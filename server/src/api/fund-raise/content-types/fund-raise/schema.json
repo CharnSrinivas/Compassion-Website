@@ -1,0 +1,76 @@
+{
+  "kind": "collectionType",
+  "collectionName": "fund_raises",
+  "info": {
+    "singularName": "fund-raise",
+    "pluralName": "fund-raises",
+    "displayName": "fund-raise",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "author": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "fund_raises"
+    },
+    "fund_target": {
+      "type": "decimal",
+      "required": true
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    },
+    "images": {
+      "type": "media",
+      "multiple": true,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "transactions": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::transaction.transaction"
+    },
+    "tag": {
+      "type": "enumeration",
+      "enum": [
+        "Medical",
+        "Memorial",
+        "Emergency",
+        "Education",
+        "Animals",
+        "Environment",
+        "Business",
+        "Community",
+        "Competition",
+        "Creative",
+        "Event",
+        "Faith",
+        "Family",
+        "Sports",
+        "Travel",
+        "Volunteer",
+        "Wishes",
+        "Other"
+      ],
+      "required": true
+    },
+    "fund_raised": {
+      "type": "decimal",
+      "required": true,
+      "default": 0
+    }
+  }
+}

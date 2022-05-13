@@ -1,22 +1,22 @@
 
 if (process.env.NODE_ENV === 'production') {
-  module.exports = ({ env }) => ({
-    connection: {
-      client: 'mysql',
+  
+    module.exports = ({ env }) => ({
       connection: {
-        host: "toptechonly.com",
-        port: 3306,
-        database: "u962252833_compassion_db",
-        user: "u962252833_compassion",
-        password: "M&*THo6kCs2*HFX]rR?",
-        ssl: {
-          rejectUnauthorized: false
+        client: 'mysql',
+        connection: {
+          host: "compassion.toptechonly.com",
+          port: 3306,
+          database: "u962252833_compassion_db",
+          user: "u962252833_compassion_usr",
+          password: ":7Nw=Z$/4^",
+          ssl: {
+            rejectUnauthorized: false
+          },
         },
+        debug: false,
       },
-      debug: false,
-    },
-  })
-
+    })
 }
 else {
 

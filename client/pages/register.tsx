@@ -3,8 +3,8 @@ import React, { useEffect } from 'react'
 import * as Yup from 'yup';
 import { useFormik } from 'formik'
 import { useRouter } from 'next/router';
-import axios from 'axios'
 import { jwt_aut_token, server_url } from '../config';
+import Cookies from 'js-cookie';
 export default function register() {
   const router = useRouter();
   const formik = useFormik({
@@ -73,6 +73,7 @@ export default function register() {
   });
   useEffect(() => {
     if (localStorage.getItem(jwt_aut_token)) {
+      Cookies.set(jwt_aut_token,localStorage.getItem(jwt_aut_token)!)
       router.push('/')
     }
   }, [])
@@ -113,8 +114,7 @@ export default function register() {
               Register to Compassion
             </h1>
             <p className="lg:w-2/3 mx-auto leading-relaxed text-base">
-              Whatever cardigan tote bag tumblr hexagon brooklyn asymmetrical
-              gentrify.
+            Make Their Wishes Come True through compassion
             </p>
           </div>
           <div className="lg:w-1/2 md:w-2/3 mx-auto">
@@ -134,7 +134,7 @@ export default function register() {
                     className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
                   />
                   {formik.errors.firstName &&
-                    dangerAlert("first name is required")
+                    dangerAlert("Invalid First Name")
                   }
 
                 </div>
@@ -154,7 +154,7 @@ export default function register() {
                     className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
                   />
                   {formik.errors.lastName &&
-                    dangerAlert("Last name is required!")
+                    dangerAlert("Invalid Last Name!")
                   }
                 </div>
               </div>
@@ -176,7 +176,7 @@ export default function register() {
                     className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-primary-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 resize-none leading-6 transition-colors duration-200 ease-in-out"
                   />
                   {formik.errors.email &&
-                    dangerAlert("Email name is required")
+                    dangerAlert("Invalid Email name")
                   }
                   {/* <ErrorMessage name='email'/> */}
                 </div>
@@ -198,7 +198,7 @@ export default function register() {
                   className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
                 />
                 {formik.errors.password &&
-                  dangerAlert("password is required")
+                  dangerAlert("Invalid password")
                 }
                 {/* <ErrorMessage name='password'/> */}
               </div>
@@ -220,7 +220,7 @@ export default function register() {
                 />
                 {/* <ErrorMessage name='retypePassword'/> */}
                 {formik.errors.retypePassword &&
-                  dangerAlert("Confirm Password is required")
+                  dangerAlert("Invalid Confirm Password")
                 }
               </div>
               <div className="p-2 w-1/2">
@@ -242,7 +242,7 @@ export default function register() {
                   />
                   {/* <ErrorMessage name='address'/> */}
                   {formik.errors.address &&
-                    dangerAlert("Address is required")
+                    dangerAlert("Invalid Address")
                   }
                 </div>
               </div>
@@ -265,7 +265,7 @@ export default function register() {
                   />
                   {/* <ErrorMessage name='mobileNo'/> */}
                   {formik.errors.mobileNo &&
-                    dangerAlert("Mobile.No is required")
+                    dangerAlert("Invalid Mobile.No")
                   }
                 </div>
               </div>

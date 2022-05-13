@@ -1,6 +1,8 @@
 import axios from 'axios'
-import { GetStaticProps, GetStaticPropsContext } from 'next'
+import Cookies from 'js-cookie'
+import { GetServerSidePropsContext, GetServerSidePropsResult } from 'next'
 import Link from 'next/link'
+import qs from 'qs'
 import React, { useEffect, useState } from 'react'
 import { jwt_aut_token, server_url } from '../config'
 
@@ -22,6 +24,7 @@ export default function Navbar() {
         }).then((res) => {
             if (res.status <= 201) {
                 setIsAuth(true)
+                Cookies.set(jwt_aut_token, token!)
             } else {
                 setIsAuth(false);
                 localStorage.removeItem(jwt_aut_token);
@@ -31,14 +34,16 @@ export default function Navbar() {
     return (
         <div>
             <header className="text-gray-600 body-font">
-                <div className="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
+                <div className="container mx-auto flex flex-wrap px-5 py-3 flex-col md:flex-row items-center h-fit">
                     <a className="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0" href='/'>
                         <img src="/assets/logo.png" alt="logo" width={40} />
                         <span className="ml-3 text-xl">Compassion</span>
                     </a>
                     <nav className="md:ml-auto flex flex-wrap items-center text-base justify-center">
-                        <Link href={'/discover'}><a className="mr-5 hover:text-gray-900">discover</a></Link>
-                        <Link href={'/'}><a className="mr-5 hover:text-gray-900">Second Link</a></Link>
+                        <Link href={'/discover'}><a className="mr-5 hover:text-gray-900">Discover</a></Link>
+                        {is_auth &&
+                            <Link href={'/manage'}><a className="mr-5 hover:text-gray-900">Manage</a></Link>
+                        }
                         <Link href={'/'}><a className="mr-5 hover:text-gray-900">Third Link</a></Link>
                         {!is_auth && <Link href={'/login'}><a className="mr-5 hover:text-gray-900">Login</a></Link>}
                     </nav>
@@ -66,3 +71,29 @@ export default function Navbar() {
         </div >
     )
 }
+/* export async function getServerSideProps(context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<Record<string, unknown>>> {
+    const token = context.req.cookies[jwt_aut_token];
+    // const res_json
+    console.log(token);
+    try {
+
+        if (token) {
+            let res = await ((await fetch(server_url + "/api/users/me", {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                }
+            })
+            ).json())
+            console.log(res);
+        }
+        return {
+            props: {}
+        }
+    } catch (err) {
+        console.error(err);
+        return {
+            props: { is_auth: false },
+        }
+    }
+
+} */

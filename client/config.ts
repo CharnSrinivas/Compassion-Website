@@ -1,23 +1,23 @@
-export const server_url = "http://localhost:1337";
+export const server_url = process.env['NODE_ENV'] === "production" ? "http://compassion-api.toptechonly.com" : "http://localhost:1337";
 export const jwt_aut_token = 'jwt-auth-token';
-
+export const fundraiser_ref = 'api::fund-raise.fund-raise'
 export const fundraiser_tags = [
-    "Animals",
-    "Business",
-    "Community",
-    "Competition",
-    "Creative",
-    "Emergency",
-    "Education",
-    "Environment",
-    "Event",
-    "Memorial",
-    "Medical",
-    "Faith",
-    "Family",
-    "Sports",
-    "Travel",
-    "Volunteer",
-    "Wishes",
-    "Other",
+    "medical",
+    "memorial",
+    "emergency",
+    "education",
+    "animals",
+    "environment",
+    "business",
+    "community",
+    "competition",
+    "creative",
+    "event",
+    "faith",
+    "family",
+    "sports",
+    "travel",
+    "volunteer",
+    "wishes",
+    "other",
 ]

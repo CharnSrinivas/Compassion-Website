@@ -24,15 +24,16 @@
     },
     "title": {
       "type": "string",
-      "required": true
+      "required": true,
+      "unique": true
     },
     "description": {
       "type": "text",
-      "required": true
+      "required": false
     },
-    "images": {
+    "image": {
       "type": "media",
-      "multiple": true,
+      "multiple": false,
       "required": false,
       "allowedTypes": [
         "images"
@@ -46,31 +47,53 @@
     "tag": {
       "type": "enumeration",
       "enum": [
-        "Medical",
-        "Memorial",
-        "Emergency",
-        "Education",
-        "Animals",
-        "Environment",
-        "Business",
-        "Community",
-        "Competition",
-        "Creative",
-        "Event",
-        "Faith",
-        "Family",
-        "Sports",
-        "Travel",
-        "Volunteer",
-        "Wishes",
-        "Other"
+        "medical",
+        "memorial",
+        "emergency",
+        "education",
+        "animals",
+        "environment",
+        "business",
+        "community",
+        "competition",
+        "creative",
+        "event",
+        "faith",
+        "family",
+        "sports",
+        "travel",
+        "volunteer",
+        "wishes",
+        "other"
       ],
       "required": true
     },
     "fund_raised": {
       "type": "decimal",
-      "required": true,
+      "required": false,
       "default": 0
+    },
+    "slug": {
+      "type": "uid",
+      "required": true,
+      "minLength": 5,
+      "maxLength": 120,
+      "targetField": "title"
+    },
+    "donations_count": {
+      "type": "biginteger",
+      "default": "0",
+      "required": true
+    },
+    "donations": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::transaction.transaction",
+      "mappedBy": "fund_raise"
+    },
+    "zip_code": {
+      "type": "integer",
+      "required": true
     }
   }
 }

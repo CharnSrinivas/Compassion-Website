@@ -4,7 +4,7 @@
   "info": {
     "singularName": "transaction",
     "pluralName": "transactions",
-    "displayName": "transaction",
+    "displayName": "donation",
     "description": ""
   },
   "options": {
@@ -21,6 +21,15 @@
       "relation": "manyToOne",
       "target": "plugin::users-permissions.user",
       "inversedBy": "transactions"
+    },
+    "fund_raise": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::fund-raise.fund-raise",
+      "inversedBy": "donations"
+    },
+    "comment": {
+      "type": "text"
     }
   }
 }

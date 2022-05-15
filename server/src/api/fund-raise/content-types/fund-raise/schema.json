@@ -12,12 +12,6 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "author": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "plugin::users-permissions.user",
-      "inversedBy": "fund_raises"
-    },
     "fund_target": {
       "type": "decimal",
       "required": true
@@ -38,11 +32,6 @@
       "allowedTypes": [
         "images"
       ]
-    },
-    "transactions": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::transaction.transaction"
     },
     "tag": {
       "type": "enumeration",
@@ -85,15 +74,21 @@
       "default": "0",
       "required": true
     },
-    "donations": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::transaction.transaction",
-      "mappedBy": "fund_raise"
-    },
     "zip_code": {
       "type": "integer",
       "required": true
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "fund_raises"
+    },
+    "donations": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::donation.donation",
+      "mappedBy": "fund_raise"
     }
   }
 }

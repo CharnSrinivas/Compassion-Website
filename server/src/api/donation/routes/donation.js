@@ -1,9 +1,9 @@
 'use strict';
 
 /**
- * transaction router.
+ * donation router.
  */
 
 const { createCoreRouter } = require('@strapi/strapi').factories;
 
-module.exports = createCoreRouter('api::transaction.transaction');
+module.exports = createCoreRouter('api::donation.donation');

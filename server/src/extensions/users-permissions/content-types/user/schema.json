@@ -67,12 +67,6 @@
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::fund-raise.fund-raise",
-      "mappedBy": "author"
-    },
-    "transactions": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::transaction.transaction",
       "mappedBy": "user"
     },
     "address": {
@@ -80,6 +74,12 @@
     },
     "mobile_no": {
       "type": "string"
+    },
+    "donations": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::donation.donation",
+      "mappedBy": "user"
     }
   }
 }

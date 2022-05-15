@@ -1,9 +1,9 @@
 'use strict';
 
 /**
- * transaction service.
+ * donation service.
  */
 
 const { createCoreService } = require('@strapi/strapi').factories;
 
-module.exports = createCoreService('api::transaction.transaction');
+module.exports = createCoreService('api::donation.donation');

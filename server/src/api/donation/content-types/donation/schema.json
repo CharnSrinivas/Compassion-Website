@@ -1,11 +1,10 @@
 {
   "kind": "collectionType",
-  "collectionName": "transactions",
+  "collectionName": "donations",
   "info": {
-    "singularName": "transaction",
-    "pluralName": "transactions",
-    "displayName": "donation",
-    "description": ""
+    "singularName": "donation",
+    "pluralName": "donations",
+    "displayName": "donation"
   },
   "options": {
     "draftAndPublish": true
@@ -13,14 +12,13 @@
   "pluginOptions": {},
   "attributes": {
     "amount": {
-      "type": "decimal",
-      "required": true
+      "type": "decimal"
     },
     "user": {
       "type": "relation",
       "relation": "manyToOne",
       "target": "plugin::users-permissions.user",
-      "inversedBy": "transactions"
+      "inversedBy": "donations"
     },
     "fund_raise": {
       "type": "relation",

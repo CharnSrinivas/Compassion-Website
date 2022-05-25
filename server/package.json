@@ -10,20 +10,19 @@
     "strapi": "strapi"	
   },	
   "dependencies": {	
-    "@strapi/plugin-i18n": "4.1.1",	
-    "@strapi/plugin-users-permissions": "4.1.1",	
-    "@strapi/strapi": "4.1.1",	
-    "mysql": "^2.18.1",	
-    "mysql2": "^2.3.3",	
-    "pg": "8.6.0",	
-    "qs": "^6.10.3"
+    "@strapi/plugin-i18n": "4.1.1",
+    "@strapi/plugin-users-permissions": "4.1.1",
+    "@strapi/strapi": "4.1.1",
+    "mysql": "^2.18.1",
+    "mysql2": "^2.3.3",
+    "pg": "8.6.0",
+    "pg-connection-string": "^2.5.0",
+    "qs": "^6.10.3",
+    "strapi-email-nodemailer": "^0.2.1"
   },	
   "author": {	
     "name": "A Strapi developer"	
-  },	
-  "strapi": {	
-    "uuid": "ea2179af-d489-4783-97b4-0a4a59a4263f"	
-  },	
+  },	  
   "engines": {	
     "node": ">=12.x.x <=16.x.x",	
     "npm": ">=6.0.0"	

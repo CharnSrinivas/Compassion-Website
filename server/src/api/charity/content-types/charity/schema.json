@@ -1,0 +1,55 @@
+{
+  "kind": "collectionType",
+  "collectionName": "charities",
+  "info": {
+    "singularName": "charity",
+    "pluralName": "charities",
+    "displayName": "charity",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "fundraisers": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::fund-raise.fund-raise",
+      "mappedBy": "charity"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "charity"
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "documents": {
+      "type": "media",
+      "multiple": true,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "zip_code": {
+      "type": "integer",
+      "required": true
+    }
+  }
+}

@@ -1,14 +1,11 @@
-import axios from 'axios'
 import Cookies from 'js-cookie'
-import { GetServerSidePropsContext, GetServerSidePropsResult } from 'next'
+
 import Link from 'next/link'
-import qs from 'qs'
 import React, { useEffect, useState } from 'react'
 import { jwt_aut_token, server_url } from '../config'
 
-type Props = {}
-
 export default function Navbar() {
+    
     const [is_auth, setIsAuth] = useState(false);
 
     useEffect(() => {
@@ -16,36 +13,44 @@ export default function Navbar() {
         if (!token) {
             setIsAuth(false)
         }
-        console.log('hit');
-        axios(server_url + "/api/users/me", {
+        fetch(server_url + "/api/users/me", {
+            method: "GET",
             headers: {
                 Authorization: `Bearer ${token}`,
             }
         }).then((res) => {
             if (res.status <= 201) {
-                setIsAuth(true)
+                console.log('Al good');
                 Cookies.set(jwt_aut_token, token!)
+                setIsAuth(true)
             } else {
-                setIsAuth(false);
+                console.log('removing');
                 localStorage.removeItem(jwt_aut_token);
+                Cookies.remove(jwt_aut_token)
+                setIsAuth(false);
             }
         })
-    }, [])
+    }, []);
+
     return (
         <div>
             <header className="text-gray-600 body-font">
-                <div className="container mx-auto flex flex-wrap px-5 py-3 flex-col md:flex-row items-center h-fit">
-                    <a className="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0" href='/'>
+                <div className="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
+                    <a className="flex flex-col title-font font-medium items-center justify-center text-gray-900 mb-4 md:mb-0" >
                         <img src="/assets/logo.png" alt="logo" width={40} />
-                        <span className="ml-3 text-xl">Compassion</span>
+                        <span className="ml-3 text-xl text-primary">Compassion</span>
                     </a>
-                    <nav className="md:ml-auto flex flex-wrap items-center text-base justify-center">
-                        <Link href={'/discover'}><a className="mr-5 hover:text-gray-900">Discover</a></Link>
+                    <nav className="md:ml-auto md:mr-auto gap-30 flex flex-wrap items-center text-base justify-center">
+                        <Link href={'/discover'}><a className="mr-5 hover:text-gray-900">For Individuals</a></Link>
+                        <Link href={'/discover/charities'}><a className="mr-5 hover:text-gray-900">For Charities</a></Link>
                         {is_auth &&
-                            <Link href={'/manage'}><a className="mr-5 hover:text-gray-900">Manage</a></Link>
+                            <Link href={'/manage/my-fundraisers'}><a className="mr-5 hover:text-gray-900">Manage</a>
+                            </Link>
                         }
-                        <Link href={'/'}><a className="mr-5 hover:text-gray-900">Third Link</a></Link>
-                        {!is_auth && <Link href={'/login'}><a className="mr-5 hover:text-gray-900">Login</a></Link>}
+                        <Link href={'/manage/my-fundraisers'}><a className="mr-5 hover:text-gray-900">How it works</a></Link>
+                        {!is_auth &&
+                            <Link href={'/login'}><a className="mr-5 hover:text-gray-900">Login</a></Link>
+                        }
                     </nav>
                     {!is_auth &&
                         <Link href={'/register'}>
@@ -67,7 +72,7 @@ export default function Navbar() {
                         </Link>
                     }
                 </div>
-            </header >
+            </header>
         </div >
     )
 }

@@ -1,123 +1,349 @@
+import axios from 'axios';
 import { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
+import Head from 'next/head';
+import { useRouter } from 'next/router';
 import qs from 'qs';
-import React from 'react'
-import { server_url } from '../../config';
+import React, { useEffect, useState } from 'react'
+import { jwt_aut_token, server_url } from '../../config';
+import { isMobile } from '../../utils';
 
 interface Props {
-  fundraiser: any
+  fundraiser: any; user: any | null;
 }
 
-export default function fundraiser({ fundraiser }: Props) {
+export default function fundraiser({ fundraiser, user }: Props) {
+  const [url, setUrl] = useState('');
+  const [open_share, setOpenShare] = useState(false);
+  const [read_more, setReadMore] = useState(false);
+  const router = useRouter();
+  useEffect(() => {
+    setUrl(window.location.href)
+  }, [])
+  const shareOnWhatsapp = () => {
+    if (!window) return;
+    if (isMobile()) {
+      window.open(`whatsapp://send?text=${url}`, '_blank')
+    } else {
+      window.open(`https://web.whatsapp.com/send?text=${url}`, "_blank")
+    }
+  }
+  const copyLink = () => {
+    navigator.clipboard.writeText(url).then(() => {
+    }).catch(() => {
 
+    })
+  }
+  const shareOnTwitter = () => {
+    if (!window) return;
+    if (isMobile()) {
+      window.open(`tg://msg?text=${url}`, '_blank')
+    } else {
+      window.open(`https://telegram.me/share/url?url=${url}`, "_blank")
+    }
+  }
+  const donate = () => {
+    if (!user) {
+      router.push("/register")
+    }
+    let _amount = window.prompt("enter the amount to donate ")
+    if (!_amount) return;
+    let amount = parseInt(_amount);
+    if (isNaN(amount)) return;
+    const token = localStorage.getItem(jwt_aut_token);
+    axios.post(server_url + "/api/donations", {
+      data: {
+        amount,
+        user: user.id,
+        fund_raise: fundraiser.id, comment: "test comment"
+      },
+    }, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      }
+    })
+  }
   return (
-    <div>
-      <section className="text-gray-600 body-font">
-        <div className="container w-auto gap-5 px-3 py-20 mx-auto">
-
-          <div className="lg:w-4/5 lg:justify-center mx-auto flex flex-wrap ">
-
-            <div className='lg:w-1/2'>
-              {fundraiser.attributes.image &&
-                <img
-                className="lg:w-full w-full lg:h-[32rem] h-[28rem] object-cover object-center rounded-lg"
-                  src={server_url + fundraiser.attributes.image.data.attributes.formats.small.url}
-                  alt="content"
-                />
-              }{!fundraiser.attributes.image &&
-                <img
-                  className="h-40 rounded w-full object-cover object-center mb-6"
-                  src={"/assets/image-placeholder.jpg"}
-                  alt="content"
-                />
-              }
-              <div className="flex justify-between align-baseline h-auto w-fit fill-gray-600 mt-5">
-                <svg
-                  className='w-[1.5rem] h-[1.5re] mr-2'
-                  version="1.1"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 512 512"
-                  xmlnsXlink="http://www.w3.org/1999/xlink"
-                  enableBackground="new 0 0 512 512"
-                >
-                  <g>
+    <>
+      <Head>
+        <title>{"Compassion| " + fundraiser.attributes.title}</title>
+        <meta property="og:url" content={url} />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content={"Compassion| " + fundraiser.attributes.title} />
+        <meta property="og:description" content={fundraiser.attributes.description} />
+        {fundraiser.attributes.image.data &&
+          <meta property="og:image" content={server_url + fundraiser.attributes.image.data.attributes.url} />}
+      </Head>
+      <div>
+        <section className="text-gray-600 body-font">
+          <div className="container w-auto gap-5 px-3 py-20 mx-auto">
+            <div className="lg:w-4/5 lg:justify-center mx-auto flex flex-wrap ">
+              <div className='lg:w-1/2'>
+                {fundraiser.attributes.image &&
+                  <img
+                    className="lg:w-full w-full lg:h-[32rem] h-[28rem] object-cover object-center rounded-lg"
+                    src={server_url + fundraiser.attributes.image.data.attributes.url}
+                    alt="content"
+                  />
+                }{!fundraiser.attributes.image &&
+                  <img
+                    className="lg:w-full w-full lg:h-[32rem] h-[28rem] object-cover object-center rounded-lg"
+                    src={"/assets/image-placeholder.jpg"}
+                    alt="content"
+                  />
+                }
+                <div className="flex justify-between align-baseline h-auto w-fit fill-gray-600 mt-5">
+                  <svg
+                    className='w-[1.5rem] h-[1.5re] mr-2'
+                    version="1.1"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 512 512"
+                    xmlnsXlink="http://www.w3.org/1999/xlink"
+                    enableBackground="new 0 0 512 512"
+                  >
                     <g>
-                      <path d="m121.5,64.2c-31.7,0-57.3,25.7-57.3,57.3 0,31.7 25.7,57.3 57.3,57.3 31.7,0 57.3-25.7 57.3-57.3 0.1-31.7-25.6-57.3-57.3-57.3zm0,94.3c-20.4,0-37-16.6-37-37s16.6-37 37-37c20.4,0 37,16.6 37,37s-16.5,37-37,37z" />
-                      <path d="m244.5,29.8c-10.4-11.5-25-17.7-40.7-17.7l-107.3-1.1c-22.9,0-44.8,8.3-60.5,25-16.7,15.7-25,37.6-25,60.5l1,107.4c1,14.6 6.3,29.2 17.7,40.7l256.5,256.4 214.8-214.8-256.5-256.4zm40.7,442l-241.9-241.9c-7.3-7.3-11.5-16.7-11.5-27.1l-1-106.3c0-16.7 7.3-33.4 18.8-45.9 12.5-12.5 29.2-19.8 46.9-19.8l106.3,1c10.4,0 19.8,4.2 27.1,11.5l241.9,241.9-186.6,186.6z" />
+                      <g>
+                        <path d="m121.5,64.2c-31.7,0-57.3,25.7-57.3,57.3 0,31.7 25.7,57.3 57.3,57.3 31.7,0 57.3-25.7 57.3-57.3 0.1-31.7-25.6-57.3-57.3-57.3zm0,94.3c-20.4,0-37-16.6-37-37s16.6-37 37-37c20.4,0 37,16.6 37,37s-16.5,37-37,37z" />
+                        <path d="m244.5,29.8c-10.4-11.5-25-17.7-40.7-17.7l-107.3-1.1c-22.9,0-44.8,8.3-60.5,25-16.7,15.7-25,37.6-25,60.5l1,107.4c1,14.6 6.3,29.2 17.7,40.7l256.5,256.4 214.8-214.8-256.5-256.4zm40.7,442l-241.9-241.9c-7.3-7.3-11.5-16.7-11.5-27.1l-1-106.3c0-16.7 7.3-33.4 18.8-45.9 12.5-12.5 29.2-19.8 46.9-19.8l106.3,1c10.4,0 19.8,4.2 27.1,11.5l241.9,241.9-186.6,186.6z" />
+                      </g>
                     </g>
-                  </g>
-                </svg>
-                <a className="my-3 title-font text-indigo-500 tracking-widest" href={`/discover/${fundraiser.attributes.tag}`}>
-                  {(fundraiser.attributes.tag as string)[0].toUpperCase() + fundraiser.attributes.tag.slice(1)}
-                </a>
+                  </svg>
+                  <a className="my-3 title-font text-indigo-500 tracking-widest" href={`/discover/${fundraiser.attributes.tag}`}>
+                    {(fundraiser.attributes.tag as string)[0].toUpperCase() + fundraiser.attributes.tag.slice(1)}
+                  </a>
+                </div>
+                <h1 className="text-gray-900 text-3xl title-font font-medium mb-1">
+                  {fundraiser.attributes.title}
+                </h1>
+                <hr className='my-3' />
+                <div className="leading-relaxed " style={{ transition: 'ease-in 0.6s all' }} >
+                  {!read_more && ((fundraiser.attributes.description as string).slice(0, 500) + "...").split(`\n`).map((txt, index) => {
+                    if (!txt) { return null }
+                    return (<>
+                      <p key={index + Math.random()} className="leading-relaxed text-base">
+                        {txt}
+                      </p>
+                      <div key={index + Math.random()}>&nbsp;</div>
+                    </>)
+                  })}
+                  {read_more &&
+                    (fundraiser.attributes.description as string).split(`\n`).map((txt, index) => {
+                      if (!txt) { return null }
+                      return (<>
+                        <p key={index + Math.random()} className="leading-relaxed text-base">
+                          {txt}
+                        </p>
+                        <div key={index + Math.random()}>&nbsp;</div>
+                      </>)
+                    })
+                  }
+                  {!read_more &&
+                    <p onClick={() => { setReadMore(true) }} className=' text-blue-900 underline cursor-pointer'>Read more</p>
+                  }
+                  {read_more &&
+                    <p onClick={() => { setReadMore(false) }} className=' text-blue-900 underline cursor-pointer' >Read less</p>
+                  }
+                </div>
+                <hr className='my-3' />
               </div>
-              <h1 className="text-gray-900 text-3xl title-font font-medium mb-1">
-                {fundraiser.attributes.title}
-              </h1>
-              <hr className='my-3' />
-              <p className="leading-relaxed">
-                {(fundraiser.attributes.description as string).split(`\n`).map((txt, index) => {
-                  if (!txt) { return null }
-                  return (<>
+              <div className="lg:w-1/3 w-1/2   lg:pl-10 m-auto sm:mt-5   lg:mt-0 relative">
+                <div className='rounded-lg drop-shadow-xl bg-white max-w-sm flex-col p-5 justify-start relative'>
+                  <div className="flex items-baseline">
+                    <p className='text-gray-900 text-2xl title-font font-medium'>{fundraiser.attributes.fund_raised}&nbsp;</p>
+                    <p>raised</p>
+                    <p className='font-light text-sm text-gray-500'>&nbsp;of&nbsp; {fundraiser.attributes.fund_target}</p>
+                  </div>
+                  <div className="w-full bg-green-400 bg-opacity-20 h-1 mt-1 mb-3" >
+                    <div className="bg-green-500 h-1" style={{ width: `${Math.floor((fundraiser.attributes.fund_raised / fundraiser.attributes.fund_target) * 100)}%` }}></div>
+                  </div>
+                  <p className='font-normal my-3 text-sm text-gray-500'>{fundraiser.attributes.donations_count}&nbsp;donations</p>
+                  <button onClick={donate} className="flex w-full mt-10 text-white items-center gap-2 bg-primary justify-center border-0 py-2 px-4 focus:outline-none active:bg-secondary rounded">
+                    <svg
+                      fill="currentColor"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      className="w-5 h-5"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
+                    </svg>
+                    <p>Donate </p>
+                  </button>
+                  <button onClick={() => { setOpenShare(true) ;;document.querySelector('body')!.style.overflow='hidden'}} className="flex w-full mt-3 text-primary items-center gap-2 bg-transparent border-2 border-primary justify-center py-2 px-4 focus:outline-none active:bg-primary active:text-white rounded">
+                    <svg
+                      fill="currentColor"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      className="w-5 h-5"
+                      width={30}
+                      height={30}
+                      viewBox="0 0 30 30"
+                    >
+                      <path d="M 23 3 A 4 4 0 0 0 19 7 A 4 4 0 0 0 19.09375 7.8359375 L 10.011719 12.376953 A 4 4 0 0 0 7 11 A 4 4 0 0 0 3 15 A 4 4 0 0 0 7 19 A 4 4 0 0 0 10.013672 17.625 L 19.089844 22.164062 A 4 4 0 0 0 19 23 A 4 4 0 0 0 23 27 A 4 4 0 0 0 27 23 A 4 4 0 0 0 23 19 A 4 4 0 0 0 19.986328 20.375 L 10.910156 15.835938 A 4 4 0 0 0 11 15 A 4 4 0 0 0 10.90625 14.166016 L 19.988281 9.625 A 4 4 0 0 0 23 11 A 4 4 0 0 0 27 7 A 4 4 0 0 0 23 3 z" />
+                    </svg>
 
-                    <p key={index} className="leading-relaxed text-base">
-                      {txt}
-                    </p>
-                    <div key={index}>&nbsp;</div>
-                  </>)
-
-                })}
-              </p>
-              <hr className='my-3' />
-            </div>
-            <div className="lg:w-1/3 w-1/2   lg:pl-10 m-auto sm:mt-5   lg:mt-0 relative">
-              <div className='rounded-lg drop-shadow-xl bg-white max-w-sm flex-col p-5 justify-start relative'>
-                <div className="flex items-baseline">
-                  <p className='text-gray-900 text-2xl title-font font-medium'>{fundraiser.attributes.fund_raised}&nbsp;</p>
-                  <p>raised</p>
-                  <p className='font-light text-sm text-gray-500'>&nbsp;of&nbsp; {fundraiser.attributes.fund_target}</p>
+                    <p>Share </p>
+                  </button>
                 </div>
-                <div className="w-full bg-green-400 bg-opacity-20 h-1 mt-1 mb-3" >
-                  <div className="bg-green-500 h-1" style={{ width: `${Math.floor((fundraiser.attributes.fund_raised / fundraiser.attributes.fund_target) * 100)}%` }}></div>
-                </div>
-                <p className='font-normal my-3 text-sm text-gray-500'>{fundraiser.attributes.donations_count}&nbsp;donations</p>
-                <button className="flex w-full mt-10 text-white items-center gap-2 bg-primary justify-center border-0 py-2 px-4 focus:outline-none active:bg-secondary rounded">
-                  <svg
-                    fill="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    className="w-5 h-5"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
-                  </svg>
-                  <p>Donate </p>
-                </button>
-                <button className="flex w-full mt-3 text-primary items-center gap-2 bg-transparent border-2 border-primary justify-center py-2 px-4 focus:outline-none active:bg-primary active:text-white rounded">
-                  <svg
-                    fill="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    className="w-5 h-5"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
-                  </svg>
-                  <p>Share </p>
-                </button>
               </div>
             </div>
           </div>
-        </div>
-      </section >
+        </section >
 
-    </div >
+        {
+          open_share &&
+          <>
+            {/* component */}
+            {/* CONTAINER MODAL*/}
+            <div className="absolute top-0 left-0 right-0 bottom-0 bg-gray-800 bg-opacity-70 flex items-center justify-center">
+              {/*MODAL ITEM*/}
+              <div className="bg-gray-100 w-full mx-4 p-4 rounded-xl md:w-1/2 lg:w-1/3">
+                {/*MODAL HEADER*/}
+                <div className="flex justify-between items center border-b border-gray-200 py-3">
+                  <div className="flex items-center justify-center">
+                    <p className="text-xl font-bold text-gray-800">Share </p>
+                  </div>
+                  <div onClick={() => { setOpenShare(false) ;;document.querySelector('body')!.style.overflow='scroll' }} className="bg-gray-300 hover:bg-gray-500 cursor-pointer hover:text-gray-300 font-sans text-gray-500 w-8 h-8 flex items-center justify-center rounded-full">
+                    x
+                  </div>
+                </div>
+                {/*MODAL BODY*/}
+                <div className="my-4">
+                  <p className="text-sm">Share this link via</p>
+                  <div className="flex justify-around my-4">
+                    {/*FACEBOOK ICON*/}
+                    {/* <div className="border hover:bg-[#1877f2] w-12 h-12 fill-[#1877f2] hover:fill-white border-blue-200 rounded-full flex items-center justify-center shadow-xl hover:shadow-blue-500/50 cursor-pointer">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width={24}
+                        height={24}
+                        viewBox="0 0 24 24"
+                      >
+                        <path d="M13.397 20.997v-8.196h2.765l.411-3.209h-3.176V7.548c0-.926.258-1.56 1.587-1.56h1.684V3.127A22.336 22.336 0 0 0 14.201 3c-2.444 0-4.122 1.492-4.122 4.231v2.355H7.332v3.209h2.753v8.202h3.312z" />
+                      </svg>
+                    </div> */}
+                    {/*TWITTER ICON*/}
+                    {/* <div className="border hover:bg-[#1d9bf0] w-12 h-12 fill-[#1d9bf0] hover:fill-white border-blue-200 rounded-full flex items-center justify-center shadow-xl hover:shadow-sky-500/50 cursor-pointer">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width={24}
+                        height={24}
+                        viewBox="0 0 24 24"
+                      >
+                        <path d="M19.633 7.997c.013.175.013.349.013.523 0 5.325-4.053 11.461-11.46 11.461-2.282 0-4.402-.661-6.186-1.809.324.037.636.05.973.05a8.07 8.07 0 0 0 5.001-1.721 4.036 4.036 0 0 1-3.767-2.793c.249.037.499.062.761.062.361 0 .724-.05 1.061-.137a4.027 4.027 0 0 1-3.23-3.953v-.05c.537.299 1.16.486 1.82.511a4.022 4.022 0 0 1-1.796-3.354c0-.748.199-1.434.548-2.032a11.457 11.457 0 0 0 8.306 4.215c-.062-.3-.1-.611-.1-.923a4.026 4.026 0 0 1 4.028-4.028c1.16 0 2.207.486 2.943 1.272a7.957 7.957 0 0 0 2.556-.973 4.02 4.02 0 0 1-1.771 2.22 8.073 8.073 0 0 0 2.319-.624 8.645 8.645 0 0 1-2.019 2.083z" />
+                      </svg>
+                    </div> */}
+                    {/* GMAIL ICON */}
+                    <div className="border hover:bg-orange-400 w-12 h-12 fill-[#1d9bf0] hover:fill-white border-blue-200 rounded-full flex items-center justify-center shadow-xl hover:shadow-orange-400/50 cursor-pointer">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width={24}
+                        height={24}
+                        viewBox="0 0 48 48"
+                      >
+                        <path
+                          fill="#4caf50"
+                          d="M45,16.2l-5,2.75l-5,4.75L35,40h7c1.657,0,3-1.343,3-3V16.2z"
+                        />
+                        <path
+                          fill="#1e88e5"
+                          d="M3,16.2l3.614,1.71L13,23.7V40H6c-1.657,0-3-1.343-3-3V16.2z"
+                        />
+                        <polygon
+                          fill="#e53935"
+                          points="35,11.2 24,19.45 13,11.2 12,17 13,23.7 24,31.95 35,23.7 36,17"
+                        />
+                        <path
+                          fill="#c62828"
+                          d="M3,12.298V16.2l10,7.5V11.2L9.876,8.859C9.132,8.301,8.228,8,7.298,8h0C4.924,8,3,9.924,3,12.298z"
+                        />
+                        <path
+                          fill="#fbc02d"
+                          d="M45,12.298V16.2l-10,7.5V11.2l3.124-2.341C38.868,8.301,39.772,8,40.702,8h0 C43.076,8,45,9.924,45,12.298z"
+                        />
+                      </svg>
+
+                    </div>
+                    {/*INSTAGRAM ICON*/}
+                    {/* <div className="border hover:bg-[#bc2a8d] w-12 h-12 fill-[#bc2a8d] hover:fill-white border-pink-200 rounded-full flex items-center justify-center shadow-xl hover:shadow-pink-500/50 cursor-pointer">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width={24}
+                        height={24}
+                        viewBox="0 0 24 24"
+                      >
+                        <path d="M11.999 7.377a4.623 4.623 0 1 0 0 9.248 4.623 4.623 0 0 0 0-9.248zm0 7.627a3.004 3.004 0 1 1 0-6.008 3.004 3.004 0 0 1 0 6.008z" />
+                        <circle cx="16.806" cy="7.207" r="1.078" />
+                        <path d="M20.533 6.111A4.605 4.605 0 0 0 17.9 3.479a6.606 6.606 0 0 0-2.186-.42c-.963-.042-1.268-.054-3.71-.054s-2.755 0-3.71.054a6.554 6.554 0 0 0-2.184.42 4.6 4.6 0 0 0-2.633 2.632 6.585 6.585 0 0 0-.419 2.186c-.043.962-.056 1.267-.056 3.71 0 2.442 0 2.753.056 3.71.015.748.156 1.486.419 2.187a4.61 4.61 0 0 0 2.634 2.632 6.584 6.584 0 0 0 2.185.45c.963.042 1.268.055 3.71.055s2.755 0 3.71-.055a6.615 6.615 0 0 0 2.186-.419 4.613 4.613 0 0 0 2.633-2.633c.263-.7.404-1.438.419-2.186.043-.962.056-1.267.056-3.71s0-2.753-.056-3.71a6.581 6.581 0 0 0-.421-2.217zm-1.218 9.532a5.043 5.043 0 0 1-.311 1.688 2.987 2.987 0 0 1-1.712 1.711 4.985 4.985 0 0 1-1.67.311c-.95.044-1.218.055-3.654.055-2.438 0-2.687 0-3.655-.055a4.96 4.96 0 0 1-1.669-.311 2.985 2.985 0 0 1-1.719-1.711 5.08 5.08 0 0 1-.311-1.669c-.043-.95-.053-1.218-.053-3.654 0-2.437 0-2.686.053-3.655a5.038 5.038 0 0 1 .311-1.687c.305-.789.93-1.41 1.719-1.712a5.01 5.01 0 0 1 1.669-.311c.951-.043 1.218-.055 3.655-.055s2.687 0 3.654.055a4.96 4.96 0 0 1 1.67.311 2.991 2.991 0 0 1 1.712 1.712 5.08 5.08 0 0 1 .311 1.669c.043.951.054 1.218.054 3.655 0 2.436 0 2.698-.043 3.654h-.011z" />
+                      </svg>
+                    </div> */}
+                    {/*WHATSAPP ICON*/}
+                    <div onClick={shareOnWhatsapp} className="border hover:bg-[#25D366] w-12 h-12 fill-[#25D366] hover:fill-white border-green-200 rounded-full flex items-center justify-center shadow-xl hover:shadow-green-500/50 cursor-pointer">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width={24}
+                        height={24}
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          clipRule="evenodd"
+                          d="M18.403 5.633A8.919 8.919 0 0 0 12.053 3c-4.948 0-8.976 4.027-8.978 8.977 0 1.582.413 3.126 1.198 4.488L3 21.116l4.759-1.249a8.981 8.981 0 0 0 4.29 1.093h.004c4.947 0 8.975-4.027 8.977-8.977a8.926 8.926 0 0 0-2.627-6.35m-6.35 13.812h-.003a7.446 7.446 0 0 1-3.798-1.041l-.272-.162-2.824.741.753-2.753-.177-.282a7.448 7.448 0 0 1-1.141-3.971c.002-4.114 3.349-7.461 7.465-7.461a7.413 7.413 0 0 1 5.275 2.188 7.42 7.42 0 0 1 2.183 5.279c-.002 4.114-3.349 7.462-7.461 7.462m4.093-5.589c-.225-.113-1.327-.655-1.533-.73-.205-.075-.354-.112-.504.112s-.58.729-.711.879-.262.168-.486.056-.947-.349-1.804-1.113c-.667-.595-1.117-1.329-1.248-1.554s-.014-.346.099-.458c.101-.1.224-.262.336-.393.112-.131.149-.224.224-.374s.038-.281-.019-.393c-.056-.113-.505-1.217-.692-1.666-.181-.435-.366-.377-.504-.383a9.65 9.65 0 0 0-.429-.008.826.826 0 0 0-.599.28c-.206.225-.785.767-.785 1.871s.804 2.171.916 2.321c.112.15 1.582 2.415 3.832 3.387.536.231.954.369 1.279.473.537.171 1.026.146 1.413.089.431-.064 1.327-.542 1.514-1.066.187-.524.187-.973.131-1.067-.056-.094-.207-.151-.43-.263"
+                        />
+                      </svg>
+                    </div>
+                    {/*TELEGRAM ICON*/}
+                    <div onClick={shareOnTwitter} className="border hover:bg-[#229ED9] w-12 h-12 fill-[#229ED9] hover:fill-white border-sky-200 rounded-full flex items-center justify-center shadow-xl hover:shadow-sky-500/50 cursor-pointer">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width={24}
+                        height={24}
+                        viewBox="0 0 24 24"
+                      >
+                        <path d="m20.665 3.717-17.73 6.837c-1.21.486-1.203 1.161-.222 1.462l4.552 1.42 10.532-6.645c.498-.303.953-.14.579.192l-8.533 7.701h-.002l.002.001-.314 4.692c.46 0 .663-.211.921-.46l2.211-2.15 4.599 3.397c.848.467 1.457.227 1.668-.785l3.019-14.228c.309-1.239-.473-1.8-1.282-1.434z" />
+                      </svg>
+                    </div>
+                  </div>
+                  <p className="text-sm">Or copy link</p>
+                  {/*BOX LINK*/}
+                  <div className=" flex-col justify-between items-center mt-4">
+                    <div className="flex justify-between items-center border-2 border-gray-200 py-2">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width={24}
+                        height={24}
+                        viewBox="0 0 24 24"
+                        className="fill-gray-500 ml-2"
+                      >
+                        <path d="M8.465 11.293c1.133-1.133 3.109-1.133 4.242 0l.707.707 1.414-1.414-.707-.707c-.943-.944-2.199-1.465-3.535-1.465s-2.592.521-3.535 1.465L4.929 12a5.008 5.008 0 0 0 0 7.071 4.983 4.983 0 0 0 3.535 1.462A4.982 4.982 0 0 0 12 19.071l.707-.707-1.414-1.414-.707.707a3.007 3.007 0 0 1-4.243 0 3.005 3.005 0 0 1 0-4.243l2.122-2.121z" />
+                        <path d="m12 4.929-.707.707 1.414 1.414.707-.707a3.007 3.007 0 0 1 4.243 0 3.005 3.005 0 0 1 0 4.243l-2.122 2.121c-1.133 1.133-3.109 1.133-4.242 0L10.586 12l-1.414 1.414.707.707c.943.944 2.199 1.465 3.535 1.465s2.592-.521 3.535-1.465L19.071 12a5.008 5.008 0 0 0 0-7.071 5.006 5.006 0 0 0-7.071 0z" />
+                      </svg>
+                      <input
+                        className="w-full outline-none bg-transparent"
+                        type="text"
+                        placeholder="link"
+                        defaultValue={url}
+                      />
+                    </div>
+                    <button onClick={copyLink} className="bg-indigo-500 text-white rounded text-sm py-2 px-5 mr-2 hover:bg-indigo-600 mt-3">
+                      Copy
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </>
+
+        }
+      </div >
+    </>
   )
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<Record<string, unknown>>> {
   const slug = context.params ? context.params['slug']?.toString().toLocaleLowerCase() : [];
+  const token = context.req.cookies[jwt_aut_token];
   if (!slug) {
     return {
       props: {
@@ -131,22 +357,29 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
         $eq: slug
       }
     },
-    populate: ["image", "author", "transactions"]
+    populate: ["image", "user",]
   })
 
-  try {
+  const headers: any = token ? {
+    Authorization: `Bearer ${token}`,
+  } : {};
 
-    const res = await (await fetch(server_url + "/api/fund-raises?" + query, {
-      method: "GET",
-    })).json()
+  const fundraiser = await (await fetch(server_url + "/api/fund-raises?" + query, {
+    method: "GET",
+    headers: headers
+  })).json();
+
+  const user_res = await fetch(server_url + "/api/users/me", {
+    method: "GET",
+    headers: headers
+  })
+  if (user_res.status > 201) {
     return {
-      props: { fundraiser: res['data'][0] }
-    }
-  } catch (err) {
-    console.error(err);
-    return {
-      props: { fundraiser: undefined },
+      props: { fundraiser: fundraiser['data'][0], user: null }
     }
   }
-
+  const user = await user_res.json();
+  return {
+    props: { fundraiser: fundraiser['data'][0], user }
+  }
 }

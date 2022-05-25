@@ -11,7 +11,6 @@ interface Props {
 }
 
 export default function Tag({ fundraisers }: Props) {
-
     return (
         <div>
             <section className="text-gray-600 body-font">
@@ -34,16 +33,24 @@ export default function Tag({ fundraisers }: Props) {
                         </p>
                     </div>
                     <div className="flex flex-wrap -m-4">
-                        {
+                        {fundraisers.length > 0 &&
                             fundraisers.map((item, index) => {
                                 return (
                                     <a href={`/f/${item.attributes.slug}`} key={index} className="xl:w-1/4 md:w-1/2 p-4 cursor-pointer ">
                                         <div className="bg-gray-50 drop-shadow-md p-6 rounded-lg">
-                                            <img
-                                                className="h-40 rounded w-full object-cover object-center mb-6"
-                                                src={server_url + item.attributes.images.data[0].attributes.formats.small.url}
-                                                alt="content"
-                                            />
+                                        {item.attributes.image && item.attributes.image.data &&
+                                                    <img
+                                                        className="h-40 rounded w-full object-cover object-center mb-6"
+                                                        src={server_url + item.attributes.image.data.attributes.url}
+                                                        alt="content"
+                                                    />
+                                                }{(!item.attributes.image || !item.attributes.image.data )&&
+                                                    <img
+                                                        className="h-40 rounded w-full object-cover object-center mb-6"
+                                                        src={"/assets/image-placeholder.jpg"}
+                                                        alt="content"
+                                                    />
+                                                }
                                             <h3 className="tracking-widest text-indigo-500 text-xs font-medium title-font">
                                                 {item.attributes.tag}
                                             </h3>
@@ -53,14 +60,6 @@ export default function Tag({ fundraisers }: Props) {
                                             <p className="leading-relaxed text-base">
                                                 {(item.attributes.description as string).slice(0, 60) + "..."}
                                             </p>
-                                            {/* {(item.attributes.description as string).split(`\n`).map((txt, index) => {
-                                                return (<>
-                                                    <p className="leading-relaxed text-base">
-                                                        {txt}
-                                                    </p>
-                                                    <div>&nbsp;</div>
-                                                </>)
-                                            })} */}
                                             <div className='text-gray-900 font-medium mt-4'>
                                                 <strong>{item.attributes.fund_raised.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} raised</strong> out of {item.attributes.fund_target.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                                             </div>
@@ -68,6 +67,11 @@ export default function Tag({ fundraisers }: Props) {
                                     </a>
                                 )
                             })
+                        } {
+                            fundraisers.length <= 0 &&
+                            <h2 className='sm:text-3xl text-2xl font-medium title-font my-7  text-gray-900'>
+                                No fundraisers found
+                            </h2>
                         }
 
                     </div>
@@ -92,7 +96,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
                 $eq: tag
             }
         },
-        populate: ["images", "author"]
+        populate: ["image", "user"]
     })
     // const res_json
     try {
@@ -100,8 +104,17 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
         const res = await (await fetch(server_url + "/api/fund-raises?" + query, {
             method: "GET",
         })).json()
+        if (res['data']) {
+            return {
+                props: {
+                    fundraisers: res['data']
+                }
+            }
+        }
         return {
-            props: { fundraisers: res['data'] }
+            props: {
+                fundraisers: []
+            }
         }
     } catch (err) {
         console.error(err);

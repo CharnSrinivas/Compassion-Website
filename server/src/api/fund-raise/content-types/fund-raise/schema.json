@@ -89,6 +89,12 @@
       "relation": "oneToMany",
       "target": "api::donation.donation",
       "mappedBy": "fund_raise"
+    },
+    "charity": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::charity.charity",
+      "inversedBy": "fundraisers"
     }
   }
 }

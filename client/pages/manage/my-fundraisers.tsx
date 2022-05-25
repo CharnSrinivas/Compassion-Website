@@ -1,55 +1,40 @@
-import { GetStaticPathsContext } from 'next'
+import { GetServerSidePropsContext, GetServerSidePropsResult, GetStaticPathsContext, Redirect } from 'next';
+import qs from 'qs';
 import React from 'react'
-import { server_url } from '../../config'
-import qs from 'qs'
+import { jwt_aut_token, server_url } from '../../config';
+
 interface Props {
-    fundraisers: any[]
+    fundraisers: any[];
 }
 
-export default function fundraisers({ fundraisers }: Props) {
+export default function manage({ fundraisers }: Props) {
+
     return (
         <div>
             <section className="text-gray-600 body-font ">
-                <div className="container px-3 py-24 mx-auto">
-                    <div className="flex flex-wrap w-full mb-20">
-                        <div className="lg:w-1/2 w-full mb-6 lg:mb-0">
-                            <h1 className="sm:text-3xl text-2xl font-medium title-font mb-2 text-gray-900">
-                                Browse fundraisers
+                <div className=' flex flex-col mx-auto mt-10 py-5 items-center' style={{ minHeight: "60vh" }}>
+                    {fundraisers.length > 0 &&
+                        <div className='w-[80%] my-5 px-4'>
+                            <h1 className="sm:text-3xl  text-left  text-2xl font-medium title-font mb-2  text-gray-900">
+                                My fundraisers
                             </h1>
                             <div className="h-1 w-20 bg-primary rounded " />
-                            <h2 className='mt-5 mb-2 text-gray-600'>
-                                People around the world are raising money f or what they are passionate about.
-                            </h2>
                         </div>
-                        <p className="lg:w-1/2 w-full leading-relaxed text-gray-500">
-                            Whatever cardigan tote bag tumblr hexagon brooklyn asymmetrical
-                            gentrify, subway tile poke farm-to-table. Franzen you probably haven't
-                            heard of them man bun deep jianbing selfies heirloom prism food truck
-                            ugh squid celiac humblebrag.
-                        </p>
-                    </div>
-                </div>
-                <div className=' bg-primary bg-opacity-5 flex flex-col mx-auto py-5 items-center' style={{ minHeight: "60vh" }}>
-                    {fundraisers.length > 0 &&
-                        <h1 className="sm:text-3xl text-2xl font-medium title-font mb-2  text-gray-900">
-                            Top fundraisers
-                        </h1>
                     }
                     <div className=' w-[80%] flex justify-center'>
-                        <div className="flex flex-wrap w-full justify-evenly">
-                            {fundraisers.length > 0 &&
+                        <div className="flex flex-wrap w-full justify-between">
+                            {fundraisers &&
                                 fundraisers.map((item, index) => {
                                     return (
-                                        <a key={index} href={`/f/${item.attributes.slug}`} className="xl:w-1/4 md:w-1/2 p-4 cursor-pointer" >
+                                        <a key={index} href={`/manage/${item.attributes.slug}/overview`} className="xl:w-1/4 md:w-1/2 p-4 cursor-pointer " >
                                             <div className="bg-gray-50 drop-shadow-md rounded-lg p-0  min-h-[26rem] ">
-                                            
                                                 {item.attributes.image && item.attributes.image.data &&
                                                     <img
                                                         className="h-40 rounded w-full object-cover object-center mb-6"
                                                         src={server_url + item.attributes.image.data.attributes.url}
                                                         alt="content"
                                                     />
-                                                }{(!item.attributes.image || !item.attributes.image.data )&&
+                                                }{(!item.attributes.image.data || !item.attributes.image)&&
                                                     <img
                                                         className="h-40 rounded w-full object-cover object-center mb-6"
                                                         src={"/assets/image-placeholder.jpg"}
@@ -97,10 +82,40 @@ export default function fundraisers({ fundraisers }: Props) {
     )
 }
 
-export async function getStaticProps(context: GetStaticPathsContext) {
-    const query = qs.stringify({ populate: ["image", "user"]})
-    let res = await (await fetch(server_url + "/api/fund-raises?" + query)).json()
+export async function getServerSideProps(context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<Record<string, unknown>>> {
+    const token = context.req.cookies[jwt_aut_token];
+    const redirect: Redirect = {
+        destination: "/register",
+        statusCode: 307,
+        basePath: false
+    }
 
+    if (!token) {
+        return { redirect }
+    }
+
+    let usr_res = (await fetch(server_url + "/api/users/me", {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        }
+    })
+    )
+    if (usr_res.status > 201) {
+        return { props: { is_auth: false, user: null, fundraisers: null } }
+    }
+    let user = await usr_res.json();
+
+    const query = qs.stringify({
+        filters: {
+            user: {
+                id: {
+                    $eq: user.id
+                }
+            }
+        }, populate: ["image", "user"]
+    });
+
+    let res = await (await fetch(server_url + "/api/fund-raises?" + query)).json()
     if (res['data']) {
         return {
             props: {
@@ -110,7 +125,7 @@ export async function getStaticProps(context: GetStaticPathsContext) {
     }
     return {
         props: {
-            fundraisers: null
+            fundraisers: []
         }
     }
 }

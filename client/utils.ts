@@ -6,3 +6,14 @@ export function stringToSlug(str: string): string {
         .replace(/-+/g, '-'); // collapse dashes
     return str;
 };
+export function isMobile() {
+    let userAgent = navigator.userAgent;
+    let mobiles = ['Android', 'BlackBerry', 'iPhone', "iPad", "iPod", "Opera Mini", "IEMobile"]
+    for (let i = 0; i < mobiles.length; i++) {
+        if (userAgent.match(mobiles[i])) {
+            return true;
+        }
+    }
+    return false;
+
+};

@@ -6,7 +6,11 @@ import { jwt_aut_token, server_url } from '../config';
 import Cookies from 'js-cookie'
 export default function login() {
     const router = useRouter();
-    const [loggingIn, setLoggingIn] = useState(false)
+    const [loggingIn, setLoggingIn] = useState(false);
+    const [show_alert, setShowAlert] = useState(false);
+    const [alert_txt, setAlertTxt] = useState('');
+    const [alert_title, setAlertTitle] = useState('');
+
     const formik = useFormik({
         initialValues: {
             email: '',
@@ -35,10 +39,16 @@ export default function login() {
                 })
             }).then((res) => {
                 res.json().then(res_json => {
+                    console.log(res_json);
+                    
                     if (!res_json.error && res_json.jwt) {
                         localStorage.setItem(jwt_aut_token, res_json.jwt);
                         Cookies.set(jwt_aut_token, res_json.jwt);
                         router.push('/')
+                    } else {
+                        console.log(res_json.error.message);
+                        setShowAlert(true);setAlertTitle(res_json.error.name);setAlertTxt(res_json.error.message);
+                        setLoggingIn(false)
                     }
                 })
             })
@@ -53,20 +63,18 @@ export default function login() {
 
     return (
         <div className='w-screen h-screen bg-gray-200 flex justify-center align-middle'>
-            {!loggingIn &&
-                <div className="container m-auto drop-shadow-lg">
-                    <div className="flex justify-center px-4 h-[35rem]">
-                        {/* Row */}
-                        <div className="w-full xl:w-3/4 lg:w-11/12 flex">
-                            <div
-                                className="w-full h-auto bg-gray-400 hidden lg:block lg:w-1/2 bg-cover rounded-l-lg"
-                                style={{
-                                    backgroundImage:
-                                        'url("https://source.unsplash.com/K4mSJ7kc0As/600x800")'
-                                }}
-                            />
-                            {/* Col */}
-                            <div className="w-full lg:w-1/2 bg-white p-5 rounded-lg lg:rounded-l-none">
+            <div className="container m-auto drop-shadow-lg">
+                <div className="flex justify-center px-4 h-[35rem]">
+                    <div className="w-full xl:w-3/4 lg:w-11/12 flex">
+                        <div
+                            className="w-full h-auto bg-gray-400 hidden lg:block lg:w-1/2 bg-cover rounded-l-lg"
+                            style={{
+                                backgroundImage:
+                                    'url("https://source.unsplash.com/K4mSJ7kc0As/600x800")'
+                            }}
+                        />
+                        <div className="w-full lg:w-1/2 bg-white p-5 rounded-lg lg:rounded-l-none relative">
+                            {!loggingIn && <>
                                 <h3 className="pt-4 text-2xl text-center">Welcome Back!</h3>
                                 <form className="px-8 pt-6 pb-8 mb-4 bg-white rounded" onSubmit={formik.handleSubmit}>
                                     <div className="mb-4">
@@ -136,17 +144,37 @@ export default function login() {
                                         </a>
                                     </div>
                                 </form>
-                            </div>
+                            </>}
+                            {
+                                loggingIn &&
+                                <div className="w-12 h-12 rounded-full animate-spin border-x-2 border-solid border-blue-500 border-t-transparent absolute" style={{ position: "absolute", top: "50%", left: "50%" }}></div>
+                            }
+                            {show_alert &&
+                                <div
+                                    className="flex bg-red-100 rounded-lg p-4 mb-4 text-sm text-red-700"
+                                    role="alert"
+                                >
+                                    <svg
+                                        className="w-5 h-5 inline mr-3"
+                                        fill="currentColor"
+                                        viewBox="0 0 20 20"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                        <path
+                                            fillRule="evenodd"
+                                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                                            clipRule="evenodd"
+                                        />
+                                    </svg>
+                                    <div>
+                                        <span className="font-medium mx-2">{alert_title}</span>{alert_txt.replace('identifier','email')}
+                                    </div>
+                                </div>
+                            }
                         </div>
-
                     </div>
                 </div>
-            }
-            {
-                loggingIn &&
-                <div className="w-12 h-12 rounded-full animate-spin
-                border-x-2 border-solid border-blue-500 border-t-transparent absolute" style={{position:"absolute",top:"50%"}}></div>
-            }
+            </div>
         </div>
 
     )

@@ -9,6 +9,7 @@ module.exports = async (policyContext, config, { strapi }) => {
             }
         }, populate: ['user']
     })
+    console.log(fundraiser);
     if (user.id === fundraiser.user.id) {
         return true
     } else {

@@ -5,6 +5,7 @@ import { useFormik } from 'formik'
 import { useRouter } from 'next/router';
 import { jwt_aut_token, server_url } from '../config';
 import Cookies from 'js-cookie';
+import axios from 'axios';
 export default function register() {
   const router = useRouter();
   const formik = useFormik({
@@ -71,11 +72,23 @@ export default function register() {
       })
     }
   });
+  console.log('checking ! ');
   useEffect(() => {
-    if (localStorage.getItem(jwt_aut_token)) {
-      Cookies.set(jwt_aut_token,localStorage.getItem(jwt_aut_token)!)
-      router.push('/')
-    }
+    const token = localStorage.getItem(jwt_aut_token);
+    axios(server_url + "/api/users/me", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      }
+    }).then((res) => {
+      console.log(res);   
+      if (res.status <= 201) {
+        Cookies.set(jwt_aut_token, localStorage.getItem(jwt_aut_token)!)
+        router.push('/')
+      } else {
+        localStorage.removeItem(jwt_aut_token);
+        Cookies.remove(jwt_aut_token)
+      }
+    })
   }, [])
   const dangerAlert = (text: string) => {
     return (
@@ -114,7 +127,7 @@ export default function register() {
               Register to Compassion
             </h1>
             <p className="lg:w-2/3 mx-auto leading-relaxed text-base">
-            Make Their Wishes Come True through compassion
+              Make Their Wishes Come True through compassion
             </p>
           </div>
           <div className="lg:w-1/2 md:w-2/3 mx-auto">

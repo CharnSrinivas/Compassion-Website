@@ -80,6 +80,12 @@
       "relation": "oneToMany",
       "target": "api::donation.donation",
       "mappedBy": "user"
+    },
+    "charity": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::charity.charity",
+      "mappedBy": "user"
     }
   }
 }

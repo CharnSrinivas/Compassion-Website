@@ -10,8 +10,6 @@ interface Props {
 }
 
 export default function story({ fundraiser, is_auth, token }: Props) {
-    console.log(fundraiser);
-    
     const router = useRouter()
     const submit = async () => {
         const description_ele = (document.getElementById('description') as (HTMLTextAreaElement | undefined));

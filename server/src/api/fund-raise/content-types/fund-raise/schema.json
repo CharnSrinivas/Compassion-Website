@@ -95,6 +95,10 @@
       "relation": "manyToOne",
       "target": "api::charity.charity",
       "inversedBy": "fundraisers"
+    },
+    "individual": {
+      "type": "boolean",
+      "default": true
     }
   }
 }

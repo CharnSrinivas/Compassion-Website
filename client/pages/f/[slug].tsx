@@ -70,7 +70,7 @@ export default function fundraiser({ fundraiser, user }: Props) {
         <meta property="og:type" content="website" />
         <meta property="og:title" content={"Compassion| " + fundraiser.attributes.title} />
         <meta property="og:description" content={fundraiser.attributes.description} />
-        {fundraiser.attributes.image.data &&
+        {fundraiser.attributes.image && fundraiser.attributes.image.data &&
           <meta property="og:image" content={server_url + fundraiser.attributes.image.data.attributes.url} />}
       </Head>
       <div>
@@ -78,7 +78,7 @@ export default function fundraiser({ fundraiser, user }: Props) {
           <div className="container w-auto gap-5 px-3 py-20 mx-auto">
             <div className="lg:w-4/5 lg:justify-center mx-auto flex flex-wrap ">
               <div className='lg:w-1/2'>
-                {fundraiser.attributes.image &&
+                {fundraiser.attributes.image && fundraiser.attributes.image.data &&
                   <img
                     className="lg:w-full w-full lg:h-[32rem] h-[28rem] object-cover object-center rounded-lg"
                     src={server_url + fundraiser.attributes.image.data.attributes.url}
@@ -116,31 +116,47 @@ export default function fundraiser({ fundraiser, user }: Props) {
                 </h1>
                 <hr className='my-3' />
                 <div className="leading-relaxed " style={{ transition: 'ease-in 0.6s all' }} >
-                  {!read_more && ((fundraiser.attributes.description as string).slice(0, 500) + "...").split(`\n`).map((txt, index) => {
-                    if (!txt) { return null }
-                    return (<>
-                      <p key={index + Math.random()} className="leading-relaxed text-base">
-                        {txt}
+                  {fundraiser.attributes.description && fundraiser.attributes.description.length > 500 &&
+                    <>
+                      {!read_more && ((fundraiser.attributes.description as string).slice(0, 500) + "...").split(`\n`).map((txt, index) => {
+                        if (!txt) { return null }
+                        return (<>
+                          <p key={index + Math.random()} className="leading-relaxed text-base">
+                            {txt}
+                          </p>
+                          <div key={index + Math.random()}>&nbsp;</div>
+                        </>)
+                      })}
+                      {read_more &&
+                        (fundraiser.attributes.description as string).split(`\n`).map((txt, index) => {
+                          if (!txt) { return null }
+                          return (<>
+                            <p key={index + Math.random()} className="leading-relaxed text-base">
+                              {txt}
+                            </p>
+                            <div key={index + Math.random()}>&nbsp;</div>
+                          </>)
+                        })
+                      }
+                    </>
+                  }
+                  {fundraiser.attributes.description && fundraiser.attributes.description.length <= 500 &&
+                    (<>
+                      <p className="leading-relaxed text-base">
+                        {fundraiser.attributes.description}
                       </p>
-                      <div key={index + Math.random()}>&nbsp;</div>
+                      <div >&nbsp;</div>
                     </>)
-                  })}
-                  {read_more &&
-                    (fundraiser.attributes.description as string).split(`\n`).map((txt, index) => {
-                      if (!txt) { return null }
-                      return (<>
-                        <p key={index + Math.random()} className="leading-relaxed text-base">
-                          {txt}
-                        </p>
-                        <div key={index + Math.random()}>&nbsp;</div>
-                      </>)
-                    })
                   }
-                  {!read_more &&
-                    <p onClick={() => { setReadMore(true) }} className=' text-blue-900 underline cursor-pointer'>Read more</p>
-                  }
-                  {read_more &&
-                    <p onClick={() => { setReadMore(false) }} className=' text-blue-900 underline cursor-pointer' >Read less</p>
+                  { fundraiser.attributes.description &&<>
+
+                    {!read_more &&
+                      <p onClick={() => { setReadMore(true) }} className=' text-blue-900 underline cursor-pointer'>Read more</p>
+                    }
+                    {read_more &&
+                      <p onClick={() => { setReadMore(false) }} className=' text-blue-900 underline cursor-pointer' >Read less</p>
+                    }
+                  </>
                   }
                 </div>
                 <hr className='my-3' />
@@ -169,7 +185,7 @@ export default function fundraiser({ fundraiser, user }: Props) {
                     </svg>
                     <p>Donate </p>
                   </button>
-                  <button onClick={() => { setOpenShare(true) ;;document.querySelector('body')!.style.overflow='hidden'}} className="flex w-full mt-3 text-primary items-center gap-2 bg-transparent border-2 border-primary justify-center py-2 px-4 focus:outline-none active:bg-primary active:text-white rounded">
+                  <button onClick={() => { setOpenShare(true);; document.querySelector('body')!.style.overflow = 'hidden' }} className="flex w-full mt-3 text-primary items-center gap-2 bg-transparent border-2 border-primary justify-center py-2 px-4 focus:outline-none active:bg-primary active:text-white rounded">
                     <svg
                       fill="currentColor"
                       strokeLinecap="round"
@@ -204,7 +220,7 @@ export default function fundraiser({ fundraiser, user }: Props) {
                   <div className="flex items-center justify-center">
                     <p className="text-xl font-bold text-gray-800">Share </p>
                   </div>
-                  <div onClick={() => { setOpenShare(false) ;;document.querySelector('body')!.style.overflow='scroll' }} className="bg-gray-300 hover:bg-gray-500 cursor-pointer hover:text-gray-300 font-sans text-gray-500 w-8 h-8 flex items-center justify-center rounded-full">
+                  <div onClick={() => { setOpenShare(false);; document.querySelector('body')!.style.overflow = 'scroll' }} className="bg-gray-300 hover:bg-gray-500 cursor-pointer hover:text-gray-300 font-sans text-gray-500 w-8 h-8 flex items-center justify-center rounded-full">
                     x
                   </div>
                 </div>

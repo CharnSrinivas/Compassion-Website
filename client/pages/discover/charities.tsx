@@ -110,8 +110,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
         })
     let res = await (await fetch(server_url + "/api/fund-raises?" + query)).json()
     const token = context.req.cookies[jwt_aut_token];
-console.log(res);
-
     if (res['data'] && res['data'].length > 0) {
         return {
             props: {

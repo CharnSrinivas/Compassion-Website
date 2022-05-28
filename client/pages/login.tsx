@@ -39,14 +39,11 @@ export default function login() {
                 })
             }).then((res) => {
                 res.json().then(res_json => {
-                    console.log(res_json);
-                    
                     if (!res_json.error && res_json.jwt) {
                         localStorage.setItem(jwt_aut_token, res_json.jwt);
                         Cookies.set(jwt_aut_token, res_json.jwt);
                         router.push('/')
                     } else {
-                        console.log(res_json.error.message);
                         setShowAlert(true);setAlertTitle(res_json.error.name);setAlertTxt(res_json.error.message);
                         setLoggingIn(false)
                     }

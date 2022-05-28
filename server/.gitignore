@@ -106,7 +106,7 @@ coverage
 # Strapi
 ############################
 
-
+build/
 license.txt
 exports
 *.cache

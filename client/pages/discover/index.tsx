@@ -32,7 +32,7 @@ export default function fundraisers({ fundraisers }: Props) {
                 <div className=' bg-primary bg-opacity-5 flex flex-col mx-auto py-5 items-center' style={{ minHeight: "60vh" }}>
                     {fundraisers.length > 0 &&
                         <h1 className="sm:text-3xl text-2xl font-medium title-font mb-2  text-gray-900">
-                            Top fundraisers
+                            Top individual fundraisers
                         </h1>
                     }
                     <div className=' w-[80%] flex justify-center'>
@@ -42,14 +42,14 @@ export default function fundraisers({ fundraisers }: Props) {
                                     return (
                                         <a key={index} href={`/f/${item.attributes.slug}`} className="xl:w-1/4 md:w-1/2 p-4 cursor-pointer" >
                                             <div className="bg-gray-50 drop-shadow-md rounded-lg p-0  min-h-[26rem] ">
-                                            
+
                                                 {item.attributes.image && item.attributes.image.data &&
                                                     <img
                                                         className="h-40 rounded w-full object-cover object-center mb-6"
                                                         src={server_url + item.attributes.image.data.attributes.url}
                                                         alt="content"
                                                     />
-                                                }{(!item.attributes.image || !item.attributes.image.data )&&
+                                                }{(!item.attributes.image || !item.attributes.image.data) &&
                                                     <img
                                                         className="h-40 rounded w-full object-cover object-center mb-6"
                                                         src={"/assets/image-placeholder.jpg"}
@@ -98,7 +98,15 @@ export default function fundraisers({ fundraisers }: Props) {
 }
 
 export async function getStaticProps(context: GetStaticPathsContext) {
-    const query = qs.stringify({ populate: ["image", "user"]})
+    const query = qs.stringify({
+        filters: {
+            individual: {
+                $eq: true
+            }
+        }, populate: ["image", "user", 'charity'], pagination: {
+            pageSize: 10
+        }
+    })
     let res = await (await fetch(server_url + "/api/fund-raises?" + query)).json()
 
     if (res['data']) {

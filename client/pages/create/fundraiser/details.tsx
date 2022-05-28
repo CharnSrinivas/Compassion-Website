@@ -44,17 +44,7 @@ export default function fundraiser({ is_auth, user, token: auth_token }: Props) 
             name: {
               $containsi: search
             }
-          }, {
-            location: {
-              $containsi: search
-            }
-          }, {
-            user: {
-              username: {
-                $containsi: search
-              }
-            }
-          }
+          }, 
         ]
       }, populate: ['image', 'user'], pagination: {
         pageSize: 20
@@ -107,14 +97,6 @@ export default function fundraiser({ is_auth, user, token: auth_token }: Props) 
     onSubmit: async (e) => {
       setSubmitting(true);
       const slug = stringToSlug(e.title);
-      console.log({
-        title: e.title,
-        fund_target: e.targetFunds,
-        zip_code: e.zipCode,
-        user: user.id,
-        tag: e.category,
-        slug: slug
-      });
       let res = await axios.post(server_url + "/api/fund-raises",
         {
           data: {
@@ -124,7 +106,8 @@ export default function fundraiser({ is_auth, user, token: auth_token }: Props) 
             user: user.id,
             tag: e.category,
             slug: slug,
-            charity: selected_charity
+            charity: selected_charity,
+            individual:selected_charity == null
           }
         }, {
         headers: {

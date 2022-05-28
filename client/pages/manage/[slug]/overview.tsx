@@ -488,8 +488,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
       Authorization: `Bearer ${token}`,
     }
   })).json();
-  console.log(token);
-  console.log(fundraiser['data'][0]['attributes']);
   if (!fundraiser['data'][0]['attributes']['user']) { return { redirect: redirect_obj } };
 
   const donations_query = qs.stringify({

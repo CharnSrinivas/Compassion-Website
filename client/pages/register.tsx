@@ -72,7 +72,6 @@ export default function register() {
       })
     }
   });
-  console.log('checking ! ');
   useEffect(() => {
     const token = localStorage.getItem(jwt_aut_token);
     axios(server_url + "/api/users/me", {
@@ -80,7 +79,6 @@ export default function register() {
         Authorization: `Bearer ${token}`,
       }
     }).then((res) => {
-      console.log(res);   
       if (res.status <= 201) {
         Cookies.set(jwt_aut_token, localStorage.getItem(jwt_aut_token)!)
         router.push('/')

@@ -36,33 +36,43 @@ export default function Tag({ fundraisers }: Props) {
                         {fundraisers.length > 0 &&
                             fundraisers.map((item, index) => {
                                 return (
-                                    <a href={`/f/${item.attributes.slug}`} key={index} className="xl:w-1/4 md:w-1/2 p-4 cursor-pointer ">
+                                    <a href={`/f/${item.attributes.slug}`} key={index} className=" xl:w-1/4 md:w-1/2 p-4 cursor-pointer ">
                                         <div className="bg-gray-50 drop-shadow-md p-6 rounded-lg">
-                                        {item.attributes.image && item.attributes.image.data &&
-                                                    <img
-                                                        className="h-40 rounded w-full object-cover object-center mb-6"
-                                                        src={server_url + item.attributes.image.data.attributes.url}
-                                                        alt="content"
-                                                    />
-                                                }{(!item.attributes.image || !item.attributes.image.data )&&
-                                                    <img
-                                                        className="h-40 rounded w-full object-cover object-center mb-6"
-                                                        src={"/assets/image-placeholder.jpg"}
-                                                        alt="content"
-                                                    />
+                                            {item.attributes.image && item.attributes.image.data &&
+                                                <img
+                                                    className="h-40 rounded w-full object-cover object-center mb-6"
+                                                    src={server_url + item.attributes.image.data.attributes.url}
+                                                    alt="content"
+                                                />
+                                            }{(!item.attributes.image || !item.attributes.image.data) &&
+                                                <img
+                                                    className="h-40 rounded w-full object-cover object-center mb-6"
+                                                    src={"/assets/image-placeholder.jpg"}
+                                                    alt="content"
+                                                />
+                                            }
+                                            <>
+                                                <h3 className="tracking-widest text-indigo-500 text-xs font-medium title-font">
+                                                    {item.attributes.tag}
+                                                </h3>
+                                                <h2 className="text-lg text-gray-900 font-medium title-font mb-4">
+                                                    {item.attributes.title}
+                                                </h2>
+                                                {item.attributes.description &&
+                                                    <p className="leading-relaxed text-base">
+                                                        {(item.attributes.description as string).slice(0, 60) + "..."}
+                                                    </p>
                                                 }
-                                            <h3 className="tracking-widest text-indigo-500 text-xs font-medium title-font">
-                                                {item.attributes.tag}
-                                            </h3>
-                                            <h2 className="text-lg text-gray-900 font-medium title-font mb-4">
-                                                {item.attributes.title}
-                                            </h2>
-                                            <p className="leading-relaxed text-base">
-                                                {(item.attributes.description as string).slice(0, 60) + "..."}
-                                            </p>
-                                            <div className='text-gray-900 font-medium mt-4'>
-                                                <strong>{item.attributes.fund_raised.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} raised</strong> out of {item.attributes.fund_target.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                                            </div>
+                                                {!item.attributes.description &&
+                                                    <p className="leading-relaxed text-base">No story.  </p>
+                                                }
+                                                <div className='text-gray-900 font-medium mt-4'>
+                                                    <strong>{item.attributes.fund_raised.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} raised</strong> out of {item.attributes.fund_target.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                                                </div>
+                                                <div className="w-full bg-green-400 bg-opacity-20 h-1 mt-1 mb-3" >
+                                                    <div className="bg-green-500 h-1" style={{ width: `${Math.floor((item.attributes.fund_raised / item.attributes.fund_target) * 100)}%` }}></div>
+                                                </div>
+                                            </>
                                         </div>
                                     </a>
                                 )

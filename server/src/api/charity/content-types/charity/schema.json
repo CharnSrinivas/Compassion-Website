@@ -50,6 +50,10 @@
     "zip_code": {
       "type": "integer",
       "required": true
+    },
+    "register_no": {
+      "required": true,
+      "type": "integer"
     }
   }
 }

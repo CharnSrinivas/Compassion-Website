@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react'
-import Header from 'next/head'
-import { jwt_aut_token, server_url } from '../../../config'
-import qs from 'qs'
-import { GetServerSidePropsContext, GetServerSidePropsResult, Redirect } from 'next/types'
+import React, { useEffect, useState } from 'react';
+import Header from 'next/head';
+import { jwt_aut_token, server_url } from '../../../config';
+import qs from 'qs';
+import { GetServerSidePropsContext, GetServerSidePropsResult, Redirect } from 'next/types';
 import { isMobile } from '../../../utils'
 interface Props {
   fundraiser: any; donations: any[]; donations_meta: any;

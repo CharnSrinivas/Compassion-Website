@@ -7,11 +7,12 @@ import axios from 'axios';
 
 interface Props {
   is_auth: boolean,
-  fundraiser: any | null;
+  charity: any | null;
   token: string
 }
 
-export default function addImage({ is_auth, token, fundraiser }: Props) {
+export default function addImage({ is_auth, token, charity }: Props) {
+  console.log(charity);
 
   const router = useRouter();
   const [uploading, setUploading] = useState(false);
@@ -33,7 +34,7 @@ export default function addImage({ is_auth, token, fundraiser }: Props) {
     if (!img) return;
     const formData = new FormData();
     formData.append('files', img[0]);
-    formData.append('refId', fundraiser.id);
+    formData.append('refId', charity.id);
     formData.append('ref', charity_ref);
     formData.append('field', 'image');
     setUploading(true);
@@ -51,11 +52,11 @@ export default function addImage({ is_auth, token, fundraiser }: Props) {
       },
     })
     if (res.status <= 201) {
-      router.push(`/create/charity/${fundraiser.attributes.slug}/story`); return;
+      router.push(`/create/charity/${(charity.attributes.name as string).replaceAll(" ","-")}/add-documents`); return;
     }
   }
   return (
-    <div className="border p-8 px-10 w-[45%] bg-white shadow-xl md:min-w-1/2  mx-auto rounded-xl">
+    <div className="border p-8 px-10 lg:w-[45%] w-[95%] bg-white shadow-xl md:min-w-1/2  mx-auto rounded-xl">
       {!uploading &&
         <>
           <div className="w-full py-3">
@@ -123,7 +124,7 @@ export default function addImage({ is_auth, token, fundraiser }: Props) {
             </div>
           </div>
           <div className="font-medium m-auto text-4xl text-green-900 my-7 text-center">
-            Upload your image here
+            Upload your charity image here
           </div>
 
           <img
@@ -202,11 +203,11 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
       return { redirect: redirect_obj }
     }
 
-    let fundraiser = await res.json();
-    if (!fundraiser.data || fundraiser.data.length <= 0) { return { redirect: redirect_obj } }
+    let charity = await res.json();
+    if (!charity.data || charity.data.length <= 0) { return { redirect: redirect_obj } }
     return {
       props: {
-        is_auth: true, fundraiser: fundraiser.data[0], token: token
+        is_auth: true, charity: charity.data[0], token: token
       }
     }
   } catch (err) {

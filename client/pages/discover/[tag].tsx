@@ -1,16 +1,13 @@
 import React from 'react'
-import { useRouter } from 'next/router'
 import { GetServerSidePropsContext, GetServerSidePropsResult, GetStaticPropsContext } from 'next';
-import axios from 'axios';
 import qs from 'qs';
-import { jwt_aut_token, server_url } from '../../config';
-import Link from 'next/link';
+import { server_url } from '../../config';
 
 interface Props {
-    fundraisers: any[]
+    fundraisers: any[];tag:string
 }
 
-export default function Tag({ fundraisers }: Props) {
+export default function Tag({ fundraisers,tag }: Props) {
     return (
         <div>
             <section className="text-gray-600 body-font">
@@ -18,7 +15,7 @@ export default function Tag({ fundraisers }: Props) {
                     <div className="flex flex-wrap w-full mb-20">
                         <div className="lg:w-1/2 w-full mb-6 lg:mb-0">
                             <h1 className="sm:text-3xl text-2xl font-medium title-font mb-2 text-gray-900">
-                                Top fundraisers
+                                Top {tag} fundraisers
                             </h1>
                             <div className="h-1 w-20 bg-primary rounded " />
                             <h2 className='mt-5 mb-2 text-gray-600'>
@@ -117,19 +114,19 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
         if (res['data']) {
             return {
                 props: {
-                    fundraisers: res['data']
+                    fundraisers: res['data'],tag
                 }
             }
         }
         return {
             props: {
-                fundraisers: []
+                fundraisers: [],tag
             }
         }
     } catch (err) {
         console.error(err);
         return {
-            props: { fundraisers: [] },
+            props: { fundraisers: [] ,tag},
         }
     }
 

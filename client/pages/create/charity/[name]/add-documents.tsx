@@ -16,48 +16,50 @@ export default function addImage({ is_auth, token, fundraiser }: Props) {
   const router = useRouter();
   const [uploading, setUploading] = useState(false);
   const [uploadPercentage, setUploadPercentage] = useState(0);
+  const [uploading_docs, setDocs] = useState<{ name: string, percentage: number }[]>([]);
 
-  const changeImage = (e: ChangeEvent<HTMLInputElement>) => {
-
-    const display_img = document.getElementById('img-display') as HTMLImageElement;
-    const file = e.target.files;
-    const reader = new FileReader();
-    if (!display_img || !file || !file[0]) return;
-    reader.readAsDataURL(file[0]);
-    reader.onload = function (e) {
-      display_img.src = e.target!.result as string;
-    }
+  const changeDoc = (e: ChangeEvent<HTMLInputElement>) => {
+    const _docs = e.target.files as FileList;
+    let _uploading_docs: { name: string, percentage: number }[] = []
   }
 
-  const uploadImage = async () => {
-    const img = (document.getElementById('doc-upload') as HTMLInputElement).files;
-    if (!img) return;
-    const formData = new FormData();
-    formData.append('files', img[0]);
-    formData.append('refId', fundraiser.id);
-    formData.append('ref', charity_ref);
-    formData.append('field', 'documents');
+  const uploadDocs = async () => {
+    const docs = (document.getElementById('doc-upload') as HTMLInputElement).files;
+    if (!docs) return;
+    let uploads = []
     setUploading(true);
-    let res = await axios.post(server_url + "/api/upload", formData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      onUploadProgress: (progressEvent) => {
-        let progress = (progressEvent.loaded / progressEvent.total) * 100;
-        setUploadPercentage(progress)
-        if (progress >= 100) {
-          setUploading(false)
-          setUploadPercentage(100);
-        }
-      },
-    })
-    if (res.status <= 201) {
-      router.push(`/create/charity/${fundraiser.attributes.slug}/story`); return;
+    for (let i = 0; i < docs.length; i++) {
+      const doc = docs[i];
+      const formData = new FormData();
+      formData.append('files', doc);
+      formData.append('refId', fundraiser.id);
+      formData.append('ref', charity_ref);
+      formData.append('field', 'documents');
+      uploads.push(
+        axios.post(server_url + "/api/upload", formData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          onUploadProgress: (progressEvent) => {
+            let progress = (progressEvent.loaded / progressEvent.total) * 100;
+            setUploadPercentage(progress)
+            if (progress >= 100) {
+              setUploading(false)
+              setUploadPercentage(100);
+            }
+          },
+        }))
     }
+    Promise.all(uploads).then((res) => {
+      setUploading(false);
+      router.push(`/manage/my-fundraisers`); return;
+    }).catch((err) => {
+      console.error(err);
+    })
 
   }
   return (
-    <div className="border p-8 px-10 w-[45%] bg-white shadow-xl md:min-w-1/2  mx-auto rounded-xl">
+    <div className="border p-8 px-10 lg:w-[45%] w-[95%] bg-white shadow-xl md:min-w-1/2  mx-auto rounded-xl">
       {!uploading &&
         <>
           <div className="w-full py-3">
@@ -125,41 +127,51 @@ export default function addImage({ is_auth, token, fundraiser }: Props) {
             </div>
           </div>
           <div className="font-medium m-auto text-4xl text-green-900 my-7 text-center">
-            Upload your document here
+            Upload related documents here
           </div>
 
-          <img
-            id='img-display'
-            className="lg:w-full w-full lg:h-[32rem] h-[28rem] object-cover object-center rounded-lg"
-            defaultValue={'/assets/document-placeholder.png'}
-            src="/assets/document-placeholder.png" alt=""
-          />
           <label >
-            <input type="file" onChange={(e) => { changeImage(e) }} id='doc-upload' accept='*' className="text-sm cursor-pointer w-36 hidden" />
+            <input type="file" multiple onChange={(e) => { changeDoc(e) }} id='doc-upload' accept='*' className="text-sm cursor-pointer w-36 hidden" />
             <div className="mt-7 bg-transparent border-green-500 border-2 cursor-pointer hover:border-green-600 active:bg-green-500 active:text-white text-green-500  text-[1rem] font-medium px-14 py-3 rounded w-full text-center">
               Upload
             </div>
           </label>
-          <button onClick={uploadImage} className="mt-7 bg-green-500 hover:bg-green-600 shadow-xl text-white  text-[1rem] font-medium px-14 py-3 rounded w-full">
+          <button onClick={uploadDocs} className="mt-7 bg-green-500 hover:bg-green-600 shadow-xl text-white  text-[1rem] font-medium px-14 py-3 rounded w-full">
             Next
           </button>
         </>
       }
       {uploading &&
-        <>
-          <p className='font-medium text-green-900 text-xl'>Uploading...</p>
-          <div
-            className="bg-gray-200 rounded h-6 mt-5"
-            role="progressbar"
+        <div className="flex h-screen w-screen items-center justify-center">
+          <button
+            type="button"
+            className="flex items-center rounded-lg bg-green-700 px-4 py-2 text-white"
+            disabled
           >
-            <div
-              className="bg-green-400 rounded h-6 text-center text-white text-sm transition"
-              style={{ width: `${uploadPercentage}%`, transition: "width 2s" }}
-              x-text={`${uploadPercentage}%`}
+            <svg
+              className="mr-3 h-5 w-5 animate-spin text-white"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
             >
-            </div>
-          </div>
-        </>
+              <circle
+                className="opacity-25"
+                cx={12}
+                cy={12}
+                r={10}
+                stroke="currentColor"
+                strokeWidth={4}
+              />
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              />
+            </svg>
+            <span className="font-medium"> Processing... </span>
+          </button>
+        </div>
+
       }
     </div>
   )

@@ -1,6 +1,7 @@
 import Cookies from 'js-cookie'
 
 import Link from 'next/link'
+import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react'
 import { jwt_aut_token, server_url } from '../config'
 
@@ -8,6 +9,8 @@ export default function Navbar() {
 
     const [is_auth, setIsAuth] = useState(false);
     const [open_menu, setOpenMenu] = useState(false);
+    const [search, setSearch] = useState('');
+    const router = useRouter();
     useEffect(() => {
         const token = localStorage.getItem(jwt_aut_token)
         if (!token) {
@@ -111,7 +114,7 @@ export default function Navbar() {
                             <a className="block px-4 py-2  ml-2 font-medium hover:text-blue-500 mt-4 lg:mt-0">Manage</a>
                         </Link>
                     }
- {!is_auth &&
+                    {!is_auth &&
                         <Link href={'/register'}>
                             <a
                                 className=" px-4 py-2  ml-2  hover:text-blue-500 mt-4 lg:mt-0"
@@ -124,12 +127,25 @@ export default function Navbar() {
                 {/* This is an example component */}
                 <div className="relative my-3 ml-4 lg:my-0 lg:mx-auto text-gray-600 lg:block ">
                     <input
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                setSearch('')
+                                router.push(`/s?q=${search}`)
+                            }
+                        }}
+                        onChange={(e) => {
+                            setSearch(e.target.value)
+                        }}
+                        value={search}
                         className="border-2 border-gray-300 bg-white h-10 pl-2 pr-8 rounded-lg text-sm focus:outline-none"
                         type="search"
                         name="search"
-                        placeholder="Search"
+                        placeholder="Search fundraisers"
                     />
-                    <button type="submit" className="absolute right-0 top-0 mt-3 mr-2">
+                    <button type="submit" className="absolute right-0 top-0 mt-3 mr-2" onClick={() => {
+                        setSearch('')
+                        router.push(`/s?q=${search}`)
+                    }}>
                         <svg
                             className="text-gray-600 h-4 w-4 fill-current"
                             xmlns="http://www.w3.org/2000/svg"
@@ -145,7 +161,7 @@ export default function Navbar() {
                         </svg>
                     </button>
                 </div>
-                   <hr />
+                <hr />
                 <div className="flex my-3   justify-evenly">
                     <a href="/create/fundraiser/details"
                         className="block px-4  ml-2 py-2 rounded text-white mt-4 lg:mt-0 bg-[#32a95c] ">

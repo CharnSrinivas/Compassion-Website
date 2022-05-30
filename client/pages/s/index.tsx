@@ -1,12 +1,12 @@
-import { GetServerSidePropsContext, GetServerSidePropsResult, GetStaticPathsContext } from 'next'
+import { GetServerSidePropsContext, GetServerSidePropsResult } from 'next'
+import qs from 'qs'
 import React from 'react'
 import { server_url } from '../../config'
-import qs from 'qs'
+
 interface Props {
     fundraisers: any[]
 }
-
-export default function fundraisers({ fundraisers }: Props) {
+export default function index({ fundraisers }: Props) {
     return (
         <div>
             <section className="text-gray-600 body-font ">
@@ -30,14 +30,14 @@ export default function fundraisers({ fundraisers }: Props) {
                     </div>
                 </div>
                 <div className=' bg-primary bg-opacity-5 flex flex-col mx-auto py-5 items-center' style={{ minHeight: "60vh" }}>
-                    {fundraisers.length > 0 &&
+                    {fundraisers && fundraisers.length > 0 &&
                         <h1 className="sm:text-3xl text-2xl font-medium title-font mb-2  text-gray-900">
                             Top individual fundraisers
                         </h1>
                     }
                     <div className=' w-[80%] flex justify-center'>
                         <div className="flex flex-wrap w-full justify-evenly">
-                            {fundraisers.length > 0 &&
+                            {fundraisers && fundraisers.length > 0 &&
                                 fundraisers.map((item, index) => {
                                     return (
                                         <a key={index} href={`/f/${item.attributes.slug}`} className="xl:w-1/4 md:w-1/2 p-4 cursor-pointer" >
@@ -83,7 +83,7 @@ export default function fundraisers({ fundraisers }: Props) {
                                     )
                                 })
                             }
-                            {
+                            {!fundraisers ||
                                 fundraisers.length <= 0 &&
                                 <h2 className='sm:text-3xl text-2xl font-medium title-font my-7  text-gray-900'>
                                     No fundraisers found
@@ -98,27 +98,46 @@ export default function fundraisers({ fundraisers }: Props) {
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<Record<string, unknown>>> {
+    const search_query = context.query['q'];
+    if (!search_query) {
+        return {
+            notFound: true
+        }
+    }
     const query = qs.stringify({
         filters: {
-            individual: {
-                $eq: true
-            }
-        }, populate: ["image", "user", 'charity'], pagination: {
+            $or: [
+                {
+                    title:
+                    {
+                        $containsi: search_query
+                    }
+                },
+                {
+                    charity: {
+                        name: {
+                            $containsi: search_query
+                        }
+                    }
+                }
+            ]
+        },
+        populate: ["image", "user", 'charity'],
+        pagination: {
             pageSize: 10
         }
-    })
-    let res = await (await fetch(server_url + "/api/fund-raises?" + query)).json()
-
+    });
+    let res = await (await fetch(server_url + "/api/fund-raises?" + query)).json();
     if (res['data']) {
         return {
             props: {
-                fundraisers: res['data']
+                fundraisers: res['data'], search_query
             }
         }
     }
     return {
         props: {
-            fundraisers: null
+            fundraisers: null, search_query
         }
     }
 }

@@ -23,7 +23,8 @@ export default function fundraiser({ is_auth, user, token }: Props) {
       name: '',
       targetFunds: 0,
       zipCode: 0,
-      category: ''
+      category: '',
+      registerNumber: 0
     },
     validationSchema: Yup.object({
       name: Yup
@@ -34,17 +35,20 @@ export default function fundraiser({ is_auth, user, token }: Props) {
       zipCode: Yup
         .number()
         .min(1, "Invalid zip code")
-        .required('Invalid Zip Code.')
+        .required('Zip Code is required'),
+      registerNumber: Yup.number().min(1, "Invalid register number!")
+        .required("register no is required")
     }),
     onSubmit: async (e) => {
       setSubmitting(true);
-      const name = (e.name).replaceAll(' ','-');
+      const name = (e.name).replaceAll(' ', '-');
       let res = await axios.post(server_url + "/api/charities",
         {
           data: {
             name: e.name,
             zip_code: e.zipCode,
-            user: user.id
+            user: user.id, register_no: e.registerNumber
+            
           }
         },
         {
@@ -165,6 +169,24 @@ export default function fundraiser({ is_auth, user, token }: Props) {
               formik.errors.zipCode &&
               <p className="text-xs italic text-red-500">
                 {formik.errors.zipCode}
+              </p>
+            }
+            <label htmlFor="" className="block">
+              Register number
+            </label>
+            <input
+              onBlur={formik.handleBlur}
+              onChange={formik.handleChange}
+              value={formik.values.registerNumber}
+              type="number"
+              name='registerNumber'
+              className="border w-full h-10 px-3 mb-5 rounded-md"
+              placeholder="0234234234"
+            />
+            {
+              formik.errors.registerNumber &&
+              <p className="text-xs italic text-red-500">
+                {formik.errors.registerNumber}
               </p>
             }
             <button type='submit' className="mt-7 bg-green-500 hover:bg-green-600 shadow-xl text-white uppercase text-sm font-semibold px-14 py-3 rounded w-full">

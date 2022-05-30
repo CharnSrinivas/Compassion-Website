@@ -1,5 +1,5 @@
-import React, { ChangeEvent, ChangeEventHandler, useState } from 'react'
-import { useRouter } from 'next/router'
+import React, { ChangeEvent,  useState } from 'react';
+import { useRouter } from 'next/router';
 import { GetServerSidePropsContext, GetServerSidePropsResult, Redirect } from 'next';
 import { charity_ref, jwt_aut_token, server_url } from '../../../../config';
 import qs from 'qs';
@@ -12,7 +12,6 @@ interface Props {
 }
 
 export default function addImage({ is_auth, token, fundraiser }: Props) {
-
   const router = useRouter();
   const [uploading, setUploading] = useState(false);
   const [uploadPercentage, setUploadPercentage] = useState(0);
@@ -168,7 +167,7 @@ export default function addImage({ is_auth, token, fundraiser }: Props) {
                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
               />
             </svg>
-            <span className="font-medium"> Processing... </span>
+            <span className="font-medium"> Uploading... </span>
           </button>
         </div>
 

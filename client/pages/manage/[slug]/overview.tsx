@@ -25,10 +25,7 @@ export default function ({ fundraiser, donations, donations_meta }: Props) {
     }
   }
   const copyLink = () => {
-    navigator.clipboard.writeText(url).then(() => {
-    }).catch(() => {
-
-    })
+    navigator.clipboard.writeText(url).then(() => {}).catch(() => { });
   }
   const shareOnTwitter = () => {
     if (!window) return;
@@ -54,13 +51,13 @@ export default function ({ fundraiser, donations, donations_meta }: Props) {
           <div className='flex-col'>
             <div className='flex justify-between flex-wrap'>
               <div >
-                {fundraiser.attributes.image &&
+                {fundraiser.attributes.image  && fundraiser.attributes.image.data &&
                   <img
                     className="lg:w-[30rem] h-[25rem] object-cover object-center rounded-lg"
                     src={server_url + fundraiser.attributes.image.data.attributes.url}
                     alt="content"
                   />
-                }{!fundraiser.attributes.image &&
+                }{!fundraiser.attributes.image || !fundraiser.attributes.image.data &&
                   <img
                     className="lg:w-[30rem] h-[25rem] object-cover object-center rounded-lg"
                     src={"/assets/image-placeholder.jpg"}
@@ -125,7 +122,6 @@ export default function ({ fundraiser, donations, donations_meta }: Props) {
             <hr />
             <div className='my-10 '>
               <div className="grid grid-cols-1 gap-5 mt-6 sm:grid-cols-2 lg:grid-cols-4 ">
-
                 <div className="p-4 transition-shadow border rounded-lg shadow-sm hover:shadow-lg bg-white">
                   <div className="flex items-center justify-between">
                     <div className="flex flex-col space-y-2">
@@ -149,7 +145,6 @@ export default function ({ fundraiser, donations, donations_meta }: Props) {
                     <span>Today</span> */}
                   </div>
                 </div>
-
                 <div className="p-4 transition-shadow border rounded-lg shadow-sm hover:shadow-lg bg-white">
                   <div className="flex items-center justify-between">
                     <div className="flex flex-col space-y-2">
@@ -237,9 +232,7 @@ export default function ({ fundraiser, donations, donations_meta }: Props) {
                     <div className="bg-green-500 h-1" style={{ width: `${Math.floor((fundraiser.attributes.fund_raised / fundraiser.attributes.fund_target) * 100)}%` }}></div>
                   </div>
                 </div>
-                {/* NO OF COMMENTS */}
-                {/*                 
-
+                {/*
               <div className="p-4 transition-shadow border rounded-lg shadow-sm hover:shadow-lg bg-white">
                 <div className="flex items-center justify-between">
                   <div className="flex flex-col space-y-2">
@@ -247,7 +240,6 @@ export default function ({ fundraiser, donations, donations_meta }: Props) {
                     <span className="text-2xl text-primary font-semibold">{fundraiser.attributes.fund_raised}</span>
                   </div>
                   <div className="bg-gray-200 p-2 rounded-full">
-
                   </div>
                 </div>
                 <div className='text-gray-900 font-medium mt-4'>
@@ -257,7 +249,6 @@ export default function ({ fundraiser, donations, donations_meta }: Props) {
                   <div className="bg-green-500 h-1" style={{ width: `${Math.floor((fundraiser.attributes.fund_raised / fundraiser.attributes.fund_target) * 100)}%` }}></div>
                 </div>
               </div> */}
-
               </div>
             </div>
             <hr />
@@ -457,6 +448,7 @@ export default function ({ fundraiser, donations, donations_meta }: Props) {
     </>
   )
 }
+
 export async function getServerSideProps(context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<Record<string, unknown>>> {
   const slug = context.params ? context.params['slug']?.toString().toLocaleLowerCase() : [];
   const token = context.req.cookies[jwt_aut_token];

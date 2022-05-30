@@ -5,7 +5,7 @@ if (process.env.NODE_ENV === 'production') {
       connection: {
         client: 'mysql',
         connection: {
-          host: "compassion.toptechonly.com",
+          host: "217.21.95.154",
           port: 3306,
           database: "u962252833_compassion_db",
           user: "u962252833_compassion_usr",

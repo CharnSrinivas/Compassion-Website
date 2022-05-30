@@ -1,13 +1,13 @@
 import React from 'react'
 import { GetServerSidePropsContext, GetServerSidePropsResult, GetStaticPropsContext } from 'next';
 import qs from 'qs';
-import { server_url } from '../../config';
+import { fundraiser_ref, fundraiser_tags, server_url } from '../../config';
 
 interface Props {
-    fundraisers: any[];tag:string
+    fundraisers: any[]; tag: string
 }
 
-export default function Tag({ fundraisers,tag }: Props) {
+export default function Tag({ fundraisers, tag }: Props) {
     return (
         <div>
             <section className="text-gray-600 body-font">
@@ -77,7 +77,7 @@ export default function Tag({ fundraisers,tag }: Props) {
                         } {
                             fundraisers.length <= 0 &&
                             <h2 className='sm:text-3xl text-2xl font-medium title-font my-7  text-gray-900'>
-                                No fundraisers found
+                                No  {tag} fundraisers found
                             </h2>
                         }
 
@@ -89,12 +89,19 @@ export default function Tag({ fundraisers,tag }: Props) {
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<Record<string, unknown>>> {
-    const tag = context.params ? context.params['tag']?.toString().toLocaleLowerCase() : [];
+    const tag = context.params ? context.params['tag']?.toString().toLocaleLowerCase() : '';
     if (!tag) {
         return {
             props: {
                 fundraisers: []
             }
+        }
+    }
+    console.log(fundraiser_tags.indexOf(tag));
+    
+    if (fundraiser_tags.indexOf(tag) < 0) {
+        return {
+            notFound: true
         }
     }
     const query = qs.stringify({
@@ -107,26 +114,25 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
     })
     // const res_json
     try {
-
         const res = await (await fetch(server_url + "/api/fund-raises?" + query, {
             method: "GET",
         })).json()
         if (res['data']) {
             return {
                 props: {
-                    fundraisers: res['data'],tag
+                    fundraisers: res['data'], tag
                 }
             }
         }
         return {
             props: {
-                fundraisers: [],tag
+                fundraisers: [], tag
             }
         }
     } catch (err) {
         console.error(err);
         return {
-            props: { fundraisers: [] ,tag},
+            props: { fundraisers: [], tag },
         }
     }
 

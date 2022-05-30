@@ -28,10 +28,10 @@ export default function story({ fundraiser, is_auth, token }: Props) {
     }
     return (
         <div className="border p-8 px-10 w-[45%] bg-white shadow-xl md:min-w-1/2  mx-auto rounded-xl">
-            <div className="font-medium m-auto text-4xl text-green-900 mt-7 text-center">Edit your story
+            <div  className="font-medium m-auto text-4xl text-green-900 mt-7 text-center">Edit your story
             </div>
             <p className=" text-gray-500 text-center mt-3"> Explain who you are and why you're fundraising.</p>
-            <textarea id="description" cols={30} rows={10} placeholder="your story goes here..." className="w-full  p-4 text-gray-600 bg-indigo-50 outline-none rounded-md my-5"></textarea>
+            <textarea id="description" defaultValue={fundraiser['attributes']['description']} cols={30} rows={10} placeholder="your story goes here..." className="w-full  p-4 text-gray-600 bg-indigo-50 outline-none rounded-md my-5"></textarea>
             <button onClick={submit} className="mt-7 bg-green-500 hover:bg-green-600 shadow-xl text-white  text-[1rem] font-medium px-14 py-3 rounded w-full">
                 Save
             </button>

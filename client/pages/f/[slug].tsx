@@ -9,9 +9,12 @@ import { isMobile } from '../../utils';
 
 interface Props {
   fundraiser: any; user: any | null;
+  donations: any[], donations_meta: any
 }
 
-export default function fundraiser({ fundraiser, user }: Props) {
+export default function fundraiser({ fundraiser, user, donations, donations_meta }: Props) {
+  console.log(donations_meta);
+
   const [url, setUrl] = useState('');
   const [open_share, setOpenShare] = useState(false);
   const [read_more, setReadMore] = useState(false);
@@ -114,6 +117,12 @@ export default function fundraiser({ fundraiser, user }: Props) {
                 <h1 className="text-gray-900 text-3xl title-font font-medium mb-1">
                   {fundraiser.attributes.title}
                 </h1>
+                {fundraiser.attributes['charity']['data'] && fundraiser.attributes['charity']['data']['attributes']['name'] &&
+                  <h2 className='text-gray-700 my-3'> <b className='font-medium text-[1.2rem]'> {fundraiser.attributes['charity']['data']['attributes']['name']}</b> is organizing this fundraiser.</h2>
+                }
+                {(!fundraiser.attributes['charity']['data'] || fundraiser.attributes['charity']['data']['attributes']) &&
+                  <h2 className='text-gray-700 my-3'>Individual fundraiser.  </h2>
+                }
                 <hr className='my-3' />
                 <div className="leading-relaxed " style={{ transition: 'ease-in 0.6s all' }} >
                   {fundraiser.attributes.description && fundraiser.attributes.description.length > 500 &&
@@ -148,7 +157,7 @@ export default function fundraiser({ fundraiser, user }: Props) {
                       <div >&nbsp;</div>
                     </>)
                   }
-                  { fundraiser.attributes.description &&<>
+                  {fundraiser.attributes.description && <>
 
                     {!read_more &&
                       <p onClick={() => { setReadMore(true) }} className=' text-blue-900 underline cursor-pointer'>Read more</p>
@@ -205,17 +214,146 @@ export default function fundraiser({ fundraiser, user }: Props) {
               </div>
             </div>
           </div>
+          <div className='container w-auto  gap-5 px-3 py-20 mx-auto'>
+            <hr />
+            <h2 className='subtitle-font  font-medium text-xl sm:text-2xl my-3 text-gray-900' > Donations</h2>
+            <div className="flex flex-col mt-6">
+              <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+                  <div className="overflow-hidden border-b border-gray-200 rounded-md shadow-md">
+                    {donations && donations.length > 0 &&
+                      <table className="min-w-full overflow-x-scroll divide-y divide-gray-200">
+                        <thead className="bg-gray-50">
+                          <tr>
+                            <th
+                              scope="col"
+                              className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
+                            >
+                              Donar
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
+                            >
+                              Amount
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
+                            >
+                              Word of support
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
+                            >
+                              Date
+                            </th>
+
+                          </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                          {donations.map((donation, index) => {
+                            return (
+                              <tr key={index} className="transition-all hover:bg-gray-100 hover:shadow-lg">
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                  <div className="flex items-center">
+                                    <div className="flex-shrink-0 w-10 h-10">
+                                      <img
+                                        className="w-10 h-10 rounded-full"
+                                        src="/assets/user-placeholder.png"
+                                      />
+                                    </div>
+                                    <div className="ml-4">
+                                      <div className="text-sm font-medium text-gray-900">{donation.attributes.user.data.attributes.username}</div>
+                                      <div className="text-sm text-gray-500">{donation.attributes.user.data.attributes.email}</div>
+                                    </div>
+                                  </div>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                  <div className="text-lg text-gray-900">{donation.attributes.amount}</div>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                  <div className="text-xs text-gray-900">{donation.attributes.comment}</div>
+                                </td>
+                                <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
+                                  {new Date(donation.attributes.createdAt).toLocaleDateString().replaceAll("/", '-')}
+                                </td>
+                                {/* <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
+                                  <a href="#" className="text-indigo-600 hover:text-indigo-900">Edit</a>
+                                </td> */}
+                              </tr>
+                            )
+                          })}
+
+                        </tbody>
+                      </table>}
+                    {donations && donations.length <= 0 &&
+                      <div className=' bg-white py-7'>
+                        <h3 className='mt-15 font-medium text-xl text-gray-900 my-3 text-center'>Your fundraiser has no donations yet :(</h3>
+                        <h5 className='mt-15  text-gray-700 my-3 text-center' >Your donations will show up here. Start by sharing your fundriaiser with friends and family </h5>
+                      </div>
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>
+            {/* PAGINATION */}
+            <div className="flex my-5 mx-auto justify-center">
+              {donations_meta['pagination']['page'] > 1 &&
+                <a href={`/f/${fundraiser['attributes']['slug']}?dp=${donations_meta['pagination']['page']- 1}`} className="border border-teal-500 text-teal-500 block rounded-sm font-bold py-4 px-6 mr-2 flex items-center hover:bg-teal-500 hover:text-white">
+                  <svg
+                    className="h-5 w-5 mr-2 fill-current"
+                    version="1.1"
+                    id="Layer_1"
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlnsXlink="http://www.w3.org/1999/xlink"
+                    x="0px"
+                    y="0px"
+                    viewBox="-49 141 512 512"
+                    xmlSpace="preserve"
+                  >
+                    <path
+                      id="XMLID_10_"
+                      d="M438,372H36.355l72.822-72.822c9.763-9.763,9.763-25.592,0-35.355c-9.763-9.764-25.593-9.762-35.355,0 l-115.5,115.5C-46.366,384.01-49,390.369-49,397s2.634,12.989,7.322,17.678l115.5,115.5c9.763,9.762,25.593,9.763,35.355,0 c9.763-9.763,9.763-25.592,0-35.355L36.355,422H438c13.808,0,25-11.193,25-25S451.808,372,438,372z"
+                    />
+                  </svg>
+                  Previous page
+                </a>
+              }
+              {
+                donations_meta['pagination']['page'] < donations_meta['pagination']['pageCount'] &&
+                <a href={`/f/${fundraiser['attributes']['slug']}?dp=${donations_meta['pagination']['page']+1}`}className="border border-teal-500 bg-teal-500 text-white block rounded-sm font-bold py-4 px-6 ml-2 flex items-center">
+                  Next page
+                  <svg
+                    className="h-5 w-5 ml-2 fill-current"
+                    id="Layer_1"
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlnsXlink="http://www.w3.org/1999/xlink"
+                    x="0px"
+                    y="0px"
+                    viewBox="-49 141 512 512"
+                    xmlSpace="preserve"
+                  >
+                    <path
+                      id="XMLID_11_"
+                      d="M-24,422h401.645l-72.822,72.822c-9.763,9.763-9.763,25.592,0,35.355c9.763,9.764,25.593,9.762,35.355,0
+      l115.5-115.5C460.366,409.989,463,403.63,463,397s-2.634-12.989-7.322-17.678l-115.5-115.5c-9.763-9.762-25.593-9.763-35.355,0
+      c-9.763,9.763-9.763,25.592,0,35.355l72.822,72.822H-24c-13.808,0-25,11.193-25,25S-37.808,422-24,422z"
+                    />
+                  </svg>
+                </a>
+              }
+            </div>
+
+          </div>
         </section >
 
         {
           open_share &&
           <>
-            {/* component */}
-            {/* CONTAINER MODAL*/}
             <div className="absolute top-0 left-0 right-0 bottom-0 bg-gray-800 bg-opacity-70 flex items-center justify-center">
-              {/*MODAL ITEM*/}
               <div className="bg-gray-100 w-full mx-4 p-4 rounded-xl md:w-1/2 lg:w-1/3">
-                {/*MODAL HEADER*/}
                 <div className="flex justify-between items center border-b border-gray-200 py-3">
                   <div className="flex items-center justify-center">
                     <p className="text-xl font-bold text-gray-800">Share </p>
@@ -224,33 +362,9 @@ export default function fundraiser({ fundraiser, user }: Props) {
                     x
                   </div>
                 </div>
-                {/*MODAL BODY*/}
                 <div className="my-4">
                   <p className="text-sm">Share this link via</p>
                   <div className="flex justify-around my-4">
-                    {/*FACEBOOK ICON*/}
-                    {/* <div className="border hover:bg-[#1877f2] w-12 h-12 fill-[#1877f2] hover:fill-white border-blue-200 rounded-full flex items-center justify-center shadow-xl hover:shadow-blue-500/50 cursor-pointer">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width={24}
-                        height={24}
-                        viewBox="0 0 24 24"
-                      >
-                        <path d="M13.397 20.997v-8.196h2.765l.411-3.209h-3.176V7.548c0-.926.258-1.56 1.587-1.56h1.684V3.127A22.336 22.336 0 0 0 14.201 3c-2.444 0-4.122 1.492-4.122 4.231v2.355H7.332v3.209h2.753v8.202h3.312z" />
-                      </svg>
-                    </div> */}
-                    {/*TWITTER ICON*/}
-                    {/* <div className="border hover:bg-[#1d9bf0] w-12 h-12 fill-[#1d9bf0] hover:fill-white border-blue-200 rounded-full flex items-center justify-center shadow-xl hover:shadow-sky-500/50 cursor-pointer">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width={24}
-                        height={24}
-                        viewBox="0 0 24 24"
-                      >
-                        <path d="M19.633 7.997c.013.175.013.349.013.523 0 5.325-4.053 11.461-11.46 11.461-2.282 0-4.402-.661-6.186-1.809.324.037.636.05.973.05a8.07 8.07 0 0 0 5.001-1.721 4.036 4.036 0 0 1-3.767-2.793c.249.037.499.062.761.062.361 0 .724-.05 1.061-.137a4.027 4.027 0 0 1-3.23-3.953v-.05c.537.299 1.16.486 1.82.511a4.022 4.022 0 0 1-1.796-3.354c0-.748.199-1.434.548-2.032a11.457 11.457 0 0 0 8.306 4.215c-.062-.3-.1-.611-.1-.923a4.026 4.026 0 0 1 4.028-4.028c1.16 0 2.207.486 2.943 1.272a7.957 7.957 0 0 0 2.556-.973 4.02 4.02 0 0 1-1.771 2.22 8.073 8.073 0 0 0 2.319-.624 8.645 8.645 0 0 1-2.019 2.083z" />
-                      </svg>
-                    </div> */}
-                    {/* GMAIL ICON */}
                     <div className="border hover:bg-orange-400 w-12 h-12 fill-[#1d9bf0] hover:fill-white border-blue-200 rounded-full flex items-center justify-center shadow-xl hover:shadow-orange-400/50 cursor-pointer">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -281,20 +395,6 @@ export default function fundraiser({ fundraiser, user }: Props) {
                       </svg>
 
                     </div>
-                    {/*INSTAGRAM ICON*/}
-                    {/* <div className="border hover:bg-[#bc2a8d] w-12 h-12 fill-[#bc2a8d] hover:fill-white border-pink-200 rounded-full flex items-center justify-center shadow-xl hover:shadow-pink-500/50 cursor-pointer">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width={24}
-                        height={24}
-                        viewBox="0 0 24 24"
-                      >
-                        <path d="M11.999 7.377a4.623 4.623 0 1 0 0 9.248 4.623 4.623 0 0 0 0-9.248zm0 7.627a3.004 3.004 0 1 1 0-6.008 3.004 3.004 0 0 1 0 6.008z" />
-                        <circle cx="16.806" cy="7.207" r="1.078" />
-                        <path d="M20.533 6.111A4.605 4.605 0 0 0 17.9 3.479a6.606 6.606 0 0 0-2.186-.42c-.963-.042-1.268-.054-3.71-.054s-2.755 0-3.71.054a6.554 6.554 0 0 0-2.184.42 4.6 4.6 0 0 0-2.633 2.632 6.585 6.585 0 0 0-.419 2.186c-.043.962-.056 1.267-.056 3.71 0 2.442 0 2.753.056 3.71.015.748.156 1.486.419 2.187a4.61 4.61 0 0 0 2.634 2.632 6.584 6.584 0 0 0 2.185.45c.963.042 1.268.055 3.71.055s2.755 0 3.71-.055a6.615 6.615 0 0 0 2.186-.419 4.613 4.613 0 0 0 2.633-2.633c.263-.7.404-1.438.419-2.186.043-.962.056-1.267.056-3.71s0-2.753-.056-3.71a6.581 6.581 0 0 0-.421-2.217zm-1.218 9.532a5.043 5.043 0 0 1-.311 1.688 2.987 2.987 0 0 1-1.712 1.711 4.985 4.985 0 0 1-1.67.311c-.95.044-1.218.055-3.654.055-2.438 0-2.687 0-3.655-.055a4.96 4.96 0 0 1-1.669-.311 2.985 2.985 0 0 1-1.719-1.711 5.08 5.08 0 0 1-.311-1.669c-.043-.95-.053-1.218-.053-3.654 0-2.437 0-2.686.053-3.655a5.038 5.038 0 0 1 .311-1.687c.305-.789.93-1.41 1.719-1.712a5.01 5.01 0 0 1 1.669-.311c.951-.043 1.218-.055 3.655-.055s2.687 0 3.654.055a4.96 4.96 0 0 1 1.67.311 2.991 2.991 0 0 1 1.712 1.712 5.08 5.08 0 0 1 .311 1.669c.043.951.054 1.218.054 3.655 0 2.436 0 2.698-.043 3.654h-.011z" />
-                      </svg>
-                    </div> */}
-                    {/*WHATSAPP ICON*/}
                     <div onClick={shareOnWhatsapp} className="border hover:bg-[#25D366] w-12 h-12 fill-[#25D366] hover:fill-white border-green-200 rounded-full flex items-center justify-center shadow-xl hover:shadow-green-500/50 cursor-pointer">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -309,7 +409,6 @@ export default function fundraiser({ fundraiser, user }: Props) {
                         />
                       </svg>
                     </div>
-                    {/*TELEGRAM ICON*/}
                     <div onClick={shareOnTwitter} className="border hover:bg-[#229ED9] w-12 h-12 fill-[#229ED9] hover:fill-white border-sky-200 rounded-full flex items-center justify-center shadow-xl hover:shadow-sky-500/50 cursor-pointer">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -322,7 +421,6 @@ export default function fundraiser({ fundraiser, user }: Props) {
                     </div>
                   </div>
                   <p className="text-sm">Or copy link</p>
-                  {/*BOX LINK*/}
                   <div className=" flex-col justify-between items-center mt-4">
                     <div className="flex justify-between items-center border-2 border-gray-200 py-2">
                       <svg
@@ -350,8 +448,8 @@ export default function fundraiser({ fundraiser, user }: Props) {
               </div>
             </div>
           </>
-
         }
+
       </div >
     </>
   )
@@ -360,6 +458,8 @@ export default function fundraiser({ fundraiser, user }: Props) {
 export async function getServerSideProps(context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<Record<string, unknown>>> {
   const slug = context.params ? context.params['slug']?.toString().toLocaleLowerCase() : [];
   const token = context.req.cookies[jwt_aut_token];
+  const donations_page = context.query['dp'];
+  const donations_size = context.query['ds'];
   if (!slug) {
     return {
       props: {
@@ -373,7 +473,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
         $eq: slug
       }
     },
-    populate: ["image", "user",]
+    populate: ["image", "user", 'charity']
   })
 
   const headers: any = token ? {
@@ -384,11 +484,31 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
     method: "GET",
     headers: headers
   })).json();
+  const dp = parseInt(donations_page ? donations_page.toString() : '1');
+  const ds = parseInt(donations_size ? donations_size.toString() : '10');
+  const donations_query = qs.stringify({
+    filters: {
+      fund_raise: {
+        $eq: fundraiser.id
+      }
+    },
+    populate: ["image", "user", 'charity'],
+    pagination: {
+      pageSize: !isNaN(ds) ? ds : 10,
+      page: !isNaN(dp) ? dp : 1
+    }
+  })
 
+  var donations = await (await fetch(server_url + '/api/donations?' + donations_query, {
+    method: "GET",
+    headers: headers
+  })).json();
+  
   const user_res = await fetch(server_url + "/api/users/me", {
     method: "GET",
     headers: headers
   })
+
   if (user_res.status > 201) {
     return {
       props: { fundraiser: fundraiser['data'][0], user: null }
@@ -396,6 +516,11 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
   }
   const user = await user_res.json();
   return {
-    props: { fundraiser: fundraiser['data'][0], user }
+    props: {
+      fundraiser: fundraiser['data'][0],
+      user,
+      donations: donations['data'] ? donations['data'] : [],
+      donations_meta: donations['meta']
+    }
   }
 }

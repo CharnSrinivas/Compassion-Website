@@ -33,83 +33,7 @@ export default function Navbar() {
     }, []);
 
     return (
-        // <div>
-        //     <header className="text-gray-600 body-font shadow-sm">
-        //         <div className="container mx-auto flex flex-wrap py-3 md:flex-row justify-evenly items-center ">
-        //             <a href='/' className="flex flex-col title-font  items-center justify-center text-gray-900 mb-4 md:mb-0" >
-        //                 <img src="/assets/logo.png" alt="logo" width={40} />
-        //                 <span className="ml-3 text-xl text-primary">Compassion</span>
-        //             </a>
-        //             <nav className=" list-none  flex flex-wrap items-center gap-7 text-base justify-center">
-        //                 <div className='relative mx-auto'>
-        //                     <input
-        //                         type="search"
-        //                         style={{transition:" all ease 0.4s"}}
-        //                         className="peer cursor-pointer relative z-10 h-12 w-12 rounded-full border bg-transparent pl-12 outline-none focus:w-full focus:cursor-text focus:border-blue-300 focus:pl-16 focus:pr-4"
-        //                         placeholder='search by name'
-        //                     />
-        //                     <svg
-        //                         xmlns="http://www.w3.org/2000/svg"
-        //                         className="absolute inset-y-0 my-auto h-8 w-12 border-r border-transparent stroke-gray-500 px-3.5 peer-focus:border-blue-300 peer-focus:stroke-blue-500"
-        //                         fill="none"
-        //                         viewBox="0 0 24 24"
-        //                         stroke="currentColor"
-        //                         strokeWidth={2}
-        //                     >
-        //                         <path
-        //                             strokeLinecap="round"
-        //                             strokeLinejoin="round"
-        //                             d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-        //                         />
-        //                     </svg>
-        //                 </div>
 
-        //                 <li className="mx-3 group relative dropdown hover:text-gray-900 cursor-pointer tracking-wide">
-        //                     <a>Fundraise for</a>
-        //                     <div className="group-hover:block dropdown-menu absolute hidden h-auto z-30">
-        //                         <ul className="top-0 w-48 bg-white shadow px-6 py-8">
-        //                             <h2 className=' my-2'>Fundraise for </h2>
-        //                             <li className="py-1">
-        //                                 <Link href={'/discover'}><a className="mr-5 hover:text-gray-900"> Individuals</a></Link>
-        //                             </li>
-        //                             <li className="py-1">
-        //                                 <Link href={'/discover/charities'}><a className="mr-5 hover:text-gray-900"> Charities</a></Link>
-        //                             </li>
-        //                         </ul>
-        //                     </div>
-        //                 </li>
-
-        //                 {is_auth &&
-        //                     <Link href={'/manage/my-fundraisers'}><a className="mr-5 hover:text-gray-900">Manage</a>
-        //                     </Link>
-        //                 }
-        //                 <Link href={'/manage/my-fundraisers'}><a className="mr-5 hover:text-gray-900">How it works</a></Link>
-        //                 {!is_auth &&
-        //                     <Link href={'/login'}><a className="mr-5 hover:text-gray-900">Login</a></Link>
-        //                 }
-        //                 {!is_auth &&
-        //                     <Link href={'/register'}>
-        //                         <button
-        //                             className="inline-flex items-center bg-primary border-0 py-1 text-[#ffffff] px-3 focus:outline-none hover:bg-gray rounded mt-4 md:mt-0">
-        //                             Register
-        //                             <svg
-        //                                 fill="none"
-        //                                 stroke="currentColor"
-        //                                 strokeLinecap="round"
-        //                                 strokeLinejoin="round"
-        //                                 strokeWidth={2}
-        //                                 className="w-4 h-4 ml-1"
-        //                                 viewBox="0 0 24 24"
-        //                             >
-        //                                 <path d="M5 12h14M12 5l7 7-7 7" />
-        //                             </svg>
-        //                         </button>
-        //                     </Link>
-        //                 }
-        //             </nav>
-        //         </div>
-        //     </header>
-        // </div >
         <nav className="flex items-center justify-between flex-wrap bg-white  lg:px-12 shadow border-solid border-t-2 border-blue-700 h-fit">
             <div className="flex justify-between lg:w-auto w-full lg:border-b-0 py-3 pl-3 pr-2 border-solid border-b-2 border-gray-300 pb-5 lg:pb-0">
                 <div className="flex items-center flex-shrink-0 text-gray-800 h-fit">
@@ -150,23 +74,36 @@ export default function Navbar() {
                     </button>
                 </div>
             </div>
-            <div className={`menu w-full ${open_menu ? 'flex-grow' : 'hidden'} lg:flex lg:items-center lg:w-auto px-2 lg:px-3 `} style={{ transition: 'all 0.5s ease ' }}>
+            <div className={`menu flex flex-wrap w-full ${open_menu ? 'flex-grow' : 'hidden'} lg:flex lg:items-center lg:w-auto px-2 lg:px-3 `} style={{ transition: 'all 0.5s ease ' }}>
                 <div className="text-md  text-grey-700 lg:flex lg:items-baseline">
                     <a className="block mt-4 lg:inline-block lg:mt-0 group relative dropdown hover:text-gray-900 cursor-pointer tracking-wide mr-3">
-                        <a className='px-4 py-2  ml-2  hover:text-blue-500 mt-4 lg:mt-0'>Fundraise for</a>
+                        <a className='px-4 py-2  ml-2  hover:text-blue-500 mt-4 lg:mt-0'>For Individuals</a>
                         <div className="group-hover:block dropdown-menu absolute hidden h-auto z-30">
-                            <ul className="top-0 w-48 bg-white shadow px-6 py-8">
-                                <h2 className=' my-2'>Fundraise for </h2>
-                                <li className="py-1">
-                                    <Link href={'/discover'}><a className="block px-4 py-2  ml-2  hover:text-blue-500 mt-4 lg:mt-0"> Individuals</a></Link>
+                            <ul className="top-0 w-48 bg-white shadow px-3 py-4">
+                                <h2 className='font-medium text-gray-700 my-2'>Discover </h2>
+                                <hr />
+                                <li className="">
+                                    <Link href={'/discover/medical'}><a className="block 0x-1 py-2  ml-2  hover:text-blue-500 mt-4 lg:mt-0"> Medical</a></Link>
                                 </li>
-                                <li className="py-1">
-                                    <Link href={'/discover/charities'}><a className="block px-4 py-2  ml-2  hover:text-blue-500 mt-4 lg:mt-0"> Charities</a></Link>
+                                <li className="">
+                                    <Link href={'/discover/memorial'}><a className="block 0x-1 py-2  ml-2  hover:text-blue-500 mt-4 lg:mt-0"> Memorial</a></Link>
+                                </li>
+                                <li className="">
+                                    <Link href={'/discover/emergency'}><a className="block 0x-1 py-2  ml-2  hover:text-blue-500 mt-4 lg:mt-0">Emergency</a></Link>
+                                </li>
+                                <li className="">
+                                    <Link href={'/discover/charities'}><a className="block 0x-1 py-2  ml-2  hover:text-blue-500 mt-4 lg:mt-0"> Charity</a></Link>
+                                </li>
+                                <li className="">
+                                    <Link href={'/discover/education'}><a className="block 0x-1 py-2  ml-2  hover:text-blue-500 mt-4 lg:mt-0">Education</a></Link>
+                                </li>
+                                <li className="">
+                                    <Link href={'/discover'}><a className="block px-0 py-1  ml-2  hover:text-blue-500 mt-4 lg:mt-0">See all</a></Link>
                                 </li>
                             </ul>
                         </div>
                     </a>
-                    <a href="/how-it-works" className='block  lg:inline-block px-4 py-2  ml-2 font-medium hover:text-blue-500 mt-4 lg:mt-0'>
+                    <a href="/how-it-works" className='block  lg:inline-block px-4 py-2  ml-2 hover:text-blue-500 mt-4 lg:mt-0'>
                         How it works
                     </a>
                     {is_auth &&
@@ -174,10 +111,18 @@ export default function Navbar() {
                             <a className="block px-4 py-2  ml-2 font-medium hover:text-blue-500 mt-4 lg:mt-0">Manage</a>
                         </Link>
                     }
-
+ {!is_auth &&
+                        <Link href={'/register'}>
+                            <a
+                                className=" px-4 py-2  ml-2  hover:text-blue-500 mt-4 lg:mt-0"
+                            >
+                                Register
+                            </a>
+                        </Link>
+                    }
                 </div>
                 {/* This is an example component */}
-                <div className="relative mx-auto text-gray-600 lg:block hidden">
+                <div className="relative my-3 ml-4 lg:my-0 lg:mx-auto text-gray-600 lg:block ">
                     <input
                         className="border-2 border-gray-300 bg-white h-10 pl-2 pr-8 rounded-lg text-sm focus:outline-none"
                         type="search"
@@ -189,7 +134,6 @@ export default function Navbar() {
                             className="text-gray-600 h-4 w-4 fill-current"
                             xmlns="http://www.w3.org/2000/svg"
                             version="1.1"
-                            id="Capa_1"
                             x="0px"
                             y="0px"
                             viewBox="0 0 56.966 56.966"
@@ -201,20 +145,15 @@ export default function Navbar() {
                         </svg>
                     </button>
                 </div>
-                <div className="flex my-3   border-t-2 border-solid justify-evenly">
-                    {!is_auth &&
-                        <Link href={'/register'}>
-                            <a
-                                className="block px-4 py-2  ml-2  hover:text-blue-500 mt-4 lg:mt-0"
-                            >
-                                Register
-                            </a>
-
-                        </Link>
-                    }
-                    <a href="#"
+                   <hr />
+                <div className="flex my-3   justify-evenly">
+                    <a href="/create/fundraiser/details"
                         className="block px-4  ml-2 py-2 rounded text-white mt-4 lg:mt-0 bg-[#32a95c] ">
-                        Start a Fundraiser!
+                        Start a Fundraiser
+                    </a>
+                    <a href="/create/charity/details"
+                        className="block px-4  ml-2 py-2 rounded text-white mt-4 lg:mt-0 text-[#32a95c] ">
+                        Create  a Charity
                     </a>
 
                 </div>

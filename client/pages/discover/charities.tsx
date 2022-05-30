@@ -106,7 +106,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
                     }
                 }
             }
-            , populate: ["image", "user"]
+            , populate: ["image", "user","charity"]
         })
     let res = await (await fetch(server_url + "/api/fund-raises?" + query)).json()
     const token = context.req.cookies[jwt_aut_token];

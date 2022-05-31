@@ -44,7 +44,7 @@ export default function fundraiser({ is_auth, user, token: auth_token }: Props) 
             name: {
               $containsi: search
             }
-          }, 
+          },
         ]
       }, populate: ['image', 'user'], pagination: {
         pageSize: 20
@@ -107,7 +107,7 @@ export default function fundraiser({ is_auth, user, token: auth_token }: Props) 
             tag: e.category,
             slug: slug,
             charity: selected_charity,
-            individual:selected_charity == null
+            individual: selected_charity == null
           }
         }, {
         headers: {
@@ -266,7 +266,7 @@ export default function fundraiser({ is_auth, user, token: auth_token }: Props) 
               <option selected>Choose a category</option>
               {fundraiser_tags.map((tag, index) => {
                 return (
-                  <option value={tag}>{tag[0].toUpperCase() + tag.slice(1)}</option>
+                  <option key={index} value={tag}>{tag[0].toUpperCase() + tag.slice(1)}</option>
                 )
               })}
             </select>
@@ -282,12 +282,12 @@ export default function fundraiser({ is_auth, user, token: auth_token }: Props) 
             <fieldset onChange={() => { setIsIndividual(!is_individual) }} className='w-full flex  gap-5 flex-row items-center'>
               <>
                 <label className='border-2 border-gray-600 border-opacity-40 p-3 rounded-lg flex flex-col w-full md:w-1/2' htmlFor="an-individual">
-                  <input type="radio" id='an-individual' checked={is_individual} />
+                  <input type="radio" id='an-individual' defaultChecked={is_individual} checked={is_individual} />
                   <h3 className='my-1 text-gray-700 font-medium '>An Individual</h3>
                   <p className='my-1 text-gray-600 text-sm'>I am solo organizer</p>
                 </label>
                 <label className='border-2 border-gray-600 border-opacity-40 p-3 rounded-lg flex flex-col w-full md:w-1/2' htmlFor="an-charity">
-                  <input type="radio" id='an-charity' checked={!is_individual} />
+                  <input type="radio" id='an-charity' checked={!is_individual} defaultChecked={is_individual} />
                   <h3 className='my-1 text-gray-700 font-medium '>An Charity</h3>
                   <p className='my-1 text-gray-600 text-sm'>Fundraiser for a charity</p>
                 </label>
@@ -304,10 +304,10 @@ export default function fundraiser({ is_auth, user, token: auth_token }: Props) 
                     (charity: any, key) => {
                       if (charity.id === selected_charity) {
                         return (
-                          <>
+                          <div key={key}>
                             <img className='w-5 h-5' src={server_url + charity['attributes']['image']['data']['attributes']['url']} alt={charity['attributes']['name']} />
                             <h4>{charity['attributes']['name']}</h4>
-                          </>
+                          </div>
                         )
                       }
                     }
@@ -332,6 +332,7 @@ export default function fundraiser({ is_auth, user, token: auth_token }: Props) 
         <div
           className="h-screen w-screen top-0 left-0 right-0 bottom-0 bg-gray-500 bg-opacity-80 py-6 flex flex-col justify-center sm:py-12 absolute">
           <div className="py-3 sm:w-1/2 w-full sm:mx-auto">
+            <h1 className='text-white my-3 ml-auto w-fit'>X</h1>
             <div className="bg-white min-w-1xl flex flex-col rounded-xl shadow-lg">
               <div className="px-12 py-5 flex flex-col">
                 <div className='flex flex-col'>
@@ -360,7 +361,8 @@ export default function fundraiser({ is_auth, user, token: auth_token }: Props) 
                     />
                   </div>
                   <div className='flex flex-col py-5 gap-3'>
-                    {charities && charities.length > 0 &&
+                    {
+                      charities && charities.length > 0 &&
                       charities.map((charity: any, key) => {
                         return (
                           <div
@@ -374,7 +376,8 @@ export default function fundraiser({ is_auth, user, token: auth_token }: Props) 
                             <h4>{charity['attributes']['name']}</h4>
                           </div>
                         )
-                      })}
+                      })
+                    }
                   </div>
                 </div>
               </div>

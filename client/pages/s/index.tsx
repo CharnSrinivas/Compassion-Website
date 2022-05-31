@@ -21,12 +21,7 @@ export default function index({ fundraisers }: Props) {
                                 People around the world are raising money f or what they are passionate about.
                             </h2>
                         </div>
-                        <p className="lg:w-1/2 w-full leading-relaxed text-gray-500">
-                            Whatever cardigan tote bag tumblr hexagon brooklyn asymmetrical
-                            gentrify, subway tile poke farm-to-table. Franzen you probably haven't
-                            heard of them man bun deep jianbing selfies heirloom prism food truck
-                            ugh squid celiac humblebrag.
-                        </p>
+                       
                     </div>
                 </div>
                 <div className=' bg-primary bg-opacity-5 flex flex-col mx-auto py-5 items-center' style={{ minHeight: "60vh" }}>

@@ -62,7 +62,7 @@ export default function addImage({ is_auth, token, fundraiser }: Props) {
     // })
   }
   return (
-    <div className="border p-8 px-10 w-[45%] bg-white shadow-xl md:min-w-1/2  mx-auto rounded-xl">
+    <div className="border p-8 px-10 lg:w-[45%] w-[95%] bg-white shadow-xl md:min-w-1/2  mx-auto rounded-xl">
       {!uploading &&
         <>
           <div className="w-full py-3">

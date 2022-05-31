@@ -18,6 +18,7 @@ export const fundraiser_tags = [
     "event",
     "faith",
     "family",
+    "funeral",
     "sports",
     "travel",
     "volunteer",

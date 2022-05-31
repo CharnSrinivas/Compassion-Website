@@ -2,6 +2,7 @@ import Cookies from 'js-cookie'
 
 import Link from 'next/link'
 import { useRouter } from 'next/router';
+import QueryString from 'qs';
 import React, { useEffect, useState } from 'react'
 import { jwt_aut_token, server_url } from '../config'
 
@@ -10,8 +11,14 @@ export default function Navbar() {
     const [is_auth, setIsAuth] = useState(false);
     const [open_menu, setOpenMenu] = useState(false);
     const [search, setSearch] = useState('');
+    const [has_charity, setHasCharity] = useState(false);
     const router = useRouter();
     useEffect(() => {
+        init();
+        window.onbeforeunload = init
+    }, []);
+    const init = () => {
+        if (!window) return;
         const token = localStorage.getItem(jwt_aut_token)
         if (!token) {
             setIsAuth(false)
@@ -23,18 +30,36 @@ export default function Navbar() {
             }
         }).then((res) => {
             if (res.status <= 201) {
-                console.log('Al good');
                 Cookies.set(jwt_aut_token, token!)
+                res.json().then(res_json => {
+                    const query = QueryString.stringify({
+                        filters: {
+                            user: {
+                                id: { $eq: res_json.id }
+                            }
+                        },
+                    })
+                    fetch(server_url + `/api/charities?` + query, {
+                        method: "GET",
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        }
+                    }).then(charity_res => {
+                        charity_res.json().then(charity_data => {
+                            if (charity_data.data && charity_data.data.length === 1) {
+                                setHasCharity(true)
+                            }
+                        })
+                    })
+                })
                 setIsAuth(true)
             } else {
-                console.log('removing');
                 localStorage.removeItem(jwt_aut_token);
                 Cookies.remove(jwt_aut_token)
                 setIsAuth(false);
             }
         })
-    }, []);
-
+    }
     return (
 
         <nav className="flex items-center justify-between flex-wrap bg-white  lg:px-12 shadow border-solid border-t-2 border-blue-700 h-fit">
@@ -81,8 +106,8 @@ export default function Navbar() {
                 <div className="text-md  text-grey-700 lg:flex lg:items-baseline">
                     <a className="block mt-4 lg:inline-block lg:mt-0 group relative dropdown hover:text-gray-900 cursor-pointer tracking-wide mr-3">
                         <a className='px-4 py-2  ml-2  hover:text-blue-500 mt-4 lg:mt-0'>For Individuals</a>
-                        <div className="group-hover:block dropdown-menu absolute hidden h-auto z-30">
-                            <ul className="top-0 w-48 bg-white shadow px-3 py-4">
+                        <div className="group-hover:flex  p-5 dropdown-menu absolute hidden h-auto z-30">
+                            <ul className="top-0 w-48  bg-white shadow px-3 py-4">
                                 <h2 className='font-medium text-gray-700 my-2'>Discover </h2>
                                 <hr />
                                 <li className="">
@@ -101,11 +126,34 @@ export default function Navbar() {
                                     <Link href={'/discover/education'}><a className="block 0x-1 py-2  ml-2  hover:text-blue-500 mt-4 lg:mt-0">Education</a></Link>
                                 </li>
                                 <li className="">
-                                    <Link href={'/discover'}><a className="block px-0 py-1  ml-2  hover:text-blue-500 mt-4 lg:mt-0">See all</a></Link>
+                                    <Link href={'/start'}><a className="block px-0 py-1  ml-2  hover:text-blue-500 mt-4 lg:mt-0">See all</a></Link>
+                                </li>
+                            </ul>
+                            <ul className="top-0 w-48 bg-white  px-3 py-4">
+                                <h2 className='font-medium text-gray-700 my-2'>Fundraise for </h2>
+                                <hr />
+                                <li className="">
+                                    <Link href={'/start/medical'}><a className="block 0x-1 py-2  ml-2  hover:text-blue-500 mt-4 lg:mt-0"> Medical</a></Link>
+                                </li>
+                                <li className="">
+                                    <Link href={'/start/memorial'}><a className="block 0x-1 py-2  ml-2  hover:text-blue-500 mt-4 lg:mt-0"> Memorial</a></Link>
+                                </li>
+                                <li className="">
+                                    <Link href={'/start/emergency'}><a className="block 0x-1 py-2  ml-2  hover:text-blue-500 mt-4 lg:mt-0">Emergency</a></Link>
+                                </li>
+                                <li className="">
+                                    <Link href={'/start/charity'}><a className="block 0x-1 py-2  ml-2  hover:text-blue-500 mt-4 lg:mt-0"> Charity</a></Link>
+                                </li>
+                                <li className="">
+                                    <Link href={'/start/education'}><a className="block 0x-1 py-2  ml-2  hover:text-blue-500 mt-4 lg:mt-0">Education</a></Link>
+                                </li>
+                                <li className="">
+                                    <Link href={'/start'}><a className="block px-0 py-1  ml-2  text-blue-600 mt-4 lg:mt-0">See all</a></Link>
                                 </li>
                             </ul>
                         </div>
                     </a>
+                    
                     <a href="/how-it-works" className='block  lg:inline-block px-4 py-2  ml-2 hover:text-blue-500 mt-4 lg:mt-0'>
                         How it works
                     </a>
@@ -167,39 +215,14 @@ export default function Navbar() {
                         className="block px-4  ml-2 py-2 rounded text-white mt-4 lg:mt-0 bg-[#32a95c] ">
                         Start a Fundraiser
                     </a>
-                    <a href="/create/charity/details"
-                        className="block px-4  ml-2 py-2 rounded text-white mt-4 lg:mt-0 text-[#32a95c] ">
-                        Create  a Charity
-                    </a>
-
+                    {!has_charity &&
+                        <a href="/create/charity/details"
+                            className="block px-4  ml-2 py-2 rounded text-white mt-4 lg:mt-0 text-[#32a95c] ">
+                            Create  a Charity
+                        </a>
+                    }
                 </div>
             </div>
         </nav>
     )
 }
-/* export async function getServerSideProps(context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<Record<string, unknown>>> {
-    const token = context.req.cookies[jwt_aut_token];
-    // const res_json
-    console.log(token);
-    try {
-
-        if (token) {
-            let res = await ((await fetch(server_url + "/api/users/me", {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                }
-            })
-            ).json())
-            console.log(res);
-        }
-        return {
-            props: {}
-        }
-    } catch (err) {
-        console.error(err);
-        return {
-            props: { is_auth: false },
-        }
-    }
-
-} */

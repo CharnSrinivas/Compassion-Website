@@ -106,15 +106,15 @@ export default function Navbar() {
                 <div className="text-md  text-grey-700 lg:flex lg:items-baseline">
                     <a className="block mt-4 lg:inline-block lg:mt-0 group relative dropdown hover:text-gray-900 cursor-pointer tracking-wide mr-3">
                         <a className='px-4 py-2  ml-2  hover:text-blue-500 mt-4 lg:mt-0'>For Individuals</a>
-                        <div className="group-hover:flex dropdown-menu absolute hidden h-auto z-30  lg:flex-row px-2 flex-col " >
-                            <ul className="top-0 w-48  bg-white shadow px-1 py-4 ">
+                        <div className="group-hover:flex dropdown-menu absolute hidden h-auto z-20  lg:flex-row px-12    flex-col " >
+                            <ul className="top-0 w-48  bg-white px-1 py-4 ">
                                 <h2 className='text-center font-medium text-gray-700 my-2'>Discover </h2>
                                 <hr />
                                 <li className="">
                                     <Link href={'/discover'}><a className="text-center block px-0 py-1  ml-2  hover:text-blue-500 mt-4 lg:mt-0">Fundraisers</a></Link>
                                 </li>
                             </ul>
-                            <ul className="top-0 w-48 bg-white  py-4">
+                            <ul className="top-0 w-48 bg-white px-1  py-4">
                                 <h2 className='font-medium  text-center text-gray-700 my-2'>Fundraise for </h2>
                                 <hr />
                                 <li className="">
@@ -127,7 +127,7 @@ export default function Navbar() {
                                     <Link href={'/start/emergency'}><a className="text-center block 0x-1 py-2  ml-2  hover:text-blue-500 mt-4 lg:mt-0">Emergency</a></Link>
                                 </li>
                                 <li className="text-center ">
-                                    <Link href={'/start/charity'}><a className="text-center block 0x-1 py-2  ml-2  hover:text-blue-500 mt-4 lg:mt-0"> Charity</a></Link>
+                                    <Link href={'/start/charity-fundraising'}><a className="text-center block 0x-1 py-2  ml-2  hover:text-blue-500 mt-4 lg:mt-0"> Charity</a></Link>
                                 </li>
                                 <li className="text-center ">
                                     <Link href={'/start/education'}><a className="text-center block 0x-1 py-2  ml-2  hover:text-blue-500 mt-4 lg:mt-0">Education</a></Link>
@@ -136,7 +136,7 @@ export default function Navbar() {
                                     <Link href={'/start'}><a className="text-center block px-0 py-1  ml-2  text-blue-600 mt-4 lg:mt-0">See all</a></Link>
                                 </li>
                             </ul>
-                            <ul className="top-0 w-48 bg-white  py-4">
+                            <ul className="top-0 w-48 bg-white px-1 py-4">
                                 <h2 className='text-center font-medium text-gray-700 my-2'>How it works</h2>
                                 <hr />
                                 <li className="">
@@ -158,7 +158,6 @@ export default function Navbar() {
                     <a href="/info/how-it-works" className='block  lg:inline-block px-4 py-2  ml-2 hover:text-blue-500 mt-4 lg:mt-0'>
                         How it works
                     </a>
-                    <p>what te</p>
                     {is_auth &&
                         <Link href={'/manage/my-fundraisers'}>
                             <a className="block px-4 py-2  ml-2 font-medium hover:text-blue-500 mt-4 lg:mt-0">Manage</a>

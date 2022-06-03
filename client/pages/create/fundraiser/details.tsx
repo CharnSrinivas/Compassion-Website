@@ -332,7 +332,10 @@ export default function fundraiser({ is_auth, user, token: auth_token }: Props) 
         <div
           className="h-screen w-screen top-0 left-0 right-0 bottom-0 bg-gray-500 bg-opacity-80 py-6 flex flex-col justify-center sm:py-12 absolute">
           <div className="py-3 sm:w-1/2 w-full sm:mx-auto">
-            <h1 className='text-white my-3 ml-auto w-fit'>X</h1>
+            <div onClick={()=>{
+              setIsIndividual(true);
+              setSelectedCharity(null);
+            }} className='rounded-full w-[1.5rem] h-[1.5rem] my-3 cursor-pointer bg-gray-200 text-gray-800 ml-auto flex justify-center items-center '>x</div>
             <div className="bg-white min-w-1xl flex flex-col rounded-xl shadow-lg">
               <div className="px-12 py-5 flex flex-col">
                 <div className='flex flex-col'>

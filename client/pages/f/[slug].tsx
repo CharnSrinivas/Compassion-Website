@@ -359,7 +359,6 @@ export default function fundraiser({ fundraiser, user, slug, donations, donation
                 </div>
               </div>
             </div>
-            {/*MODAL ITEM*/}
           </>
         }
 

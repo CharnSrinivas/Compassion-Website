@@ -1,7 +1,7 @@
 export default function Footer() {
     return (
         <footer id="footer" className="text-gray-600 body-font bg-gray-100">
-            <div className="container px-5 py-24 mx-auto flex md:items-center lg:items-start md:flex-row md:flex-nowrap flex-wrap flex-col">
+            <div className="container px-5 py-10 mx-auto flex md:items-center lg:items-start md:flex-row md:flex-nowrap flex-wrap flex-col">
                 <div className="w-64 flex-shrink-0 md:mx-0 mx-auto text-center md:text-left">
                     <a className="flex title-font font-medium items-center md:justify-start justify-center text-gray-900">
                         <img src="/assets/logo.png" alt="logo" className="w-10 h-10 text-white " />
@@ -9,6 +9,16 @@ export default function Footer() {
                     </a>
                 </div>
                 <div className="flex-grow flex flex-wrap md:pl-20 -mb-10 md:mt-0 mt-10 md:text-left text-center">
+                    <div className="lg:w-1/4 md:w-1/2 w-full px-4">
+                        <h2 className="title-font font-medium text-gray-900 tracking-widest text-sm mb-3">
+                            Discover
+                        </h2>
+                        <nav className="list-none mb-10">
+                            <li title='start a  Charity' className='my-2'>
+                                <a href='/discover' className="text-gray-600 hover:text-gray-800" >Fundraiser</a>
+                            </li>
+                        </nav>
+                    </div>
                     <div className="lg:w-1/4 md:w-1/2 w-full px-4">
                         <h2 className="title-font font-medium text-gray-900 tracking-widest text-sm mb-3">
                             Fundraiser for
@@ -34,7 +44,25 @@ export default function Footer() {
                             </li>
                         </nav>
                     </div>
-
+                    <div className="lg:w-1/4 md:w-1/2 w-full px-4">
+                        <h2 className="title-font font-medium text-gray-900 tracking-widest text-sm mb-3">
+                            How it works
+                        </h2>
+                        <nav className="list-none mb-10">
+                            <li title='How compassion works' className='my-2'>
+                                <a href='/info/how-it-works' className="text-gray-600 hover:text-gray-800" >How compassion works</a>
+                            </li>
+                            <li title='what is crowdfunding' className='my-2'>
+                                <a href='/info/crowdfunding' className="text-gray-600 hover:text-gray-800">What is crowdfunding?</a>
+                            </li>
+                            <li title='Team funding' className='my-2'>
+                                <a href='/info/team-funding' className="text-gray-600 hover:text-gray-800">Team funding</a>
+                            </li>
+                            <li title='The donate button' className='my-2'>
+                                <a href='/info/donate-button' className="text-gray-600 hover:text-gray-800">The donate button</a>
+                            </li>
+                        </nav>
+                    </div>
                 </div>
             </div>
             <div className="bg-gray-200">

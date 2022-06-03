@@ -9,39 +9,38 @@ import { isMobile } from '../../utils';
 
 interface Props {
   fundraiser: any; user: any | null;
-  donations: any[], donations_meta: any
+  donations: any[], donations_meta: any; slug: string
 }
 
-export default function fundraiser({ fundraiser, user, donations, donations_meta }: Props) {
+export default function fundraiser({ fundraiser, user, slug, donations, donations_meta }: Props) {
   console.log(donations_meta);
 
   const [url, setUrl] = useState('');
   const [open_share, setOpenShare] = useState(false);
   const [read_more, setReadMore] = useState(false);
   const router = useRouter();
+  const [show_embedded, setShowEmbedded] = useState(false);
+
   useEffect(() => {
-    setUrl(window.location.href)
+    setUrl(window.location.origin)
   }, [])
   const shareOnWhatsapp = () => {
     if (!window) return;
     if (isMobile()) {
-      window.open(`whatsapp://send?text=${url}`, '_blank')
+      window.open(`whatsapp://send?text=${url}/f/${slug}`, '_blank')
     } else {
-      window.open(`https://web.whatsapp.com/send?text=${url}`, "_blank")
+      window.open(`https://web.whatsapp.com/send?text=${url}/f/${slug}`, "_blank")
     }
   }
   const copyLink = () => {
-    navigator.clipboard.writeText(url).then(() => {
-    }).catch(() => {
-
-    })
+    navigator.clipboard.writeText(`${url}/f/${slug}`).then(() => { }).catch(() => { });
   }
   const shareOnTwitter = () => {
     if (!window) return;
     if (isMobile()) {
-      window.open(`tg://msg?text=${url}`, '_blank')
+      window.open(`tg://msg?text=${url}/f/${slug}`, '_blank')
     } else {
-      window.open(`https://telegram.me/share/url?url=${url}`, "_blank")
+      window.open(`https://telegram.me/share/url?url=${url}/f/${slug}`, "_blank")
     }
   }
   const donate = () => {
@@ -110,7 +109,7 @@ export default function fundraiser({ fundraiser, user, donations, donations_meta
                       </g>
                     </g>
                   </svg>
-                  <a className="my-3 title-font text-indigo-500 tracking-widest" href={`/discover/${fundraiser.attributes.tag}`}>
+                  <a className="my-3 title-font text-indigo-500 tracking-widest" target={'_blank'} href={`/discover/${fundraiser.attributes.tag}`}>
                     {(fundraiser.attributes.tag as string)[0].toUpperCase() + fundraiser.attributes.tag.slice(1)}
                   </a>
                 </div>
@@ -194,7 +193,13 @@ export default function fundraiser({ fundraiser, user, donations, donations_meta
                     </svg>
                     <p>Donate </p>
                   </button>
-                  <button onClick={() => { setOpenShare(true);; document.querySelector('body')!.style.overflow = 'hidden' }} className="flex w-full mt-3 text-primary items-center gap-2 bg-transparent border-2 border-primary justify-center py-2 px-4 focus:outline-none active:bg-primary active:text-white rounded">
+                  <button 
+                  onClick={() => {
+                    setOpenShare(true);
+                    document.querySelector('body')!.style.overflow = 'hidden';
+                    document.documentElement.scrollTop = 0
+                  }} 
+                  className="flex w-full mt-3 text-primary items-center gap-2 bg-transparent border-2 border-primary justify-center py-2 px-4 focus:outline-none active:bg-primary active:text-white rounded">
                     <svg
                       fill="currentColor"
                       strokeLinecap="round"
@@ -214,151 +219,24 @@ export default function fundraiser({ fundraiser, user, donations, donations_meta
               </div>
             </div>
           </div>
-          <div className='container w-auto  gap-5 px-3 py-20 mx-auto'>
-            <hr />
-            <h2 className='subtitle-font  font-medium text-xl sm:text-2xl my-3 text-gray-900' > Donations</h2>
-            <div className="flex flex-col mt-6">
-              <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                  <div className="overflow-hidden border-b border-gray-200 rounded-md shadow-md">
-                    {donations && donations.length > 0 &&
-                      <table className="min-w-full overflow-x-scroll divide-y divide-gray-200">
-                        <thead className="bg-gray-50">
-                          <tr>
-                            <th
-                              scope="col"
-                              className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
-                            >
-                              Donar
-                            </th>
-                            <th
-                              scope="col"
-                              className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
-                            >
-                              Amount
-                            </th>
-                            <th
-                              scope="col"
-                              className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
-                            >
-                              Word of support
-                            </th>
-                            <th
-                              scope="col"
-                              className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
-                            >
-                              Date
-                            </th>
 
-                          </tr>
-                        </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
-                          {donations.map((donation, index) => {
-                            return (
-                              <tr key={index} className="transition-all hover:bg-gray-100 hover:shadow-lg">
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                  <div className="flex items-center">
-                                    <div className="flex-shrink-0 w-10 h-10">
-                                      <img
-                                        className="w-10 h-10 rounded-full"
-                                        src="/assets/user-placeholder.png"
-                                      />
-                                    </div>
-                                    <div className="ml-4">
-                                      <div className="text-sm font-medium text-gray-900">{donation.attributes.user.data.attributes.username}</div>
-                                      <div className="text-sm text-gray-500">{donation.attributes.user.data.attributes.email}</div>
-                                    </div>
-                                  </div>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                  <div className="text-lg text-gray-900">{donation.attributes.amount}</div>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                  <div className="text-xs text-gray-900">{donation.attributes.comment}</div>
-                                </td>
-                                <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                  {new Date(donation.attributes.createdAt).toLocaleDateString().replaceAll("/", '-')}
-                                </td>
-                                {/* <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
-                                  <a href="#" className="text-indigo-600 hover:text-indigo-900">Edit</a>
-                                </td> */}
-                              </tr>
-                            )
-                          })}
-
-                        </tbody>
-                      </table>}
-                    {donations && donations.length <= 0 &&
-                      <div className=' bg-white py-7'>
-                        <h3 className='mt-15 font-medium text-xl text-gray-900 my-3 text-center'>Your fundraiser has no donations yet :(</h3>
-                        <h5 className='mt-15  text-gray-700 my-3 text-center' >Your donations will show up here. Start by sharing your fundriaiser with friends and family </h5>
-                      </div>
-                    }
-                  </div>
-                </div>
-              </div>
-            </div>
-            {/* PAGINATION */}
-            <div className="flex my-5 mx-auto justify-center">
-              {donations_meta['pagination']['page'] > 1 &&
-                <a href={`/f/${fundraiser['attributes']['slug']}?dp=${donations_meta['pagination']['page']- 1}`} className="border border-teal-500 text-teal-500 block rounded-sm font-bold py-4 px-6 mr-2 flex items-center hover:bg-teal-500 hover:text-white">
-                  <svg
-                    className="h-5 w-5 mr-2 fill-current"
-                    version="1.1"
-                    id="Layer_1"
-                    xmlns="http://www.w3.org/2000/svg"
-                    xmlnsXlink="http://www.w3.org/1999/xlink"
-                    x="0px"
-                    y="0px"
-                    viewBox="-49 141 512 512"
-                    xmlSpace="preserve"
-                  >
-                    <path
-                      id="XMLID_10_"
-                      d="M438,372H36.355l72.822-72.822c9.763-9.763,9.763-25.592,0-35.355c-9.763-9.764-25.593-9.762-35.355,0 l-115.5,115.5C-46.366,384.01-49,390.369-49,397s2.634,12.989,7.322,17.678l115.5,115.5c9.763,9.762,25.593,9.763,35.355,0 c9.763-9.763,9.763-25.592,0-35.355L36.355,422H438c13.808,0,25-11.193,25-25S451.808,372,438,372z"
-                    />
-                  </svg>
-                  Previous page
-                </a>
-              }
-              {
-                donations_meta['pagination']['page'] < donations_meta['pagination']['pageCount'] &&
-                <a href={`/f/${fundraiser['attributes']['slug']}?dp=${donations_meta['pagination']['page']+1}`}className="border border-teal-500 bg-teal-500 text-white block rounded-sm font-bold py-4 px-6 ml-2 flex items-center">
-                  Next page
-                  <svg
-                    className="h-5 w-5 ml-2 fill-current"
-                    id="Layer_1"
-                    xmlns="http://www.w3.org/2000/svg"
-                    xmlnsXlink="http://www.w3.org/1999/xlink"
-                    x="0px"
-                    y="0px"
-                    viewBox="-49 141 512 512"
-                    xmlSpace="preserve"
-                  >
-                    <path
-                      id="XMLID_11_"
-                      d="M-24,422h401.645l-72.822,72.822c-9.763,9.763-9.763,25.592,0,35.355c9.763,9.764,25.593,9.762,35.355,0
-      l115.5-115.5C460.366,409.989,463,403.63,463,397s-2.634-12.989-7.322-17.678l-115.5-115.5c-9.763-9.762-25.593-9.763-35.355,0
-      c-9.763,9.763-9.763,25.592,0,35.355l72.822,72.822H-24c-13.808,0-25,11.193-25,25S-37.808,422-24,422z"
-                    />
-                  </svg>
-                </a>
-              }
-            </div>
-
-          </div>
         </section >
 
         {
           open_share &&
           <>
-            <div className="absolute top-0 left-0 right-0 bottom-0 bg-gray-800 bg-opacity-70 flex items-center justify-center">
-              <div className="bg-gray-100 w-full mx-4 p-4 rounded-xl md:w-1/2 lg:w-1/3">
+            {/* component */}
+            {/* CONTAINER MODAL*/}
+            <div className="absolute top-0 left-0 z-0   h-screen w-screen  flex items-center justify-center bg-gray-800 bg-opacity-70"
+            // onClick={() => { setOpenShare(false); document.querySelector('body')!.style.overflow = 'scroll' }}
+            >
+              <div className="bg-gray-100 w-full z-50 mx-4 p-4 rounded-xl md:w-1/2 lg:w-1/3 " >
+                {/*MODAL HEADER*/}
                 <div className="flex justify-between items center border-b border-gray-200 py-3">
                   <div className="flex items-center justify-center">
                     <p className="text-xl font-bold text-gray-800">Share </p>
                   </div>
-                  <div onClick={() => { setOpenShare(false);; document.querySelector('body')!.style.overflow = 'scroll' }} className="bg-gray-300 hover:bg-gray-500 cursor-pointer hover:text-gray-300 font-sans text-gray-500 w-8 h-8 flex items-center justify-center rounded-full">
+                  <div onClick={() => { setOpenShare(false); document.querySelector('body')!.style.overflow = 'scroll' }} className="bg-gray-300 hover:bg-gray-500 cursor-pointer hover:text-gray-300 font-sans text-gray-500 w-8 h-8 flex items-center justify-center rounded-full">
                     x
                   </div>
                 </div>
@@ -393,7 +271,6 @@ export default function fundraiser({ fundraiser, user, donations, donations_meta
                           d="M45,12.298V16.2l-10,7.5V11.2l3.124-2.341C38.868,8.301,39.772,8,40.702,8h0 C43.076,8,45,9.924,45,12.298z"
                         />
                       </svg>
-
                     </div>
                     <div onClick={shareOnWhatsapp} className="border hover:bg-[#25D366] w-12 h-12 fill-[#25D366] hover:fill-white border-green-200 rounded-full flex items-center justify-center shadow-xl hover:shadow-green-500/50 cursor-pointer">
                       <svg
@@ -409,6 +286,21 @@ export default function fundraiser({ fundraiser, user, donations, donations_meta
                         />
                       </svg>
                     </div>
+                    {/* EMBEDDED */}
+                    <div
+                      onClick={() => { setShowEmbedded(!show_embedded) }}
+                      className="border hover:bg-[#44475a] w-12 h-12 fill-gray-800 hover:fill-white border-gray-200 rounded-full flex items-center justify-center shadow-xl hover:shadow-gray-500/50 cursor-pointer">
+                      <svg
+                        width={24}
+                        height={24}
+                        viewBox="0 0 16 16"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path d="M4.708 5.578L2.061 8.224l2.647 2.646-.708.708-3-3V7.87l3-3 .708.708zm7-.708L11 5.578l2.647 2.646L11 10.87l.708.708 3-3V7.87l-3-3zM4.908 13l.894.448 5-10L9.908 3l-5 10z" />
+                      </svg>
+
+                    </div>
+                    {/*TELEGRAM ICON*/}
                     <div onClick={shareOnTwitter} className="border hover:bg-[#229ED9] w-12 h-12 fill-[#229ED9] hover:fill-white border-sky-200 rounded-full flex items-center justify-center shadow-xl hover:shadow-sky-500/50 cursor-pointer">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -420,6 +312,26 @@ export default function fundraiser({ fundraiser, user, donations, donations_meta
                       </svg>
                     </div>
                   </div>
+                  {show_embedded &&
+                    <span>
+                      <p className="mb-4 leading-8 text-gray-600 mt-10">
+                        Use the code below to embed this fundraiser on any website.
+
+                      </p>
+                      <div className='w-full bg-[#44475a] rounded-md p-3 mb-3 text-white'>
+                        {`
+                           <iframe 
+                               width="620" 
+                               height="650" 
+                               src="${url}/embed/f/${slug}"
+                               frameborder="0" allowfullscreen>
+                           </iframe>
+                      `
+                        }
+
+                      </div>
+                    </span>
+                  }
                   <p className="text-sm">Or copy link</p>
                   <div className=" flex-col justify-between items-center mt-4">
                     <div className="flex justify-between items-center border-2 border-gray-200 py-2">
@@ -437,7 +349,7 @@ export default function fundraiser({ fundraiser, user, donations, donations_meta
                         className="w-full outline-none bg-transparent"
                         type="text"
                         placeholder="link"
-                        defaultValue={url}
+                        defaultValue={`${url}/f/${slug}`}
                       />
                     </div>
                     <button onClick={copyLink} className="bg-indigo-500 text-white rounded text-sm py-2 px-5 mr-2 hover:bg-indigo-600 mt-3">
@@ -447,6 +359,7 @@ export default function fundraiser({ fundraiser, user, donations, donations_meta
                 </div>
               </div>
             </div>
+            {/*MODAL ITEM*/}
           </>
         }
 
@@ -503,7 +416,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
     method: "GET",
     headers: headers
   })).json();
-  
+
   const user_res = await fetch(server_url + "/api/users/me", {
     method: "GET",
     headers: headers
@@ -520,7 +433,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
       fundraiser: fundraiser['data'][0],
       user,
       donations: donations['data'] ? donations['data'] : [],
-      donations_meta: donations['meta']
+      donations_meta: donations['meta'],
+      slug
     }
   }
 }

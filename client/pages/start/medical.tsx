@@ -14,9 +14,9 @@ export default function medical({fundraisers,tag}: Props) {
             <div className='px-8 py-12 lg:w-[60%] w-[90%] mx-auto mt pt-[5rem] flex lg:flex-row flex-col  gap-8 justify-between'>
                 <div>
                     <h1 className='font-semibold my-4 text-4xl text-gray-700'>Get help with funeral fundraising</h1>
-                    <h3 className='text-gray-600 my-1 font-poppins  text-[1.1rem]'>With a GoFundMe, you can get immediate help with funeral costs.</h3>
+                    <h3 className='text-gray-600 my-1 font-poppins  text-[1.1rem]'>With a Compassion, you can get immediate help with funeral costs.</h3>
                     <a href="/create/fundraiser/details"
-                        className="block px-4 w-fit text-xl font-medium drop-shadow-xl py-2 rounded text-white mt-8  bg-[#32a95c] ">
+             className="block px-8 md:w-fit text-center text-[1.1rem] drop-shadow-xl py-3 space-x-10 rounded text-white mt-8  bg-[#32a95c] sm:w-full">
                         Start a Fundraiser
                     </a>
                 </div>

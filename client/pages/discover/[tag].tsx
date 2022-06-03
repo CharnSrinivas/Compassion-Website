@@ -34,7 +34,7 @@ export default function Tag({ fundraisers, tag }: Props) {
                             fundraisers.map((item, index) => {
                                 return (
                                     <a href={`/f/${item.attributes.slug}`} key={index} className=" xl:w-1/4 md:w-1/2 p-4 cursor-pointer ">
-                                        <div className="bg-gray-50 drop-shadow-md p-6 rounded-lg">
+                                        <div className="bg-gray-50 drop-shadow-md p-6 rounded-lg hover:shadow-lg">
                                             {item.attributes.image && item.attributes.image.data &&
                                                 <img
                                                     className="h-40 rounded w-full object-cover object-center mb-6"

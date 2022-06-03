@@ -41,7 +41,7 @@ export default function fundraisers({ fundraisers }: Props) {
                                 fundraisers.map((item, index) => {
                                     return (
                                         <a key={index} href={`/f/${item.attributes.slug}`} className="xl:w-1/4 md:w-1/2 p-4 cursor-pointer" >
-                                            <div className="bg-gray-50 drop-shadow-md rounded-lg p-0  min-h-[26rem] ">
+                                            <div className="bg-gray-50 drop-shadow-md rounded-lg p-0  min-h-[26rem] hover:shadow-lg">
 
                                                 {item.attributes.image && item.attributes.image.data &&
                                                     <img

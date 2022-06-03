@@ -18,7 +18,7 @@ export default function medical({fundraisers,tag}: Props) {
                     <h3 className='text-gray-600 my-1 font-poppins  text-[1.1rem]'>With a Compassion, you can get immediate help with medical bills.
                     </h3>
                     <a href="/create/fundraiser/details"
-                        className="block px-4 w-fit text-xl font-medium drop-shadow-xl py-2 rounded text-white mt-8  bg-[#32a95c] ">
+              className="block px-8 md:w-fit text-center text-[1.1rem] drop-shadow-xl py-3 space-x-10 rounded text-white mt-8  bg-[#32a95c] sm:w-full">
                         Start a Fundraiser
                     </a>
                 </div>

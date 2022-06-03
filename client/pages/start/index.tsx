@@ -12,7 +12,7 @@ export default function start(props: Props) {
                 <h3 className='text-gray-600 my-1 font-poppins  text-[1.1rem]'>People around the world are raising money for what they are passionate about.
                 </h3>
                 <a href="/create/fundraiser/details"
-                    className="block px-4 w-fit text-xl font-medium drop-shadow-xl py-2 rounded text-white mt-8  bg-[#32a95c] ">
+           className="block px-8 md:w-fit text-center text-[1.1rem] drop-shadow-xl py-3 space-x-10 rounded text-white mt-8  bg-[#32a95c] sm:w-full">
                     Start a Fundraiser
                 </a>
             </div>
@@ -42,7 +42,7 @@ export default function start(props: Props) {
                             </div>
                             <h3 className='font-medium text-gray-700 ml-2 my-5'>Emergency</h3>
                         </a>
-                        <a href={`/start/charity`} className="xl:w-1/4 md:w-1/2  bg-white  cursor-pointer m-3  drop-shadow-md first-letter:p-0   " >
+                        <a href={`/start/charity-fundraising`} className="xl:w-1/4 md:w-1/2  bg-white  cursor-pointer m-3  drop-shadow-md first-letter:p-0   " >
                             <div className="bg-gray-50">
                                 <img className='h-[17rem] object-cover' src="https://d25oniaj7o2jcw.cloudfront.net/photo-category-charity-uk@2x.jpg" alt="Charity" />
                             </div>

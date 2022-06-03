@@ -22,12 +22,12 @@ export default function manage({ fundraisers }: Props) {
                         </div>
                     }
                     <div className=' w-[80%] flex justify-center'>
-                        <div className="flex flex-wrap w-full justify-between">
+                        <div className="flex flex-wrap w-full ">
                             {fundraisers &&
                                 fundraisers.map((item, index) => {
                                     return (
                                         <a key={index} href={`/manage/${item.attributes.slug}/overview`} className="xl:w-1/4 md:w-1/2 p-4 cursor-pointer " >
-                                            <div className="bg-gray-50 drop-shadow-md rounded-lg p-0  min-h-[26rem] ">
+                                            <div className="bg-gray-50 drop-shadow-md rounded-lg p-0  min-h-[26rem]  hover:shadow-lg">
                                                 {item.attributes.image && item.attributes.image.data &&
                                                     <img
                                                         className="h-40 rounded w-full object-cover object-center mb-6"

@@ -5,34 +5,37 @@ import qs from 'qs';
 import { GetServerSidePropsContext, GetServerSidePropsResult, Redirect } from 'next/types';
 import { isMobile } from '../../../utils'
 interface Props {
-  fundraiser: any; donations: any[]; donations_meta: any;
+  fundraiser: any; donations: any[]; donations_meta: any; slug: String
 }
 
-export default function ({ fundraiser, donations, donations_meta }: Props) {
+export default function ({ fundraiser, donations, donations_meta, slug }: Props) {
   const [_donations, setDonations] = useState(donations);
   const [open_share, setOpenShare] = useState(false);
   const [url, setUrl] = useState('');
+  const [show_embedded, setShowEmbedded] = useState(false);
+
   useEffect(() => {
-    setUrl(window.location.href)
+    setUrl(window.location.origin);
+
   }, [])
 
   const shareOnWhatsapp = () => {
     if (!window) return;
     if (isMobile()) {
-      window.open(`whatsapp://send?text=${url}`, '_blank')
+      window.open(`whatsapp://send?text=${url}/f/${slug}`, '_blank')
     } else {
-      window.open(`https://web.whatsapp.com/send?text=${url}`, "_blank")
+      window.open(`https://web.whatsapp.com/send?text=${url}/f/${slug}`, "_blank")
     }
   }
   const copyLink = () => {
-    navigator.clipboard.writeText(url).then(() => {}).catch(() => { });
+    navigator.clipboard.writeText(`${url}/f/${slug}`).then(() => { }).catch(() => { });
   }
   const shareOnTwitter = () => {
     if (!window) return;
     if (isMobile()) {
-      window.open(`tg://msg?text=${url}`, '_blank')
+      window.open(`tg://msg?text=${url}/f/${slug}`, '_blank')
     } else {
-      window.open(`https://telegram.me/share/url?url=${url}`, "_blank")
+      window.open(`https://telegram.me/share/url?url=${url}/f/${slug}`, "_blank")
     }
   }
   return (
@@ -51,7 +54,7 @@ export default function ({ fundraiser, donations, donations_meta }: Props) {
           <div className='flex-col'>
             <div className='flex justify-between flex-wrap'>
               <div >
-                {fundraiser.attributes.image  && fundraiser.attributes.image.data &&
+                {fundraiser.attributes.image && fundraiser.attributes.image.data &&
                   <img
                     className="lg:w-[30rem] h-[25rem] object-cover object-center rounded-lg"
                     src={server_url + fundraiser.attributes.image.data.attributes.url}
@@ -70,7 +73,11 @@ export default function ({ fundraiser, donations, donations_meta }: Props) {
               </div>
               <div className='flex items-end p-4 gap-5'>
                 <div className='flex-col items-center '>
-                  <button onClick={() => { setOpenShare(true); document.querySelector('body')!.style.overflow = 'hidden' }} className='rounded-full bg-primary p-3 text-white'>
+                  <button onClick={() => {
+                    setOpenShare(true);
+                    document.querySelector('body')!.style.overflow = 'hidden';
+                    document.documentElement.scrollTop = 0
+                  }} className='rounded-full bg-primary p-3 text-white'>
                     <svg
                       fill="currentColor"
                       strokeLinecap="round"
@@ -232,23 +239,7 @@ export default function ({ fundraiser, donations, donations_meta }: Props) {
                     <div className="bg-green-500 h-1" style={{ width: `${Math.floor((fundraiser.attributes.fund_raised / fundraiser.attributes.fund_target) * 100)}%` }}></div>
                   </div>
                 </div>
-                {/*
-              <div className="p-4 transition-shadow border rounded-lg shadow-sm hover:shadow-lg bg-white">
-                <div className="flex items-center justify-between">
-                  <div className="flex flex-col space-y-2">
-                    <span className="text-gray-500">Comments</span>
-                    <span className="text-2xl text-primary font-semibold">{fundraiser.attributes.fund_raised}</span>
-                  </div>
-                  <div className="bg-gray-200 p-2 rounded-full">
-                  </div>
-                </div>
-                <div className='text-gray-900 font-medium mt-4'>
-                  <strong>{fundraiser.attributes.fund_raised.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} raised</strong> out of {fundraiser.attributes.fund_target.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                </div>
-                <div className="w-full bg-green-400 bg-opacity-20 h-1 mt-1 mb-3" >
-                  <div className="bg-green-500 h-1" style={{ width: `${Math.floor((fundraiser.attributes.fund_raised / fundraiser.attributes.fund_target) * 100)}%` }}></div>
-                </div>
-              </div> */}
+
               </div>
             </div>
             <hr />
@@ -345,15 +336,16 @@ export default function ({ fundraiser, donations, donations_meta }: Props) {
         <>
           {/* component */}
           {/* CONTAINER MODAL*/}
-          <div className="absolute top-0 left-0 right-0 bottom-0 bg-gray-800 bg-opacity-70 flex items-center justify-center">
-            {/*MODAL ITEM*/}
-            <div className="bg-gray-100 w-full mx-4 p-4 rounded-xl md:w-1/2 lg:w-1/3">
+          <div className="absolute top-0 left-0 z-0   h-screen w-screen  flex items-center justify-center bg-gray-800 bg-opacity-70"
+          // onClick={() => { setOpenShare(false); document.querySelector('body')!.style.overflow = 'scroll' }}
+          >
+            <div className="bg-gray-100 w-full z-50 mx-4 p-4 rounded-xl md:w-1/2 lg:w-1/3 " >
               {/*MODAL HEADER*/}
               <div className="flex justify-between items center border-b border-gray-200 py-3">
                 <div className="flex items-center justify-center">
                   <p className="text-xl font-bold text-gray-800">Share </p>
                 </div>
-                <div onClick={() => { setOpenShare(false);; document.querySelector('body')!.style.overflow = 'scroll' }} className="bg-gray-300 hover:bg-gray-500 cursor-pointer hover:text-gray-300 font-sans text-gray-500 w-8 h-8 flex items-center justify-center rounded-full">
+                <div onClick={() => { setOpenShare(false); document.querySelector('body')!.style.overflow = 'scroll' }} className="bg-gray-300 hover:bg-gray-500 cursor-pointer hover:text-gray-300 font-sans text-gray-500 w-8 h-8 flex items-center justify-center rounded-full">
                   x
                 </div>
               </div>
@@ -403,6 +395,20 @@ export default function ({ fundraiser, donations, donations_meta }: Props) {
                       />
                     </svg>
                   </div>
+                  {/* EMBEDDED */}
+                  <div
+                    onClick={() => { setShowEmbedded(!show_embedded) }}
+                    className="border hover:bg-[#44475a] w-12 h-12 fill-gray-800 hover:fill-white border-gray-200 rounded-full flex items-center justify-center shadow-xl hover:shadow-gray-500/50 cursor-pointer">
+                    <svg
+                      width={24}
+                      height={24}
+                      viewBox="0 0 16 16"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path d="M4.708 5.578L2.061 8.224l2.647 2.646-.708.708-3-3V7.87l3-3 .708.708zm7-.708L11 5.578l2.647 2.646L11 10.87l.708.708 3-3V7.87l-3-3zM4.908 13l.894.448 5-10L9.908 3l-5 10z" />
+                    </svg>
+
+                  </div>
                   {/*TELEGRAM ICON*/}
                   <div onClick={shareOnTwitter} className="border hover:bg-[#229ED9] w-12 h-12 fill-[#229ED9] hover:fill-white border-sky-200 rounded-full flex items-center justify-center shadow-xl hover:shadow-sky-500/50 cursor-pointer">
                     <svg
@@ -415,8 +421,27 @@ export default function ({ fundraiser, donations, donations_meta }: Props) {
                     </svg>
                   </div>
                 </div>
+                {show_embedded &&
+                  <span>
+                    <p className="mb-4 leading-8 text-gray-600 mt-10">
+                      Use the code below to embed this fundraiser on any website.
+
+                    </p>
+                    <div className='w-full bg-[#44475a] rounded-md p-3 mb-3 text-white'>
+                      {`
+                           <iframe 
+                               width="620" 
+                               height="650" 
+                               src="${url}/embed/f/${slug}"
+                               frameborder="0" allowfullscreen>
+                           </iframe>
+                      `
+                      }
+
+                    </div>
+                  </span>
+                }
                 <p className="text-sm">Or copy link</p>
-                {/*BOX LINK*/}
                 <div className=" flex-col justify-between items-center mt-4">
                   <div className="flex justify-between items-center border-2 border-gray-200 py-2">
                     <svg
@@ -433,7 +458,7 @@ export default function ({ fundraiser, donations, donations_meta }: Props) {
                       className="w-full outline-none bg-transparent"
                       type="text"
                       placeholder="link"
-                      defaultValue={url}
+                      defaultValue={`${url}/f/${slug}`}
                     />
                   </div>
                   <button onClick={copyLink} className="bg-indigo-500 text-white rounded text-sm py-2 px-5 mr-2 hover:bg-indigo-600 mt-3">
@@ -443,6 +468,7 @@ export default function ({ fundraiser, donations, donations_meta }: Props) {
               </div>
             </div>
           </div>
+          {/*MODAL ITEM*/}
         </>
       }
     </>
@@ -503,6 +529,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
   return {
     props: {
       fundraiser: fundraiser['data'][0],
+      slug,
       donations: donations['data'],
       donations_meta: donations['meta']['pagination']
     }

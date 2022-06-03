@@ -4,9 +4,9 @@ import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 function MyApp({ Component, pageProps }: AppProps) {
   return (<>
-  <body className='relative'>
+  <body >
     <Navbar />
-    <Component {...pageProps} />
+    <Component  {...pageProps} />
     <Footer />
   </body>
   </>)

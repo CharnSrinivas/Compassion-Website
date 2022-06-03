@@ -62,7 +62,7 @@ export default function Navbar() {
     }
     return (
 
-        <nav className="flex items-center justify-between flex-wrap bg-white  lg:px-12 shadow border-solid border-t-2 border-blue-700 h-fit">
+        <nav id='navbar' className="flex items-center justify-between flex-wrap bg-white  lg:px-12 shadow border-solid border-t-2 border-blue-700 h-fit">
             <div className="flex justify-between lg:w-auto w-full lg:border-b-0 py-3 pl-3 pr-2 border-solid border-b-2 border-gray-300 pb-5 lg:pb-0">
                 <div className="flex items-center flex-shrink-0 text-gray-800 h-fit">
                     <a href='/' className="flex flex-col title-font  items-center justify-center text-gray-900 " >
@@ -106,57 +106,59 @@ export default function Navbar() {
                 <div className="text-md  text-grey-700 lg:flex lg:items-baseline">
                     <a className="block mt-4 lg:inline-block lg:mt-0 group relative dropdown hover:text-gray-900 cursor-pointer tracking-wide mr-3">
                         <a className='px-4 py-2  ml-2  hover:text-blue-500 mt-4 lg:mt-0'>For Individuals</a>
-                        <div className="group-hover:flex  p-5 dropdown-menu absolute hidden h-auto z-30">
-                            <ul className="top-0 w-48  bg-white shadow px-3 py-4">
-                                <h2 className='font-medium text-gray-700 my-2'>Discover </h2>
+                        <div className="group-hover:flex dropdown-menu absolute hidden h-auto z-30  lg:flex-row px-2 flex-col " >
+                            <ul className="top-0 w-48  bg-white shadow px-1 py-4 ">
+                                <h2 className='text-center font-medium text-gray-700 my-2'>Discover </h2>
                                 <hr />
                                 <li className="">
-                                    <Link href={'/discover/medical'}><a className="block 0x-1 py-2  ml-2  hover:text-blue-500 mt-4 lg:mt-0"> Medical</a></Link>
-                                </li>
-                                <li className="">
-                                    <Link href={'/discover/memorial'}><a className="block 0x-1 py-2  ml-2  hover:text-blue-500 mt-4 lg:mt-0"> Memorial</a></Link>
-                                </li>
-                                <li className="">
-                                    <Link href={'/discover/emergency'}><a className="block 0x-1 py-2  ml-2  hover:text-blue-500 mt-4 lg:mt-0">Emergency</a></Link>
-                                </li>
-                                <li className="">
-                                    <Link href={'/discover/charities'}><a className="block 0x-1 py-2  ml-2  hover:text-blue-500 mt-4 lg:mt-0"> Charity</a></Link>
-                                </li>
-                                <li className="">
-                                    <Link href={'/discover/education'}><a className="block 0x-1 py-2  ml-2  hover:text-blue-500 mt-4 lg:mt-0">Education</a></Link>
-                                </li>
-                                <li className="">
-                                    <Link href={'/start'}><a className="block px-0 py-1  ml-2  hover:text-blue-500 mt-4 lg:mt-0">See all</a></Link>
+                                    <Link href={'/discover'}><a className="text-center block px-0 py-1  ml-2  hover:text-blue-500 mt-4 lg:mt-0">Fundraisers</a></Link>
                                 </li>
                             </ul>
-                            <ul className="top-0 w-48 bg-white  px-3 py-4">
-                                <h2 className='font-medium text-gray-700 my-2'>Fundraise for </h2>
+                            <ul className="top-0 w-48 bg-white  py-4">
+                                <h2 className='font-medium  text-center text-gray-700 my-2'>Fundraise for </h2>
                                 <hr />
                                 <li className="">
-                                    <Link href={'/start/medical'}><a className="block 0x-1 py-2  ml-2  hover:text-blue-500 mt-4 lg:mt-0"> Medical</a></Link>
+                                    <Link href={'/start/medical'}><a className="text-center block 0x-1 py-2  ml-2  hover:text-blue-500 mt-4 lg:mt-0"> Medical</a></Link>
+                                </li>
+                                <li className="text-center ">
+                                    <Link href={'/start/memorial'}><a className="text-center block 0x-1 py-2  ml-2  hover:text-blue-500 mt-4 lg:mt-0"> Memorial</a></Link>
+                                </li>
+                                <li className="text-center ">
+                                    <Link href={'/start/emergency'}><a className="text-center block 0x-1 py-2  ml-2  hover:text-blue-500 mt-4 lg:mt-0">Emergency</a></Link>
+                                </li>
+                                <li className="text-center ">
+                                    <Link href={'/start/charity'}><a className="text-center block 0x-1 py-2  ml-2  hover:text-blue-500 mt-4 lg:mt-0"> Charity</a></Link>
+                                </li>
+                                <li className="text-center ">
+                                    <Link href={'/start/education'}><a className="text-center block 0x-1 py-2  ml-2  hover:text-blue-500 mt-4 lg:mt-0">Education</a></Link>
+                                </li>
+                                <li className="text-center ">
+                                    <Link href={'/start'}><a className="text-center block px-0 py-1  ml-2  text-blue-600 mt-4 lg:mt-0">See all</a></Link>
+                                </li>
+                            </ul>
+                            <ul className="top-0 w-48 bg-white  py-4">
+                                <h2 className='text-center font-medium text-gray-700 my-2'>How it works</h2>
+                                <hr />
+                                <li className="">
+                                    <Link href={'/how-it-works'}><a className="text-center block px-0 py-1  ml-2  hover:text-blue-500 mt-4 lg:mt-0">How compassion works</a></Link>
                                 </li>
                                 <li className="">
-                                    <Link href={'/start/memorial'}><a className="block 0x-1 py-2  ml-2  hover:text-blue-500 mt-4 lg:mt-0"> Memorial</a></Link>
+                                    <Link href={'/info/hat is crowdfunding'}><a className="text-center block px-0 py-1  ml-2  hover:text-blue-500 mt-4 lg:mt-0">What is crowdfunding</a></Link>
                                 </li>
                                 <li className="">
-                                    <Link href={'/start/emergency'}><a className="block 0x-1 py-2  ml-2  hover:text-blue-500 mt-4 lg:mt-0">Emergency</a></Link>
+                                    <Link href={'/info/team-fundraising'}><a className="text-center block px-0 py-1  ml-2  hover:text-blue-500 mt-4 lg:mt-0">Team fundraising</a></Link>
                                 </li>
                                 <li className="">
-                                    <Link href={'/start/charity'}><a className="block 0x-1 py-2  ml-2  hover:text-blue-500 mt-4 lg:mt-0"> Charity</a></Link>
-                                </li>
-                                <li className="">
-                                    <Link href={'/start/education'}><a className="block 0x-1 py-2  ml-2  hover:text-blue-500 mt-4 lg:mt-0">Education</a></Link>
-                                </li>
-                                <li className="">
-                                    <Link href={'/start'}><a className="block px-0 py-1  ml-2  text-blue-600 mt-4 lg:mt-0">See all</a></Link>
+                                    <Link href={'/info/donate-button'}><a className="text-center block px-0 py-1  ml-2  hover:text-blue-500 mt-4 lg:mt-0">The Donate button</a></Link>
                                 </li>
                             </ul>
                         </div>
                     </a>
                     
-                    <a href="/how-it-works" className='block  lg:inline-block px-4 py-2  ml-2 hover:text-blue-500 mt-4 lg:mt-0'>
+                    <a href="/info/how-it-works" className='block  lg:inline-block px-4 py-2  ml-2 hover:text-blue-500 mt-4 lg:mt-0'>
                         How it works
                     </a>
+                    <p>what te</p>
                     {is_auth &&
                         <Link href={'/manage/my-fundraisers'}>
                             <a className="block px-4 py-2  ml-2 font-medium hover:text-blue-500 mt-4 lg:mt-0">Manage</a>

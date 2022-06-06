@@ -14,11 +14,25 @@ export default function manage({ fundraisers }: Props) {
             <section className="text-gray-600 body-font ">
                 <div className=' flex flex-col mx-auto mt-10 py-5 items-center' style={{ minHeight: "60vh" }}>
                     {fundraisers.length > 0 &&
-                        <div className='w-[80%] my-5 px-4'>
-                            <h1 className="sm:text-3xl  text-left  text-2xl font-medium title-font mb-2  text-gray-900">
-                                My fundraisers
-                            </h1>
-                            <div className="h-1 w-20 bg-primary rounded " />
+                        <div className='w-[80%] my-5 px-4 flex-row flex justify-between items-center flex-wrap'>
+                            <div >
+                                <h1 className="sm:text-3xl  text-left  text-2xl font-medium title-font mb-2  text-gray-900">
+                                    Your fundraisers
+                                </h1>
+                                <div className="h-1 w-20 bg-primary rounded " />
+                            </div>
+                            <a href='/create/fundraiser/details' className=" px-4  ml-2 py-3 rounded text-white mt-4 lg:mt-0 bg-[#32a95c] items-center flex-row flex gap-2">
+                                <svg
+                                    viewBox="0 0 490 490"
+                                    className='w-5 h-5'
+                                    fill='white'
+                                >
+                                    <polygon
+                                        points="222.031,490 267.969,490 267.969,267.969 490,267.969 490,222.031 267.969,222.031 267.969,0 222.031,0  222.031,222.031 0,222.031 0,267.969 222.031,267.969 "
+                                    />
+                                </svg>
+                                <p className='font-medium'> Start a new fundraiser</p>
+                            </a>
                         </div>
                     }
                     <div className=' w-[80%] flex justify-center'>
@@ -26,7 +40,7 @@ export default function manage({ fundraisers }: Props) {
                             {fundraisers &&
                                 fundraisers.map((item, index) => {
                                     return (
-                                        <a key={index} href={`/manage/${item.attributes.slug}/overview`} className="xl:w-1/4 md:w-1/2 p-4 cursor-pointer " >
+                                        <a key={index} href={`/manage-fundraisers/${item.attributes.slug}/overview`} className="xl:w-1/4 md:w-1/2 p-4 cursor-pointer " >
                                             <div className="bg-gray-50 drop-shadow-md rounded-lg p-0  min-h-[26rem]  hover:shadow-lg">
                                                 {item.attributes.image && item.attributes.image.data &&
                                                     <img
@@ -34,7 +48,7 @@ export default function manage({ fundraisers }: Props) {
                                                         src={server_url + item.attributes.image.data.attributes.url}
                                                         alt="content"
                                                     />
-                                                }{(!item.attributes.image.data || !item.attributes.image)&&
+                                                }{(!item.attributes.image.data || !item.attributes.image) &&
                                                     <img
                                                         className="h-40 rounded w-full object-cover object-center mb-6"
                                                         src={"/assets/image-placeholder.jpg"}

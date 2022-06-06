@@ -23,11 +23,11 @@ export default function story({ fundraiser, is_auth, token }: Props) {
 
         }, { headers: { Authorization: `Bearer ${token}`, } })
         if (res.status <= 201) {
-            router.push(`/manage/my-fundraisers`)
+            router.push(`/manage-fundraiserss/my-fundraisers`)
         }
     }
     return (
-        <div className="border p-8 px-10 w-[45%] bg-white shadow-xl md:min-w-1/2  mx-auto rounded-xl">
+        <div className="border p-8 my-8 px-10 w-[45%] bg-white shadow-xl md:min-w-1/2  mx-auto rounded-xl">
             <div  className="font-medium m-auto text-4xl text-green-900 mt-7 text-center">Edit your story
             </div>
             <p className=" text-gray-500 text-center mt-3"> Explain who you are and why you're fundraising.</p>

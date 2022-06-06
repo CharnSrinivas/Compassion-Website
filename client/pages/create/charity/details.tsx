@@ -22,33 +22,47 @@ export default function fundraiser({ is_auth, user, token }: Props) {
     initialValues: {
       name: '',
       targetFunds: 0,
-      zipCode: 0,
+      address: '',
       category: '',
-      registerNumber: 0
+      registerNumber: 0,
+      description: '',
+      recvDetails:''
     },
     validationSchema: Yup.object({
-      name: Yup
+      name:
+        Yup
+          .string()
+          .min(8)
+          .max(70, "Title should be less than 70 characters")
+          .required(),
+      address:
+        Yup
+          .string()
+          .min(3, "Invalid zip code")
+          .required('Zip Code is required'),
+      registerNumber:
+        Yup.number()
+          .optional(),
+      description:
+        Yup.string().required("Description is required"),
+      recvDetails: Yup
         .string()
-        .min(8)
-        .max(70, "Title should be less than 70 characters")
-        .required(),
-      zipCode: Yup
-        .number()
-        .min(1, "Invalid zip code")
-        .required('Zip Code is required'),
-      registerNumber: Yup.number().min(1, "Invalid register number!")
-        .required("register no is required")
+        .min(3, "Invalid 'fund receive details'")
+        .required('Fund receive details is required.'),
+
     }),
     onSubmit: async (e) => {
       setSubmitting(true);
-      const name = (e.name).replaceAll(' ', '-');
+      // const name = (e.name).replaceAll(' ', '-');
       let res = await axios.post(server_url + "/api/charities",
         {
           data: {
             name: e.name,
-            zip_code: e.zipCode,
-            user: user.id, register_no: e.registerNumber
-            
+            address: e.address,
+            user: user.id,
+            register_no: e.registerNumber,
+            description: e.description,
+            recv_details:e.recvDetails
           }
         },
         {
@@ -58,7 +72,7 @@ export default function fundraiser({ is_auth, user, token }: Props) {
         }
       );
       if (res.status <= 201) {
-        router.push(`/create/charity/${name}/add-image`)
+        router.push(`/create/charity/${e.name}/add-image`)
       }
     }
   });
@@ -154,25 +168,46 @@ export default function fundraiser({ is_auth, user, token }: Props) {
               </p>
             }
             <label htmlFor="" className="block">
-              Zip Code
+              Address
             </label>
             <input
               onBlur={formik.handleBlur}
               onChange={formik.handleChange}
-              value={formik.values.zipCode}
-              type="number"
-              name='zipCode'
+              value={formik.values.address}
+              type="text"
+              name='address'
               className="border w-full h-10 px-3 mb-5 rounded-md"
-              placeholder="0234234234"
+              placeholder="Aaron Larson
+              Zippy Diagnostics
+              123 Center Ln.
+              Plymouth, MN 55441"
             />
             {
-              formik.errors.zipCode &&
+              formik.errors.address &&
               <p className="text-xs italic text-red-500">
-                {formik.errors.zipCode}
+                {formik.errors.address}
               </p>
             }
             <label htmlFor="" className="block">
-              Register number
+              Fund receive details
+            </label>
+            <input
+              onBlur={formik.handleBlur}
+              onChange={formik.handleChange}
+              value={formik.values.recvDetails}
+              type="text"
+              name='recvDetails'
+              className="border w-full h-10 px-3 mb-5 rounded-md"
+              placeholder="bank details (or) wallet ID"
+            />
+            {
+              formik.errors.recvDetails &&
+              <p className="text-xs italic text-red-500">
+                {formik.errors.recvDetails}
+              </p>
+            }
+            <label htmlFor="" className="block">
+              Register number (optional)
             </label>
             <input
               onBlur={formik.handleBlur}
@@ -189,6 +224,22 @@ export default function fundraiser({ is_auth, user, token }: Props) {
                 {formik.errors.registerNumber}
               </p>
             }
+            <textarea
+              onBlur={formik.handleBlur}
+              onChange={formik.handleChange}
+              value={formik.values.description}
+              id="description"
+              name='description'
+              cols={30}
+              rows={10}
+              placeholder="Tell about your charity...."
+              className="w-full  p-4 text-gray-600 bg-indigo-50 outline-none rounded-md my-5"></textarea>
+            {
+              formik.errors.description &&
+              <p className="text-xs italic text-red-500">
+                {formik.errors.description}
+              </p>
+            }
             <button type='submit' className="mt-7 bg-green-500 hover:bg-green-600 shadow-xl text-white uppercase text-sm font-semibold px-14 py-3 rounded w-full">
               Next
             </button>
@@ -197,7 +248,7 @@ export default function fundraiser({ is_auth, user, token }: Props) {
       }
       {
         submitting &&
-        <div className="w-12 h-12 rounded-full animate-spin border-x-2 border-solid border-blue-500 border-t-transparent absolute" style={{ position: "absolute", top: "50%", left: "0%" }}></div>
+        <div className="w-12 h-12 rounded-full animate-spin border-x-2 border-solid border-blue-500 border-t-transparent absolute" style={{ position: "absolute", top: "50%", left: "50%" }}></div>
       }
     </div>
   )

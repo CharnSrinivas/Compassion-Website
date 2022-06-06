@@ -13,8 +13,6 @@ interface Props {
 }
 
 export default function fundraiser({ fundraiser, user, slug, donations, donations_meta }: Props) {
-  console.log(donations_meta);
-
   const [url, setUrl] = useState('');
   const [open_share, setOpenShare] = useState(false);
   const [read_more, setReadMore] = useState(false);
@@ -119,7 +117,7 @@ export default function fundraiser({ fundraiser, user, slug, donations, donation
                 {fundraiser.attributes['charity']['data'] && fundraiser.attributes['charity']['data']['attributes']['name'] &&
                   <h2 className='text-gray-700 my-3'> <b className='font-medium text-[1.2rem]'> {fundraiser.attributes['charity']['data']['attributes']['name']}</b> is organizing this fundraiser.</h2>
                 }
-                {(!fundraiser.attributes['charity']['data'] || fundraiser.attributes['charity']['data']['attributes']) &&
+                {(!fundraiser.attributes['charity']['data'] || !fundraiser.attributes['charity']['data']['attributes']) &&
                   <h2 className='text-gray-700 my-3'>Individual fundraiser.  </h2>
                 }
                 <hr className='my-3' />
@@ -361,7 +359,6 @@ export default function fundraiser({ fundraiser, user, slug, donations, donation
             </div>
           </>
         }
-
       </div >
     </>
   )

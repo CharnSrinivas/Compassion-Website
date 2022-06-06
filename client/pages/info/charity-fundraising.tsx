@@ -1,40 +1,40 @@
-import React from 'react'
-import { GetServerSidePropsContext, GetServerSidePropsResult, GetStaticPropsContext } from 'next';
+import { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
 import qs from 'qs';
-import { fundraiser_ref, fundraiser_tags, server_url } from '../../config';
+import React from 'react'
+import { fundraiser_tags, jwt_aut_token, server_url } from '../../config';
 
 interface Props {
-    fundraisers: any[]; tag: string
+    fundraisers: any[];
 }
 
-export default function Tag({ fundraisers, tag }: Props) {
+export default function medical({ fundraisers }: Props) {
     return (
-        <div>
-            <section className="text-gray-600 body-font">
-                <div className="container px-5 py-24 mx-auto">
-                    <div className="flex flex-wrap w-full mb-20">
-                        <div className="lg:w-1/2 w-full mb-6 lg:mb-0">
-                            <h1 className="sm:text-3xl text-2xl font-medium title-font mb-2 text-gray-900">
-                                Top {tag} fundraisers
-                            </h1>
-                            <div className="h-1 w-20 bg-primary rounded " />
-                            <h2 className='mt-5 mb-2 text-gray-600'>
-                                People around the world are raising money f or what they are passionate about.
-                            </h2>
-                        </div>
-                        <p className="lg:w-1/2 w-full leading-relaxed text-gray-500">
-                            Whatever cardigan tote bag tumblr hexagon brooklyn asymmetrical
-                            gentrify, subway tile poke farm-to-table. Franzen you probably haven't
-                            heard of them man bun deep jianbing selfies heirloom prism food truck
-                            ugh squid celiac humblebrag.
-                        </p>
+        <section>
+
+            <div className='px-8 py-12 lg:w-[60%] w-[90%] mx-auto mt pt-[5rem] flex lg:flex-row flex-col  gap-8 justify-between'>
+                <div>
+                    <h1 className='font-semibold my-4 text-4xl text-gray-700'>The New Charity Fundraising Experience Has Arrived on Compassion</h1>
+                    
+                    <a href="/create/charity/details"
+                        className="block px-8 md:w-fit text-center text-[1.1rem] drop-shadow-xl py-3 space-x-10 rounded text-white mt-8  bg-[#32a95c] sm:w-full">
+                        Register as a charity
+                    </a>
+                </div>
+                <img className=' w-[100%] lg:w-[45%] h-[13rem] lg:h-[32rem] object-cover lg:ml-11' src="https://d25oniaj7o2jcw.cloudfront.net/photo-category-emergencies-uk@2x.jpg" alt="charity" />
+            </div>
+            <hr />
+            <div className=' w-full bg-[#fbf8f6] py-5'>
+                <div className='px-8 mx-auto w-90% lg:w-[60%] pt-[5rem]'>
+                    <div className='mb-5'>
+                        <h1 className='font-semibold mb-1 text-3xl text-gray-700'>Trending charity fundraiser</h1>
+                        <div className="h-1 w-24 bg-primary rounded " />
                     </div>
-                    <div className="flex flex-wrap -m-4">
+                    <div className="flex flex-wrap ">
                         {fundraisers.length > 0 &&
                             fundraisers.map((item, index) => {
                                 return (
-                                    <a href={`/f/${item.attributes.slug}`} key={index} className=" xl:w-1/4 md:w-1/2 p-4 cursor-pointer ">
-                                        <div className="bg-gray-50 drop-shadow-md p-6 rounded-lg min-h-[28rem] hover:shadow-lg">
+                                    <a href={`/f/${item.attributes.slug}`} key={index} className=" xl:w-1/3 md:w-1/2 w-full p-4 cursor-pointer ">
+                                        <div className="bg-gray-50 drop-shadow-md p-6 rounded-lg min-h-[28rem]">
                                             {item.attributes.image && item.attributes.image.data &&
                                                 <img
                                                     className="h-40 rounded w-full object-cover object-center mb-6"
@@ -77,64 +77,42 @@ export default function Tag({ fundraisers, tag }: Props) {
                         } {
                             fundraisers.length <= 0 &&
                             <h2 className='sm:text-3xl text-2xl font-medium title-font my-7  text-gray-900'>
-                                No  {tag} fundraisers found
+                                No charity fundraisers found
                             </h2>
                         }
-
                     </div>
                 </div>
-            </section >
-        </div >
+            </div>
+        </section>
     )
 }
-
 export async function getServerSideProps(context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<Record<string, unknown>>> {
-    const tag = context.params ? context.params['tag']?.toString().toLocaleLowerCase() : '';
-    if (!tag) {
-        return {
-            props: {
-                fundraisers: []
-            }
-        }
-    }
-    console.log(fundraiser_tags.indexOf(tag));
-    
-    if (fundraiser_tags.indexOf(tag) < 0) {
-        return {
-            notFound: true
-        }
-    }
-    const query = qs.stringify({
-        filters: {
-            tag: {
-                $eq: tag
-            }
-        },
-        sort: ['donations_count:desc'],
-        populate: ["image", "user"]
-    })
-    // const res_json
-    try {
-        const res = await (await fetch(server_url + "/api/fund-raises?" + query, {
-            method: "GET",
-        })).json()
-        if (res['data']) {
-            return {
-                props: {
-                    fundraisers: res['data'], tag
+    const query = qs.stringify(
+        {
+            filters: {
+                charity: {
+                    id: {
+                        $notNull: true
+                    }
                 }
+            },
+            sort: ['donations_count:desc'],
+            populate: ["image", "user", "charity"],
+            pagination: {
+                pageSize: 6
             }
-        }
+        })
+    let res = await (await fetch(server_url + "/api/fund-raises?" + query)).json()
+    if (res['data'] && res['data'].length > 0) {
         return {
             props: {
-                fundraisers: [], tag
+                fundraisers: res['data']
             }
         }
-    } catch (err) {
-        console.error(err);
-        return {
-            props: { fundraisers: [], tag },
+    }
+    return {
+        props: {
+            fundraisers: null
         }
     }
-
 }

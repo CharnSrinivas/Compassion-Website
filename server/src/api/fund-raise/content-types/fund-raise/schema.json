@@ -75,10 +75,6 @@
       "default": "0",
       "required": true
     },
-    "zip_code": {
-      "type": "integer",
-      "required": true
-    },
     "user": {
       "type": "relation",
       "relation": "manyToOne",
@@ -100,6 +96,23 @@
     "individual": {
       "type": "boolean",
       "default": true
+    },
+    "fund_type": {
+      "type": "enumeration",
+      "enum": [
+        "INR",
+        "USD",
+        "EURO",
+        "BITCOIN"
+      ]
+    },
+    "address": {
+      "type": "string",
+      "required": true
+    },
+    "recv_details": {
+      "type": "string",
+      "required": true
     }
   }
 }

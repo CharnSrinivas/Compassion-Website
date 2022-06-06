@@ -29,11 +29,11 @@ export default function story({ fundraiser, is_auth, token }: Props) {
             ),
         })
         if (res.ok) {
-            router.push(`/manage/my-fundraisers`)
+            router.push(`/manage-fundraisers/my-fundraisers`)
         }
     }
     return (
-        <div className="border p-8 px-10 w-[45%] bg-white shadow-xl md:min-w-1/2  mx-auto rounded-xl">
+        <div className="border p-8 px-10 w-[45%] bg-white shadow-xl md:min-w-1/2 my-12  mx-auto rounded-xl">
             {/* Steps */}
             <div className="w-full py-3">
                 <div className="flex">

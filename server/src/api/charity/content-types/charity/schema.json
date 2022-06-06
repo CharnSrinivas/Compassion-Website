@@ -47,13 +47,21 @@
         "audios"
       ]
     },
-    "zip_code": {
-      "type": "integer",
+    "register_no": {
+      "required": false,
+      "type": "integer"
+    },
+    "address": {
+      "type": "string",
       "required": true
     },
-    "register_no": {
-      "required": true,
-      "type": "integer"
+    "description": {
+      "type": "text",
+      "required": true
+    },
+    "recv_details": {
+      "type": "string",
+      "required": true
     }
   }
 }

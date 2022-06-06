@@ -4,18 +4,23 @@ import { jwt_aut_token, server_url } from '../../../config';
 import qs from 'qs';
 import { GetServerSidePropsContext, GetServerSidePropsResult, Redirect } from 'next/types';
 import { isMobile } from '../../../utils'
+import { useRouter } from 'next/router';
 interface Props {
-  fundraiser: any; donations: any[]; donations_meta: any; slug: String
+  fundraiser: any; donations: any[]; donations_meta: any; slug: String; token: string;
+  fundraiser_meta:any
 }
 
-export default function ({ fundraiser, donations, donations_meta, slug }: Props) {
+export default function ({ fundraiser, fundraiser_meta,donations, donations_meta, slug, token }: Props) {
   const [_donations, setDonations] = useState(donations);
   const [open_share, setOpenShare] = useState(false);
   const [url, setUrl] = useState('');
   const [show_embedded, setShowEmbedded] = useState(false);
-
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  console.log(fundraiser_meta);
+  
   useEffect(() => {
-    setUrl(window.location.origin);
+    setUrl(window.location.pathname);
 
   }, [])
 
@@ -38,11 +43,10 @@ export default function ({ fundraiser, donations, donations_meta, slug }: Props)
       window.open(`https://telegram.me/share/url?url=${url}/f/${slug}`, "_blank")
     }
   }
+  const removeFundraiser = async () => {
+  }
   return (
     <>
-      <Header>
-      </Header>
-
       <section className="text-gray-600 body-font bg-[#f6f6f9] ">
         <div className="container px-3 py-16 mx-auto ">
           <div className='mb-5'>
@@ -77,9 +81,13 @@ export default function ({ fundraiser, donations, donations_meta, slug }: Props)
                     setOpenShare(true);
                     document.querySelector('body')!.style.overflow = 'hidden';
                     document.documentElement.scrollTop = 0
-                  }} className='rounded-full bg-primary p-3 text-white'>
+                  }}
+                    className='rounded-full bg-[#32a95c] p-3  stroke-white'
+                  >
+
                     <svg
-                      fill="currentColor"
+                      fill="none"
+                      stroke='white'
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       strokeWidth={2}
@@ -88,42 +96,29 @@ export default function ({ fundraiser, donations, donations_meta, slug }: Props)
                     >
                       <path d="M 23 3 A 4 4 0 0 0 19 7 A 4 4 0 0 0 19.09375 7.8359375 L 10.011719 12.376953 A 4 4 0 0 0 7 11 A 4 4 0 0 0 3 15 A 4 4 0 0 0 7 19 A 4 4 0 0 0 10.013672 17.625 L 19.089844 22.164062 A 4 4 0 0 0 19 23 A 4 4 0 0 0 23 27 A 4 4 0 0 0 27 23 A 4 4 0 0 0 23 19 A 4 4 0 0 0 19.986328 20.375 L 10.910156 15.835938 A 4 4 0 0 0 11 15 A 4 4 0 0 0 10.90625 14.166016 L 19.988281 9.625 A 4 4 0 0 0 23 11 A 4 4 0 0 0 27 7 A 4 4 0 0 0 23 3 z" />
                     </svg>
+
                   </button>
                   <p className='mt-1 text-center'>share</p>
                 </div>
-                <div className='flex-col items-center '>
-                  <a href={`/manage/${fundraiser.attributes.slug}/edit/details`} >
-                    <div className='rounded-full bg-primary p-3 text-white'>
-                      <svg
-                        fill="currentColor"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        className="w-6 h-6"
-                        viewBox="0 0 512.019 512.019"
 
+                <div className='flex-col items-center '>
+                  <a href={`/f/${fundraiser.attributes.slug}`} target={'_blank'} >
+                    <div className='rounded-full stroke-[#32a95c]  p-3  border-[#32a95c]   border-2 '>
+                      <svg
+                        fill="none"
+                        className="w-6 h-6"
+                        strokeWidth={2}
+                        viewBox="0 0 48 48"
                       >
-                        <g>
-                          <g>
-                            <polygon points="350.316,80.852 0,431.166 0,512.009 80.841,512.009 431.157,161.693 		" />
-                          </g>
-                        </g>
-                        <g>
-                          <g>
-                            <rect
-                              x="406.542"
-                              y="10.214"
-                              transform="matrix(0.7071 -0.7071 0.7071 0.7071 82.5924 334.1501)"
-                              width="76.218"
-                              height="114.327"
-                            />
-                          </g>
-                        </g>
+                        <path d="M24,40C12.33,40,2.8,28.13.16,24.49a0.83,0.83,0,0,1,0-1C2.8,19.87,12.33,8,24,8S45.19,19.86,47.84,23.5a0.84,0.84,0,0,1,0,1h0C45.19,28.14,35.66,40,24,40ZM1,24c2.67,3.65,11.87,15,23,15S44.3,27.64,47,24C44.31,20.36,35.1,9,24,9S3.71,20.35,1,24Z" />
+                        <path d="M24,31a7,7,0,1,1,7-7A7,7,0,0,1,24,31Zm0-13a6,6,0,1,0,6,6A6,6,0,0,0,24,18Z" />
                       </svg>
+
                     </div>
                   </a>
-                  <p className='mt-1 text-center'>Edit</p>
+                  <p className='mt-1 text-center'>View</p>
                 </div>
+
               </div>
             </div>
             <hr />
@@ -276,9 +271,6 @@ export default function ({ fundraiser, donations, donations_meta, slug }: Props)
                             >
                               Date
                             </th>
-                            {/* <th scope="col" className="relative px-6 py-3">
-                            <span className="sr-only">Edit</span>
-                          </th> */}
                           </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
@@ -309,9 +301,7 @@ export default function ({ fundraiser, donations, donations_meta, slug }: Props)
                                 <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
                                   {new Date(donation.attributes.createdAt).toLocaleDateString().replaceAll("/", '-')}
                                 </td>
-                                {/* <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
-                                  <a href="#" className="text-indigo-600 hover:text-indigo-900">Edit</a>
-                                </td> */}
+
                               </tr>
                             )
                           })}
@@ -320,17 +310,104 @@ export default function ({ fundraiser, donations, donations_meta, slug }: Props)
                       </table>}
                     {_donations.length <= 0 &&
                       <div className=' bg-white py-7'>
-                        <h3 className='mt-15 font-medium text-xl text-gray-900 my-3 text-center'>Your fundraiser has no donations yet :(</h3>
-                        <h5 className='mt-15  text-gray-700 my-3 text-center' >Your donations will show up here. Start by sharing your fundriaiser with friends and family </h5>
+                        <h3 className='mt-15 font-medium text-xl text-gray-900 my-3 text-center'>This fundraiser has no donations yet :(</h3>
+                        <h5 className='mt-15  text-gray-700 my-3 text-center' >Donations for this fundraiser will show up here</h5>
                       </div>
+                    }
+
+                    {donations_meta['']}
+                  </div>
+                  <div className="flex my-5 mx-auto justify-center">
+                    {donations_meta['page'] !== 1 &&
+                      <a href={`${url}?dp=${donations_meta['page'] - 1}`} className="border border-teal-500 text-teal-500 block rounded-sm font-bold py-4 px-6 mr-2 flex items-center hover:bg-teal-500 hover:text-white">
+                        <svg
+                          className="h-5 w-5 mr-2 fill-current"
+                          id="Layer_1"
+                          xmlns="http://www.w3.org/2000/svg"
+                          xmlnsXlink="http://www.w3.org/1999/xlink"
+                          x="0px"
+                          y="0px"
+                          viewBox="-49 141 512 512"
+                          xmlSpace="preserve"
+                        >
+                          <path
+                            id="XMLID_10_"
+                            d="M438,372H36.355l72.822-72.822c9.763-9.763,9.763-25.592,0-35.355c-9.763-9.764-25.593-9.762-35.355,0 l-115.5,115.5C-46.366,384.01-49,390.369-49,397s2.634,12.989,7.322,17.678l115.5,115.5c9.763,9.762,25.593,9.763,35.355,0 c9.763-9.763,9.763-25.592,0-35.355L36.355,422H438c13.808,0,25-11.193,25-25S451.808,372,438,372z"
+                          />
+                        </svg>
+                        Previous
+                      </a>
+                    }
+                    {donations_meta['page'] < donations_meta['pageCount'] &&
+                      <a href={`${url}?dp=${donations_meta['page'] + 1}`} className="border border-teal-500 bg-teal-500 text-white block rounded-sm font-bold py-4 px-6 ml-2 flex items-center">
+                        Next
+                        <svg
+                          className="h-5 w-5 ml-2 fill-current"
+                          id="Layer_1"
+                          xmlns="http://www.w3.org/2000/svg"
+                          xmlnsXlink="http://www.w3.org/1999/xlink"
+                          x="0px"
+                          y="0px"
+                          viewBox="-49 141 512 512"
+                          xmlSpace="preserve"
+                        >
+                          <path
+                            id="XMLID_11_"
+                            d="M-24,422h401.645l-72.822,72.822c-9.763,9.763-9.763,25.592,0,35.355c9.763,9.764,25.593,9.762,35.355,0
+      l115.5-115.5C460.366,409.989,463,403.63,463,397s-2.634-12.989-7.322-17.678l-115.5-115.5c-9.763-9.762-25.593-9.763-35.355,0
+      c-9.763,9.763-9.763,25.592,0,35.355l72.822,72.822H-24c-13.808,0-25,11.193-25,25S-37.808,422-24,422z"
+                          />
+                        </svg>
+                      </a>
                     }
                   </div>
                 </div>
               </div>
             </div>
           </div>
+          {/* <>
+            <div className="flex flex-col p-8 bg-white shadow-md hover:shodow-lg rounded-2xl mt-8">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-16 h-16 rounded-2xl p-3 border border-blue-100 text-blue-400 bg-blue-50"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  <div className="flex flex-col ml-3">
+                    <div className="font-medium leading-none">Remove this Fundraiser form my Charity ?</div>
+                    <p className="text-sm text-gray-600 leading-none mt-2">
+                      By removing this fundraiser, It no longer be under your charity
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={removeFundraiser}
+                  className="flex-no-shrink bg-red-500 px-5 ml-4 py-2 text-sm shadow-sm hover:shadow-lg font-medium tracking-wider border-2 border-red-500 text-white rounded-full">
+                  Remove
+                </button>
+              </div>
+            </div>
+
+          </> */}
         </div>
       </section>
+
+      {
+        loading &&
+        <div className="w-12 h-12 rounded-full animate-spin
+        border-x-2 border-solid border-blue-500 border-t-transparent absolute" style={{ position: "absolute", top: "50%", left: "50%" }}>
+        </div>
+      }
       {
         open_share &&
         <>
@@ -478,6 +555,9 @@ export default function ({ fundraiser, donations, donations_meta, slug }: Props)
 export async function getServerSideProps(context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<Record<string, unknown>>> {
   const slug = context.params ? context.params['slug']?.toString().toLocaleLowerCase() : [];
   const token = context.req.cookies[jwt_aut_token];
+  const donations_page = context.query['dp'];
+  const donations_size = context.query['ds'];
+
   const redirect_obj: Redirect = {
     destination: "/register",
     statusCode: 307,
@@ -506,18 +586,23 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
       Authorization: `Bearer ${token}`,
     }
   })).json();
+
   if (!fundraiser['data'][0]['attributes']['user']) { return { redirect: redirect_obj } };
+
+  const dp = parseInt(donations_page ? donations_page.toString() : '1');
+  const ds = parseInt(donations_size ? donations_size.toString() : '10');
 
   const donations_query = qs.stringify({
     filters: {
       fund_raise: {
         id: { $eq: fundraiser['data'][0]['id'] }
       }
-    }, pagination: {
-      page: 1,
-      pageSize: 25,
     },
-    populate: "*"
+    populate: ["image", "user", 'charity'],
+    pagination: {
+      pageSize: !isNaN(ds) ? ds : 10,
+      page: !isNaN(dp) ? dp : 1
+    }
   })
 
   const donations = await (await fetch(server_url + "/api/donations?" + donations_query, {
@@ -528,7 +613,9 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
   })).json();
   return {
     props: {
+      token,
       fundraiser: fundraiser['data'][0],
+      fundraiser_meta:fundraiser['meta'],
       slug,
       donations: donations['data'],
       donations_meta: donations['meta']['pagination']

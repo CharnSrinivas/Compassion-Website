@@ -1,17 +1,18 @@
 module.exports = async (policyContext, config, { strapi }) => {
     const user = (policyContext.state.user);
-    const body = policyContext.request.body.data;
-    // const fundraiser_id = policyContext.
+    let u = policyContext.request.url.split('/');
+    let id = parseInt(u[u.length-1]);
+
     let fundraiser = await strapi.db.query("api::fund-raise.fund-raise").findOne({
         where: {
             id: {
-                $eq: body.id
+                $eq: id
             }
         }, populate: ['user']
-    });
+    })
     if (user.id === fundraiser.user.id) {
-        return true
+        return true;
     } else {
-        return false
+        return false;
     }
 }

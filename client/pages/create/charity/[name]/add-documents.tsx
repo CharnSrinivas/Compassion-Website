@@ -51,7 +51,7 @@ export default function addImage({ is_auth, token, fundraiser }: Props) {
     }
     Promise.all(uploads).then((res) => {
       setUploading(false);
-      router.push(`/manage/my-fundraisers`); return;
+      router.push(`/manage-fundraisers/my-fundraisers`); return;
     }).catch((err) => {
       console.error(err);
     })

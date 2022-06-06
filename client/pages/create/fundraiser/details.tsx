@@ -3,7 +3,7 @@ import { useFormik } from 'formik';
 import { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
 import React, { useEffect, useState } from 'react'
 import * as Yup from 'yup'
-import { fundraiser_tags, jwt_aut_token, server_url } from '../../../config';
+import { fundraiser_tags, fund_types, jwt_aut_token, server_url } from '../../../config';
 import { stringToSlug } from '../../../utils';
 import { useRouter } from 'next/router';
 import axios from 'axios';
@@ -12,20 +12,23 @@ import qs from 'qs';
 interface Props {
   is_auth: boolean,
   user: any | null;
-  token: string
+  token: string;
+  is_individual: boolean;
+  charity: any
 }
 
-export default function fundraiser({ is_auth, user, token: auth_token }: Props) {
+export default function fundraiser({ is_individual: _is_individual, is_auth, user, token: auth_token, charity }: Props) {
   const [submitting, setSubmitting] = useState(false);
-  const [is_individual, setIsIndividual] = useState(true);
+  const [is_individual, setIsIndividual] = useState(_is_individual);
+  const [open_popup, setOpenPopUp] = useState(false);
   const [searching_charities, setIsSearching] = useState(false);
-  const [charities, setCharities] = useState([]);
-  const [selected_charity, setSelectedCharity] = useState<number | null>(null);
+  const [charities, setCharities] = useState<any[]>(charity?[charity]:[]);
+  const [selected_charity, setSelectedCharity] = useState<number | null>(charity ? charity.id : null);
   const router = useRouter();
-
+  
   useEffect(() => {
     let body = document.querySelector('body');
-    if (!is_individual) {
+    if (open_popup) {
       if (!body) return;
       document.body.scrollTop = document.documentElement.scrollTop = 0;
       body.style.overflow = 'hidden'
@@ -33,7 +36,7 @@ export default function fundraiser({ is_auth, user, token: auth_token }: Props) 
       if (!body) return;
       body.style.overflow = 'auto'
     }
-  }, [is_individual]);
+  }, [open_popup]);
 
   const searchCharities = (search: string) => {
     if (searching_charities) { return }
@@ -50,19 +53,15 @@ export default function fundraiser({ is_auth, user, token: auth_token }: Props) 
         pageSize: 20
       }
     });
-
     fetch(server_url + "/api/charities?" + query, {
       method: "GET",
-      headers: {
-        Authorization: `Bearer ${auth_token}`,
-      }
     })
       .then(
         res => {
           res.json().then(res_json => {
             setIsSearching(false);
             if (res_json['data']) {
-              setCharities(res_json['data'])
+              setCharities(res_json['data']);
             }
           })
         })
@@ -77,8 +76,10 @@ export default function fundraiser({ is_auth, user, token: auth_token }: Props) 
     initialValues: {
       title: '',
       targetFunds: 0,
-      zipCode: 0,
-      category: ''
+      address: '',
+      category: '',
+      fundType: '',
+      recvDetails: ''
     },
     validationSchema: Yup.object({
       title: Yup.string().min(8).max(70, "Title should be less than 70 characters").required(),
@@ -86,13 +87,22 @@ export default function fundraiser({ is_auth, user, token: auth_token }: Props) 
         .number()
         .min(1, "Invalid target funds")
         .required('Target Funds is required'),
-      zipCode: Yup
-        .number()
-        .min(1, "Invalid zip code")
-        .required('Invalid Zip Code.'),
+      address: Yup
+        .string()
+        .min(3, "Invalid Address")
+        .required('Address is required.'),
       category: Yup
         .string().min(3).required("Category is required.")
-        .equals(fundraiser_tags, 'Invalid category')
+        .equals(fundraiser_tags, 'Invalid category'),
+      fundType:
+        Yup
+          .string().min(3).required("Fund type is required.")
+          .equals(fund_types, 'Invalid category'),
+      recvDetails: Yup
+        .string()
+        .min(3, "Invalid 'fund receive details'")
+        .required('Fund receive details is required.'),
+
     }),
     onSubmit: async (e) => {
       setSubmitting(true);
@@ -102,12 +112,15 @@ export default function fundraiser({ is_auth, user, token: auth_token }: Props) 
           data: {
             title: e.title,
             fund_target: e.targetFunds,
-            zip_code: e.zipCode,
+            zip_code: e.address,
             user: user.id,
             tag: e.category,
             slug: slug,
             charity: selected_charity,
-            individual: selected_charity == null
+            individual: selected_charity == null,
+            fund_type: e.fundType,
+            address: e.address,
+            recv_details:e.recvDetails
           }
         }, {
         headers: {
@@ -218,42 +231,100 @@ export default function fundraiser({ is_auth, user, token: auth_token }: Props) 
                 {formik.errors.title}
               </p>
             }
+            <div className='w-full flex items-center gap-2'>
+              <div className='w-full'>
+                <label htmlFor="" className="block">
+                  Target funds
+                </label>
+                <input
+                  onBlur={formik.handleBlur}
+                  onChange={formik.handleChange}
+                  value={formik.values.targetFunds}
+                  type="Number"
+                  name='targetFunds'
+                  className="border w-full h-10 px-3 mb-5 rounded-md"
+                  placeholder="1000"
+                />
+                {
+                  formik.errors.targetFunds &&
+                  <p className="text-xs italic text-red-500">
+                    {formik.errors.targetFunds}
+                  </p>
+                }
+              </div>
+
+              <div>
+                <label htmlFor="" className="block">
+                  Category
+                </label>
+                <select
+                  onBlur={formik.handleBlur}
+                  onChange={formik.handleChange}
+                  value={formik.values.fundType}
+                  name='fundType'
+                  id='fundType'
+                  className="border w-full h-10 px-3 mb-5 rounded-md bg-white"
+                  // className="form-select appearance-none block w-full px-3  text-base font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+                  aria-label="Default select example">
+                  <option selected>Choose a fund type</option>
+                  {fund_types.map((tag, index) => {
+                    return (
+                      <option key={index} value={tag}>{tag[0].toUpperCase() + tag.slice(1)}</option>
+                    )
+                  })}
+                </select>
+                {
+                  formik.errors.fundType &&
+                  <p className="text-xs italic text-red-500">
+                    {
+                      formik.errors.fundType
+                    }
+                  </p>
+                }
+              </div>
+
+            </div>
             <label htmlFor="" className="block">
-              Target funds
+              Address
             </label>
             <input
               onBlur={formik.handleBlur}
               onChange={formik.handleChange}
-              value={formik.values.targetFunds}
-              type="Number"
-              name='targetFunds'
+              value={formik.values.address}
+              type="text"
+              name='address'
               className="border w-full h-10 px-3 mb-5 rounded-md"
-              placeholder="1000"
+              placeholder="Aaron Larson
+              Zippy Diagnostics
+              123 Center Ln.
+              Plymouth, MN 55441"
             />
             {
-              formik.errors.targetFunds &&
+              formik.errors.address &&
               <p className="text-xs italic text-red-500">
-                {formik.errors.targetFunds}
+                {formik.errors.address}
               </p>
             }
+
             <label htmlFor="" className="block">
-              Zip Code
+              Fund receive details
             </label>
             <input
               onBlur={formik.handleBlur}
               onChange={formik.handleChange}
-              value={formik.values.zipCode}
-              type="number"
-              name='zipCode'
+              value={formik.values.recvDetails}
+              type="text"
+              name='recvDetails'
               className="border w-full h-10 px-3 mb-5 rounded-md"
-              placeholder="0234234234"
+              placeholder="bank details (or) wallet ID"
             />
             {
-              formik.errors.zipCode &&
+              formik.errors.recvDetails &&
               <p className="text-xs italic text-red-500">
-                {formik.errors.zipCode}
+                {formik.errors.recvDetails}
               </p>
             }
+
             <label htmlFor="" className="block">
               Category
             </label>
@@ -279,14 +350,22 @@ export default function fundraiser({ is_auth, user, token: auth_token }: Props) 
               </p>
             }
             <h2 className='font-medium my-2 mt-5 text-xl'>Fundraise as: </h2>
-            <fieldset onChange={() => { setIsIndividual(!is_individual) }} className='w-full flex  gap-5 flex-row items-center'>
+            <fieldset
+              className='w-full flex  gap-5 flex-row items-center'>
               <>
-                <label className='border-2 border-gray-600 border-opacity-40 p-3 rounded-lg flex flex-col w-full md:w-1/2' htmlFor="an-individual">
+                <label onClick={() => {
+                  setIsIndividual(true);
+                  setOpenPopUp(false);
+                  setSelectedCharity(null);
+                }} className='border-2 border-gray-600 border-opacity-40 p-3 rounded-lg flex flex-col w-full md:w-1/2' htmlFor="an-individual">
                   <input type="radio" id='an-individual' defaultChecked={is_individual} checked={is_individual} />
                   <h3 className='my-1 text-gray-700 font-medium '>An Individual</h3>
                   <p className='my-1 text-gray-600 text-sm'>I am solo organizer</p>
                 </label>
-                <label className='border-2 border-gray-600 border-opacity-40 p-3 rounded-lg flex flex-col w-full md:w-1/2' htmlFor="an-charity">
+                <label onClick={() => {
+                  setIsIndividual(false);
+                  setOpenPopUp(true);
+                }} className='border-2 border-gray-600 border-opacity-40 p-3 rounded-lg flex flex-col w-full md:w-1/2' htmlFor="an-charity">
                   <input type="radio" id='an-charity' checked={!is_individual} defaultChecked={is_individual} />
                   <h3 className='my-1 text-gray-700 font-medium '>An Charity</h3>
                   <p className='my-1 text-gray-600 text-sm'>Fundraiser for a charity</p>
@@ -294,19 +373,24 @@ export default function fundraiser({ is_auth, user, token: auth_token }: Props) 
               </>
             </fieldset>
             {selected_charity != null &&
-              <h2 className='font-medium mt-5 text-xl '>Charity</h2>
+              <h2 className='font-medium mt-5 text-xl '>Selected Charity</h2>
             }
             {
               selected_charity != null &&
               <div className='flex flex-row items-center gap-5 border-2 border-gray-600 border-opacity-40 rounded-lg p-3 my-1 '>
-                {
+                {charities &&
                   charities.map(
                     (charity: any, key) => {
                       if (charity.id === selected_charity) {
                         return (
-                          <div key={key}>
-                            <img className='w-5 h-5' src={server_url + charity['attributes']['image']['data']['attributes']['url']} alt={charity['attributes']['name']} />
-                            <h4>{charity['attributes']['name']}</h4>
+                          <div key={key}
+                            className=' cursor-pointer p-2 py-4  flex flex-row gap-3 items-center'
+                          >
+                            <img className='w-[5rem] h-[4rem] object-cover' src={server_url + charity['attributes']['image']['data']['attributes']['url']} alt={charity['attributes']['name']} />
+                            <div className='flex flex-col items-start gap-1'>
+                              <h4 className='font-light text-gray-600 text-xl'>{charity['attributes']['name']}</h4>
+                              <h4 className='text-gray-500 text-sm'>{charity['attributes']['address']}</h4>
+                            </div>
                           </div>
                         )
                       }
@@ -324,16 +408,17 @@ export default function fundraiser({ is_auth, user, token: auth_token }: Props) 
       {
         submitting &&
         <div className="w-12 h-12 rounded-full animate-spin
-            border-x-2 border-solid border-blue-500 border-t-transparent absolute" style={{ position: "absolute", top: "50%", left: "0%" }}>
+            border-x-2 border-solid border-blue-500 border-t-transparent absolute" style={{ position: "absolute", top: "50%", left: "50%" }}>
         </div>
       }
       {
-        !is_individual &&
+        open_popup &&
         <div
           className="h-screen w-screen top-0 left-0 right-0 bottom-0 bg-gray-500 bg-opacity-80 py-6 flex flex-col justify-center sm:py-12 absolute">
           <div className="py-3 sm:w-1/2 w-full sm:mx-auto">
-            <div onClick={()=>{
+            <div onClick={() => {
               setIsIndividual(true);
+              setOpenPopUp(false);
               setSelectedCharity(null);
             }} className='rounded-full w-[1.5rem] h-[1.5rem] my-3 cursor-pointer bg-gray-200 text-gray-800 ml-auto flex justify-center items-center '>x</div>
             <div className="bg-white min-w-1xl flex flex-col rounded-xl shadow-lg">
@@ -370,13 +455,18 @@ export default function fundraiser({ is_auth, user, token: auth_token }: Props) 
                         return (
                           <div
                             key={key}
-                            className=' cursor-pointer p-2 border-2 border-gray-500 border-opacity-50 rounded-xl flex flex-row gap-3 items-center'
+                            className=' cursor-pointer p-2 py-4  flex flex-row gap-3 items-center'
                             onClick={() => {
                               setSelectedCharity(charity.id);
-                              setIsIndividual(true);
+                              setIsIndividual(false);
+                              setOpenPopUp(false);
                             }}>
-                            <img className='w-5 h-5' src={server_url + charity['attributes']['image']['data']['attributes']['url']} alt={charity['attributes']['name']} />
-                            <h4>{charity['attributes']['name']}</h4>
+                            <img className='w-[5rem] h-[4rem] object-cover' src={server_url + charity['attributes']['image']['data']['attributes']['url']} alt={charity['attributes']['name']} />
+                            <div className='flex flex-col items-start gap-1'>
+                              <h4 className='font-light text-gray-600 text-xl'>{charity['attributes']['name']}</h4>
+                              <h4 className='text-gray-500 text-sm'>{charity['attributes']['address']}</h4>
+
+                            </div>
                           </div>
                         )
                       })
@@ -394,6 +484,27 @@ export default function fundraiser({ is_auth, user, token: auth_token }: Props) 
 
 export async function getServerSideProps(context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<Record<string, unknown>>> {
   const token = context.req.cookies[jwt_aut_token];
+  var charity_id: any = context.query['charity_id']?.toString();
+  var is_individual = false;
+  var charity = null
+  if (!charity_id) { is_individual = true }
+  else {
+    charity_id = parseInt(charity_id);
+    if (isNaN(charity_id)) {
+      charity_id = null;
+      is_individual = true;
+    } else {
+      const query = qs.stringify({
+        populate: ['image', 'user']
+      })
+      let res = await fetch(server_url + "/api/charities/" + charity_id + '?' + query, {
+        method: "GET"
+      })
+      if (res.status > 201) { is_individual = true; charity_id = null }
+      charity = await res.json();
+      charity = charity['data']
+    }
+  }
   const redirect: any = {
     destination: "/register",
     statusCode: 307,
@@ -418,7 +529,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
 
   return {
     props: {
-      is_auth: true, user: user, token: token
+      is_auth: true, user: user, token: token, is_individual, charity
     }
   }
 }

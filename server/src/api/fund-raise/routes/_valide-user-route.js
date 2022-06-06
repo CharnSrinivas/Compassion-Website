@@ -7,6 +7,13 @@ module.exports = {
             config: {
                 policies: ['validate-user']
             }
+        },{
+            method: 'DELETE',
+            path: '/fund-raises/:id',
+            handler: 'fund-raise.delete',
+            config: {
+                policies: ['validate-user-delete']
+            }
         }
     ]
 }

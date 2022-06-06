@@ -6,9 +6,10 @@ export default function how_it_works({ }: Props) {
     return (
         <section className='flex flex-col items-center'>
             <div className='px-7 py-5 my-8'>
-                <h1 className='font-medium text-center my-5 text-3xl text-gray-700'>How compassion works</h1>
-                <h2 className='text-gray-600'>Compassion is the best place to fundraise, whether you are an individual, group, or organization.</h2>
+                <h1 className='font-medium text-center my-5 text-4xl text-gray-700'>How compassion works</h1>
+                <h2 className='w-[100%] lg:w-[65%] mx-auto  text-[1.1rem] text-gray-700 text-center '> While other fundraising platforms are limited to a country due to government restraints, Compassion allows you to collect crypto donations from around the world, whether you are an individual, group, or organization.</h2>
             </div>
+            <img src="/assets/we-accept-crypto.png" className='lg:w-[40%] w-[95%] rounded-xl' loading='lazy' alt="crypto-donation" />
             <div className="flex flex-wrap mx-auto items-center  mt-24 lg:w-[70%]  pb-20">
                 <div className="xl:w-1/4 lg:w-1/2 md:w-full w-[80%] px-8 pt-3 pb-6 border-l-2 border-gray-200 border-opacity-60 mx-auto">
                     <svg
@@ -240,7 +241,18 @@ export default function how_it_works({ }: Props) {
                     </div>
                 </div>
             </div>
+            <div className="flex flex-wrap mx-auto items-center  mt-24 pb-20 py-5 bg-[#fbf8f6] w-full">
 
+                <h1 className='font-medium text-center my-5 text-3xl mx-auto text-[#32a95c]'>
+                    The #1 Crypto Crowdfunding Platform In The World For
+                    Individuals And Charities
+                </h1>
+                <h4 className='text-gray-600 text-[1.1rem] text-light mx-auto w-[95%] lg:w-[50%]'>
+                    Compassion is a leading web3.0 fundraising platform in the world that
+                    accepts crypto donations. That’s why more and more people are using
+                    Compassion to start global fundraisers.
+                </h4>
+            </div>
         </section>
     )
 }

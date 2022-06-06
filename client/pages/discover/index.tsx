@@ -41,7 +41,7 @@ export default function fundraisers({ fundraisers }: Props) {
                                 fundraisers.map((item, index) => {
                                     return (
                                         <a key={index} href={`/f/${item.attributes.slug}`} className="xl:w-1/4 md:w-1/2 p-4 cursor-pointer" >
-                                            <div className="bg-gray-50 drop-shadow-md rounded-lg p-0  min-h-[26rem] hover:shadow-lg">
+                                            <div className="bg-gray-50 drop-shadow-md p-6 rounded-lg min-h-[28rem] hover:shadow-lg">
 
                                                 {item.attributes.image && item.attributes.image.data &&
                                                     <img
@@ -104,8 +104,10 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
                 $eq: true
             }
         }, populate: ["image", "user", 'charity'], pagination: {
-            pageSize: 10
-        }
+            pageSize: 10,
+        },
+        sort: ['donations_count:desc'],
+        encodeValuesOnly: true,
     })
     let res = await (await fetch(server_url + "/api/fund-raises?" + query)).json()
 

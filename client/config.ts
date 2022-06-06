@@ -1,4 +1,4 @@
-export const server_url = process.env['NODE_ENV'] === "production" ? "http://api-compassion.toptechonly.com" : "http://192.168.42.156:1337";
+export const server_url = process.env['NODE_ENV'] === "production" ? "http://api-compassion.toptechonly.com" : "http://localhost:1337";
 // "http://compassion-api.toptechonly.com"
 export const jwt_aut_token = 'jwt-auth-token';
 export const fundraiser_ref = 'api::fund-raise.fund-raise';
@@ -24,4 +24,11 @@ export const fundraiser_tags = [
     "volunteer",
     "wishes",
     "other",
+]
+
+export const fund_types = [
+"INR",
+"USD",
+"EURO",
+"BITCOIN"
 ]

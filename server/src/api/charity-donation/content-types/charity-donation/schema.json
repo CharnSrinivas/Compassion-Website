@@ -1,10 +1,10 @@
 {
   "kind": "collectionType",
-  "collectionName": "donations",
+  "collectionName": "charity_donations",
   "info": {
-    "singularName": "donation",
-    "pluralName": "donations",
-    "displayName": "donation",
+    "singularName": "charity-donation",
+    "pluralName": "charity-donations",
+    "displayName": "charity donation",
     "description": ""
   },
   "options": {
@@ -13,23 +13,23 @@
   "pluginOptions": {},
   "attributes": {
     "amount": {
-      "type": "decimal",
+      "type": "float",
       "required": true
     },
     "user": {
       "type": "relation",
       "relation": "manyToOne",
       "target": "plugin::users-permissions.user",
-      "inversedBy": "donations"
+      "inversedBy": "charity_donations"
     },
-    "fund_raise": {
+    "charity": {
       "type": "relation",
       "relation": "manyToOne",
-      "target": "api::fund-raise.fund-raise",
-      "inversedBy": "donations"
+      "target": "api::charity.charity",
+      "inversedBy": "charity_donations"
     },
     "comment": {
-      "type": "text"
+      "type": "string"
     }
   }
 }

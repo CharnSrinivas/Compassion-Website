@@ -255,7 +255,7 @@ export default function fundraiser({ is_individual: _is_individual, is_auth, use
 
               <div>
                 <label htmlFor="" className="block">
-                  Category
+                  Fund Type
                 </label>
                 <select
                   onBlur={formik.handleBlur}

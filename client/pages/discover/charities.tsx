@@ -9,23 +9,21 @@ export default function charities({  fundraisers }: Props) {
     return (
         <div>
             <section className="text-gray-600 body-font ">
-                <div className="container px-3 py-24 mx-auto">
+            <div className="container px-3 pt-20 mx-auto">
                     <div className="flex flex-wrap w-full mb-20">
-                        <div className="lg:w-1/2 w-full mb-6 lg:mb-0">
-                            <h1 className="sm:text-3xl text-2xl font-medium title-font mb-2 text-gray-900">
-                                Browse charity fundraisers
+                        <div className="lg:w-[80%] mx-auto w-full mb-4 lg:mb-0">
+                            <h1 className="text-3xl lg:text-4xl font-medium title-font mb-2 text-gray-800">
+                                Browse fundraisers
                             </h1>
                             <div className="h-1 w-20 bg-primary rounded " />
-                            <h2 className='mt-5 mb-2 text-gray-600'>
-                                People around the world are raising money f or what they are passionate about.
+                            <h2 className='mt-5 mb-2 text-gray-600 text-xl'>
+                                People around the world are raising money for what they are passionate about.
                             </h2>
+                            <a href="/create/fundraiser/details"
+                                className="block px-8 md:w-fit text-center text-[1.1rem] drop-shadow-xl py-3 space-x-10 rounded text-white mt-8  bg-[#32a95c] sm:w-full">
+                                Start a Fundraiser
+                            </a>
                         </div>
-                        <p className="lg:w-1/2 w-full leading-relaxed text-gray-500">
-                            Whatever cardigan tote bag tumblr hexagon brooklyn asymmetrical
-                            gentrify, subway tile poke farm-to-table. Franzen you probably haven't
-                            heard of them man bun deep jianbing selfies heirloom prism food truck
-                            ugh squid celiac humblebrag.
-                        </p>
                     </div>
                 </div>
                 <div className=' bg-primary bg-opacity-5 flex flex-col mx-auto py-5 items-center' style={{ minHeight: "60vh" }}>
@@ -35,7 +33,7 @@ export default function charities({  fundraisers }: Props) {
                         </h1>
                     }
                     <div className=' w-[80%] flex justify-center'>
-                        <div className="flex flex-wrap w-full justify-evenly">
+                        <div className="flex flex-wrap w-full">
                             {fundraisers && fundraisers.length > 0 &&
                                 fundraisers.map((item, index) => {
                                     return (

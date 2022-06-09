@@ -1,0 +1,33 @@
+module.exports = async (policyContext, config, { strapi }) => {
+    // const user = (policyContext.state.user);
+    const body = policyContext.request.body.data;
+    const charity_id = body.charity;
+    let amount = body.amount;
+    if (amount <= 0) {
+        return false;
+    }
+    let charity = await strapi.db.query("api::charity.charity").findOne({
+        where: {
+            id: {
+                $eq: charity_id
+            }
+        },
+    })
+    console.log(body);
+    console.log(charity);
+    if (!charity) { return false; };
+    let direct_funds = charity.direct_funds;
+    let direct_funds_count = parseInt(charity.direct_funds_count);
+    await strapi.db.query("api::charity.charity").update({
+        where: {
+            id: {
+                $eq: charity_id
+            }
+        },
+        data: {
+            direct_funds: direct_funds + amount,
+            direct_funds_count: direct_funds_count + 1
+        }
+    })
+    return true
+}

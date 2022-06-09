@@ -3,7 +3,6 @@ import type { AppProps } from 'next/app'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 function MyApp({ Component, pageProps }: AppProps) {
-  console.log(pageProps);
   
   return (<>
   <body >

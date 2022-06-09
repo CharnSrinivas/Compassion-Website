@@ -227,12 +227,14 @@ export default function medical({ fundraisers }: Props) {
             </section>
             <div className=' w-full bg-[#fbf8f6] py-5'>
                 <div className='px-8 mx-auto w-90% lg:w-[60%] pt-[5rem]'>
-                    <div className='mb-5'>
-                        <h1 className='font-semibold mb-1 text-3xl text-gray-700'>Trending charity fundraiser</h1>
-                        <div className="h-1 w-24 bg-primary rounded " />
-                    </div>
+                    {fundraisers && fundraisers.length > 0 &&
+                        <div className='mb-5'>
+                            <h1 className='font-semibold mb-1 text-3xl text-gray-700'>Trending charity fundraiser</h1>
+                            <div className="h-1 w-24 bg-primary rounded " />
+                        </div>
+                    }
                     <div className="flex flex-wrap ">
-                        {fundraisers.length > 0 &&
+                        {fundraisers && fundraisers.length > 0 &&
                             fundraisers.map((item, index) => {
                                 return (
                                     <a href={`/f/${item.attributes.slug}`} key={index} className=" xl:w-1/3 md:w-1/2 w-full p-4 cursor-pointer ">
@@ -277,10 +279,15 @@ export default function medical({ fundraisers }: Props) {
                                 )
                             })
                         } {
-                            fundraisers.length <= 0 &&
-                            <h2 className='sm:text-3xl text-2xl font-medium title-font my-7  text-gray-900'>
-                                No charity fundraisers found
-                            </h2>
+                            (!fundraisers || fundraisers.length <= 0) &&
+                            <div className='flex flex-col items-center mx-auto'>
+                                <h2 className='sm:text-4xl text-3xl font-medium align-middle mx-auto title-font my-2  text-gray-700'>
+                                    No charity fundraisers found
+                                </h2>
+                                <p className='font-light text-xl text-gray-600'>
+                                    Be the first one to start a charity fundraiser
+                                </p>
+                            </div>
                         }
                     </div>
                 </div>

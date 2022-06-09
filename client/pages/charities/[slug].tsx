@@ -8,122 +8,100 @@ import { jwt_aut_token, server_url } from '../../config';
 import { isMobile } from '../../utils';
 
 interface Props {
-  fundraiser: any; user: any | null;
+  charity: any; user: any | null;
   donations: any[], donations_meta: any; slug: string
 }
 
-export default function fundraiser({ fundraiser, user, slug, donations, donations_meta }: Props) {
+export default function fundraiser({ charity, user, slug, donations, donations_meta }: Props) {
   const [url, setUrl] = useState('');
   const [open_share, setOpenShare] = useState(false);
   const [read_more, setReadMore] = useState(false);
   const router = useRouter();
   const [show_embedded, setShowEmbedded] = useState(false);
+
   useEffect(() => {
     setUrl(window.location.origin)
   }, [])
   const shareOnWhatsapp = () => {
     if (!window) return;
     if (isMobile()) {
-      window.open(`whatsapp://send?text=${url}/f/${slug}`, '_blank')
+      window.open(`whatsapp://send?text=${url}/charities/${slug}`, '_blank')
     } else {
-      window.open(`https://web.whatsapp.com/send?text=${url}/f/${slug}`, "_blank")
+      window.open(`https://web.whatsapp.com/send?text=${url}/charities/${slug}`, "_blank")
     }
   }
   const copyLink = () => {
-    navigator.clipboard.writeText(`${url}/f/${slug}`).then(() => { }).catch(() => { });
+    navigator.clipboard.writeText(`${url}/charities/${slug}`).then(() => { }).catch(() => { });
   }
   const shareOnTwitter = () => {
     if (!window) return;
     if (isMobile()) {
-      window.open(`tg://msg?text=${url}/f/${slug}`, '_blank')
+      window.open(`tg://msg?text=${url}/f/${slug}`, '_blank');
     } else {
-      window.open(`https://telegram.me/share/url?url=${url}/f/${slug}`, "_blank")
+      window.open(`https://telegram.me/share/url?url=${url}/charities/${slug}`, "_blank");
     }
-  }
+  };
+
   const donate = () => {
     if (!user) {
-      router.push("/register")
+      router.push("/register");
     }
-    let _amount = window.prompt("enter the amount to donate ")
+    let _amount = window.prompt("enter the amount to donate ");
     if (!_amount) return;
     let amount = parseInt(_amount);
     if (isNaN(amount)) return;
     const token = localStorage.getItem(jwt_aut_token);
-    axios.post(server_url + "/api/donations", {
+    axios.post(server_url + "/api/charity-donations", {
       data: {
         amount,
         user: user.id,
-        fund_raise: fundraiser.id, comment: "test comment"
+        charity: charity.id, comment: "test comment"
       },
     }, {
       headers: {
         Authorization: `Bearer ${token}`,
       }
     })
-  }
+  };
+
   return (
     <>
       <Head>
-        <title>{"Compassion| " + fundraiser.attributes.title}</title>
+        <title>{"Compassion charity | " + charity.attributes.name}</title>
         <meta property="og:url" content={url} />
         <meta property="og:type" content="website" />
-        <meta property="og:title" content={"Compassion| " + fundraiser.attributes.title} />
-        <meta property="og:description" content={fundraiser.attributes.description} />
-        {fundraiser.attributes.image && fundraiser.attributes.image.data &&
-          <meta property="og:image" content={server_url + fundraiser.attributes.image.data.attributes.url} />}
+        <meta property="og:title" content={"Compassion charity| " + charity.attributes.name} />
+        <meta property="og:description" content={charity.attributes.description} />
+        {charity.attributes.image && charity.attributes.image.data &&
+          <meta property="og:image" content={server_url + charity.attributes.image.data.attributes.url} />}
       </Head>
       <div>
         <section className="text-gray-600 body-font">
           <div className="container w-auto gap-5 px-3 py-20 mx-auto">
             <div className="lg:w-4/5 lg:justify-center mx-auto flex flex-wrap ">
               <div className='lg:w-1/2'>
-                {fundraiser.attributes.image && fundraiser.attributes.image.data &&
+                {charity.attributes.image && charity.attributes.image.data &&
                   <img
                     className="lg:w-full w-full lg:h-[32rem] h-[28rem] object-cover object-center rounded-lg"
-                    src={server_url + fundraiser.attributes.image.data.attributes.url}
+                    src={server_url + charity.attributes.image.data.attributes.url}
                     alt="content"
                   />
-                }{!fundraiser.attributes.image &&
+                }{!charity.attributes.image &&
                   <img
                     className="lg:w-full w-full lg:h-[32rem] h-[28rem] object-cover object-center rounded-lg"
                     src={"/assets/image-placeholder.jpg"}
                     alt="content"
                   />
                 }
-                <div className="flex justify-between align-baseline h-auto w-fit fill-gray-600 mt-5">
-                  <svg
-                    className='w-[1.5rem] h-[1.5re] mr-2'
-                    version="1.1"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 512 512"
-                    xmlnsXlink="http://www.w3.org/1999/xlink"
-                    enableBackground="new 0 0 512 512"
-                  >
-                    <g>
-                      <g>
-                        <path d="m121.5,64.2c-31.7,0-57.3,25.7-57.3,57.3 0,31.7 25.7,57.3 57.3,57.3 31.7,0 57.3-25.7 57.3-57.3 0.1-31.7-25.6-57.3-57.3-57.3zm0,94.3c-20.4,0-37-16.6-37-37s16.6-37 37-37c20.4,0 37,16.6 37,37s-16.5,37-37,37z" />
-                        <path d="m244.5,29.8c-10.4-11.5-25-17.7-40.7-17.7l-107.3-1.1c-22.9,0-44.8,8.3-60.5,25-16.7,15.7-25,37.6-25,60.5l1,107.4c1,14.6 6.3,29.2 17.7,40.7l256.5,256.4 214.8-214.8-256.5-256.4zm40.7,442l-241.9-241.9c-7.3-7.3-11.5-16.7-11.5-27.1l-1-106.3c0-16.7 7.3-33.4 18.8-45.9 12.5-12.5 29.2-19.8 46.9-19.8l106.3,1c10.4,0 19.8,4.2 27.1,11.5l241.9,241.9-186.6,186.6z" />
-                      </g>
-                    </g>
-                  </svg>
-                  <a className="my-3 title-font text-indigo-500 tracking-widest" target={'_blank'} href={`/discover/${fundraiser.attributes.tag}`}>
-                    {(fundraiser.attributes.tag as string)[0].toUpperCase() + fundraiser.attributes.tag.slice(1)}
-                  </a>
-                </div>
-                <h1 className="text-gray-900 text-3xl title-font font-medium mb-1">
-                  {fundraiser.attributes.title}
+
+                <h1 className="text-gray-700 text-3xl my-8 title-font font-medium ">
+                  {charity.attributes.name}
                 </h1>
-                {fundraiser.attributes['charity']['data'] && fundraiser.attributes['charity']['data']['attributes']['name'] &&
-                  <h2 className='text-gray-700 my-3'> <b className='font-medium text-[1.2rem]'> {fundraiser.attributes['charity']['data']['attributes']['name']}</b> is organizing this fundraiser.</h2>
-                }
-                {(!fundraiser.attributes['charity']['data'] || !fundraiser.attributes['charity']['data']['attributes']) &&
-                  <h2 className='text-gray-700 my-3'>Individual fundraiser.  </h2>
-                }
                 <hr className='my-3' />
                 <div className="leading-relaxed " style={{ transition: 'ease-in 0.6s all' }} >
-                  {fundraiser.attributes.description && fundraiser.attributes.description.length > 500 &&
+                  {charity.attributes.description && charity.attributes.description.length > 500 &&
                     <>
-                      {!read_more && ((fundraiser.attributes.description as string).slice(0, 500) + "...").split(`\n`).map((txt, index) => {
+                      {!read_more && ((charity.attributes.description as string).slice(0, 500) + "...").split(`\n`).map((txt, index) => {
                         if (!txt) { return null }
                         return (<>
                           <p key={index + Math.random()} className="leading-relaxed text-base">
@@ -133,7 +111,7 @@ export default function fundraiser({ fundraiser, user, slug, donations, donation
                         </>)
                       })}
                       {read_more &&
-                        (fundraiser.attributes.description as string).split(`\n`).map((txt, index) => {
+                        (charity.attributes.description as string).split(`\n`).map((txt, index) => {
                           if (!txt) { return null }
                           return (<>
                             <p key={index + Math.random()} className="leading-relaxed text-base">
@@ -145,15 +123,15 @@ export default function fundraiser({ fundraiser, user, slug, donations, donation
                       }
                     </>
                   }
-                  {fundraiser.attributes.description && fundraiser.attributes.description.length <= 500 &&
+                  {charity.attributes.description && charity.attributes.description.length <= 500 &&
                     (<>
                       <p className="leading-relaxed text-base">
-                        {fundraiser.attributes.description}
+                        {charity.attributes.description}
                       </p>
                       <div >&nbsp;</div>
                     </>)
                   }
-                  {fundraiser.attributes.description && <>
+                  {charity.attributes.description && <>
 
                     {!read_more &&
                       <p onClick={() => { setReadMore(true) }} className=' text-blue-900 underline cursor-pointer'>Read more</p>
@@ -168,18 +146,15 @@ export default function fundraiser({ fundraiser, user, slug, donations, donation
               </div>
               <div className="lg:w-1/3 w-1/2   lg:pl-10 m-auto sm:mt-5   lg:mt-0 relative">
                 <div className='rounded-lg drop-shadow-xl bg-white max-w-sm flex-col p-5 justify-start relative'>
-                  <div className="flex items-baseline gap-1">
+                  <div className="flex  flex-wrap items-baseline gap-2">
                     <div className='flex items-baseline gap-0'>
-                      <p className='text-gray-900 text-2xl title-font font-medium'>{fundraiser.attributes.fund_raised}</p>
-                      <p className='text-gray-600 font-medium ' >{fundraiser.attributes.fund_type}</p>
+                      <p className='text-gray-800 text-2xl title-font font-medium'>{charity.attributes.direct_funds}</p>
+                      <p className='text-gray-600 font-medium ' >{charity.attributes.fund_type}</p>
                     </div>
-                    <p>raised</p>
-                    <p className='font-light text-sm text-gray-500'>&nbsp;of&nbsp; {fundraiser.attributes.fund_target}</p>
+                    <p>direct funds raised</p>
                   </div>
-                  <div className="w-full bg-green-400 bg-opacity-20 h-1 mt-1 mb-3" >
-                    <div className="bg-green-500 h-1" style={{ width: `${Math.floor((fundraiser.attributes.fund_raised / fundraiser.attributes.fund_target) * 100)}%` }}></div>
-                  </div>
-                  <p className='font-normal my-3 text-sm text-gray-500'>{fundraiser.attributes.donations_count}&nbsp;donations</p>
+
+                  <p className='font-normal my-3 text-sm text-gray-500'>{charity.attributes.direct_funds_count}&nbsp;donations</p>
                   <button onClick={donate} className="flex w-full mt-10 text-white items-center gap-2 bg-primary justify-center border-0 py-2 px-4 focus:outline-none active:bg-secondary rounded">
                     <svg
                       fill="currentColor"
@@ -219,10 +194,9 @@ export default function fundraiser({ fundraiser, user, slug, donations, donation
               </div>
             </div>
           </div>
+
           <div className='w-[90%] lg:w-[80%] mx-auto '>
-
-            <h2 className='subtitle-font font-medium text-xl sm:text-2xl my-3 text-gray-900' > Donations</h2>
-
+            <h2 className='subtitle-font font-medium text-xl sm:text-2xl my-8 text-gray-700' > Donations</h2>
             <div className="flex flex-col mt-6">
               <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                 <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
@@ -296,7 +270,8 @@ export default function fundraiser({ fundraiser, user, slug, donations, donation
                           })}
 
                         </tbody>
-                      </table>}
+                      </table>
+                    }
                     {donations.length <= 0 &&
                       <div className=' bg-white py-7'>
                         <h3 className='mt-15 font-medium text-xl text-gray-900 my-3 text-center'>Your fundraiser has no donations yet :(</h3>
@@ -307,7 +282,7 @@ export default function fundraiser({ fundraiser, user, slug, donations, donation
                   </div>
                   <div className="flex my-5 mx-auto justify-center">
                     {donations_meta['page'] !== 1 &&
-                      <a href={`${url}/f/${slug}?dp=${donations_meta['page'] - 1}`} className="border border-teal-500 text-teal-500 block rounded-sm font-bold py-4 px-6 mr-2 flex items-center hover:bg-teal-500 hover:text-white">
+                      <a href={`${url}/charity/${slug}?dp=${donations_meta['page'] - 1}`} className="border border-teal-500 text-teal-500 block rounded-sm font-bold py-4 px-6 mr-2 flex items-center hover:bg-teal-500 hover:text-white">
                         <svg
                           className="h-5 w-5 mr-2 fill-current"
                           id="Layer_1"
@@ -327,7 +302,7 @@ export default function fundraiser({ fundraiser, user, slug, donations, donation
                       </a>
                     }
                     {donations_meta['page'] < donations_meta['pageCount'] &&
-                      <a href={`${url}/f/${slug}?dp=${donations_meta['page'] + 1}`} className="border border-teal-500 bg-teal-500 text-white block rounded-sm font-bold py-4 px-6 ml-2 flex items-center">
+                      <a href={`${url}/charity/${slug}?dp=${donations_meta['page'] + 1}`} className="border border-teal-500 bg-teal-500 text-white block rounded-sm font-bold py-4 px-6 ml-2 flex items-center">
                         Next
                         <svg
                           className="h-5 w-5 ml-2 fill-current"
@@ -353,7 +328,6 @@ export default function fundraiser({ fundraiser, user, slug, donations, donation
               </div>
             </div>
           </div>
-
         </section >
 
         {
@@ -483,7 +457,7 @@ export default function fundraiser({ fundraiser, user, slug, donations, donation
                         className="w-full outline-none bg-transparent"
                         type="text"
                         placeholder="link"
-                        defaultValue={`${url}/f/${slug}`}
+                        defaultValue={`${url}/charities/${slug}`}
                       />
                     </div>
                     <button onClick={copyLink} className="bg-indigo-500 text-white rounded text-sm py-2 px-5 mr-2 hover:bg-indigo-600 mt-3">
@@ -525,39 +499,31 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
     Authorization: `Bearer ${token}`,
   } : {};
 
-  const fundraiser_res = (await fetch(server_url + "/api/fund-raises?" + query, {
+  const charity = await (await fetch(server_url + "/api/charities?" + query, {
     method: "GET",
     headers: headers
-  }));
-  if (fundraiser_res.status > 201) {
-    return { notFound: true };
-  }
-  const fundraiser = await fundraiser_res.json();
-  console.log(fundraiser);
-  if (!fundraiser.data || fundraiser.data.length <= 0) {
-    return {
-      notFound: true
-    }
-  }
+  })).json();
+
+
   const dp = parseInt(donations_page ? donations_page.toString() : '1');
   const ds = parseInt(donations_size ? donations_size.toString() : '10');
+
   const donations_query = qs.stringify({
     filters: {
-      fund_raise: {
+      charity: {
         id: {
-          $eq: fundraiser['data'][0]['id']
+          $eq: charity['data'][0]['id']
         }
       }
     },
-    populate: ["image", "user", 'charity'],
+    populate: ["user", 'charity'],
     pagination: {
       pageSize: !isNaN(ds) ? ds : 10,
       page: !isNaN(dp) ? dp : 1
-    },
-
+    }
   }, { encodeValuesOnly: true })
 
-  var donations = await (await fetch(server_url + '/api/donations?' + donations_query, {
+  var donations = await (await fetch(server_url + '/api/charity-donations?' + donations_query, {
     method: "GET",
     headers: headers
   })).json();
@@ -569,13 +535,13 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
 
   if (user_res.status > 201) {
     return {
-      props: { fundraiser: fundraiser['data'][0], user: null }
+      props: { fundraiser: charity['data'][0], user: null }
     }
   }
   const user = await user_res.json();
   return {
     props: {
-      fundraiser: fundraiser['data'][0],
+      charity: charity['data'][0],
       user,
       donations: donations['data'] ? donations['data'] : [],
       donations_meta: donations['meta']['pagination'],

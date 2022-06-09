@@ -180,6 +180,9 @@ export default function Navbar() {
                                     <li className="">
                                         <Link href={'/discover'}><a className="text-center block px-0 py-1  ml-2 hover:text-blue-500 mt-4 lg:mt-0">Fundraisers</a></Link>
                                     </li>
+                                    <li className="">
+                                        <Link href={'/charities'}><a className="text-center block px-0 py-1  ml-2 hover:text-blue-500 mt-4 lg:mt-0">Charities</a></Link>
+                                    </li>
                                 </ul>
                                 <ul className="top-0 w-48 bg-white px-1  py-4">
                                     <h2 className='font-medium  text-center text-gray-700 my-2'>Fundraise for </h2>
@@ -235,7 +238,7 @@ export default function Navbar() {
                             <a className="block px-4 py-2  ml-2  hover:text-blue-500 mt-4 lg:mt-0">For charities</a>
                         </Link>
                         {is_auth &&
-                            <Link href={'/manage-fundraisers/my-fundraisers'}>
+                            <Link href={'/manage-fundraisers/my-fundraisers/'}>
                                 <a className="block px-4 py-2  ml-2  hover:text-blue-500 mt-4 lg:mt-0">Your fundraisers</a>
                             </Link>
                         }
@@ -260,7 +263,7 @@ export default function Navbar() {
                                 <div className="group-hover:flex dropdown-menu absolute hidden h-auto z-20  lg:flex-row px-12 flex-col " >
                                     <ul className="top-0 w-48 z-20  bg-white shadow-lg shadow-blue-100 px-3 rounded-lg py-4 ">
                                         <li className="">
-                                            <Link href={'/my-donations'}><a className="block px-0 py-1  ml-2  hover:text-blue-500 mt-4 lg:mt-0">Donations you've made</a></Link>
+                                            <Link href={'/my-donations/fundraiser-donations'}><a className="block px-0 py-1  ml-2  hover:text-blue-500 mt-4 lg:mt-0">Donations you've made</a></Link>
                                         </li>
                                         <li className="">
                                             <Link href={'/#'}><a className="block px-0 py-1  ml-2  hover:text-blue-500 mt-4 lg:mt-0">Account settings</a></Link>
@@ -420,7 +423,7 @@ export default function Navbar() {
                             </a>
                         }
                         {is_auth && user &&
-                            <Link href={'/manage-fundraisers/my-fundraisers'}><a className="text-center self-start w-fit ml-12 block px-0 py-1  hover:text-blue-500 mt-4 lg:mt-0">Your fundraisers</a></Link>
+                            <Link href={'/manage-fundraisers/my-fundraisers/'}><a className="text-center self-start w-fit ml-12 block px-0 py-1  hover:text-blue-500 mt-4 lg:mt-0">Your fundraisers</a></Link>
                         }
                         {is_auth && has_charity &&
                             <Link href={'/manage-charity'}><a className="text-center self-start w-fit ml-12 block px-0 py-1  hover:text-blue-500 mt-4 lg:mt-0">Your charity</a></Link>
@@ -438,7 +441,7 @@ export default function Navbar() {
                                 <div className="accordion-content px-5 pt-0 overflow-hidden max-h-0 bg-white">
                                     <ul className="flex w-fit flex-col items-start pl-10">
                                         <li className="">
-                                            <Link href={'/my-donations'}><a className=" block px-0 py-1  ml-2  hover:text-blue-500 mt-4 lg:mt-0">Donations you've made</a></Link>
+                                            <Link href={'/my-donations/fundraiser-donations'}><a className=" block px-0 py-1  ml-2  hover:text-blue-500 mt-4 lg:mt-0">Donations you've made</a></Link>
                                         </li>
                                         <li className="">
                                             <Link href={'/#'}><a className=" block px-0 py-1  ml-2  hover:text-blue-500 mt-4 lg:mt-0">Account settings</a></Link>

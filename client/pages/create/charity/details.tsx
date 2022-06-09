@@ -3,7 +3,7 @@ import { useFormik } from 'formik';
 import { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
 import React, { useState } from 'react'
 import * as Yup from 'yup'
-import { fundraiser_tags, jwt_aut_token, server_url } from '../../../config';
+import { fundraiser_tags, fund_types, jwt_aut_token, server_url } from '../../../config';
 import { stringToSlug } from '../../../utils';
 import { useRouter } from 'next/router';
 import axios from 'axios';
@@ -26,7 +26,8 @@ export default function fundraiser({ is_auth, user, token }: Props) {
       category: '',
       registerNumber: 0,
       description: '',
-      recvDetails:''
+      recvDetails: '',
+      fundType: '',
     },
     validationSchema: Yup.object({
       name:
@@ -49,7 +50,10 @@ export default function fundraiser({ is_auth, user, token }: Props) {
         .string()
         .min(3, "Invalid 'fund receive details'")
         .required('Fund receive details is required.'),
-
+      fundType:
+        Yup
+          .string().min(3).required("Fund type is required.")
+          .equals(fund_types, 'Invalid category'),
     }),
     onSubmit: async (e) => {
       setSubmitting(true);
@@ -62,7 +66,10 @@ export default function fundraiser({ is_auth, user, token }: Props) {
             user: user.id,
             register_no: e.registerNumber,
             description: e.description,
-            recv_details:e.recvDetails
+            recv_details: e.recvDetails,
+            slug: stringToSlug(e.name),
+            fund_type: e.fundType,
+
           }
         },
         {
@@ -186,6 +193,33 @@ export default function fundraiser({ is_auth, user, token }: Props) {
               formik.errors.address &&
               <p className="text-xs italic text-red-500">
                 {formik.errors.address}
+              </p>
+            }
+            <label htmlFor="" className="block">
+              Fund Type
+            </label>
+            <select
+              onBlur={formik.handleBlur}
+              onChange={formik.handleChange}
+              value={formik.values.fundType}
+              name='fundType'
+              id='fundType'
+              className="border w-full h-10 px-3 mb-5 rounded-md bg-white"
+              // className="form-select appearance-none block w-full px-3  text-base font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+              aria-label="Default select example">
+              <option selected>Choose a fund type</option>
+              {fund_types.map((tag, index) => {
+                return (
+                  <option key={index} value={tag}>{tag[0].toUpperCase() + tag.slice(1)}</option>
+                )
+              })}
+            </select>
+            {
+              formik.errors.fundType &&
+              <p className="text-xs italic text-red-500">
+                {
+                  formik.errors.fundType
+                }
               </p>
             }
             <label htmlFor="" className="block">

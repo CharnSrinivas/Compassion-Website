@@ -1,6 +1,4 @@
 import Cookies from 'js-cookie'
-import Head from 'next/head';
-
 import Link from 'next/link'
 import { useRouter } from 'next/router';
 import QueryString from 'qs';

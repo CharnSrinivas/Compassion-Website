@@ -5,11 +5,11 @@ import qs from 'qs'
 interface Props {
     fundraisers: any[]
 }
-export default function charities({  fundraisers }: Props) {
+export default function charities({ fundraisers }: Props) {
     return (
         <div>
             <section className="text-gray-600 body-font ">
-            <div className="container px-3 pt-20 mx-auto">
+                <div className="container px-3 pt-20 mx-auto">
                     <div className="flex flex-wrap w-full mb-20">
                         <div className="lg:w-[80%] mx-auto w-full mb-4 lg:mb-0">
                             <h1 className="text-3xl lg:text-4xl font-medium title-font mb-2 text-gray-800">
@@ -80,7 +80,7 @@ export default function charities({  fundraisers }: Props) {
                                 })
                             }
                             {
-                                (!fundraisers ||  fundraisers.length <= 0) &&
+                                (!fundraisers || fundraisers.length <= 0) &&
                                 <h2 className='sm:text-3xl text-2xl font-medium title-font my-7  text-gray-900'>
                                     No charity fundraisers found
                                 </h2>
@@ -97,13 +97,18 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
     const query = qs.stringify(
         {
             filters: {
-                charity: {
-                    id:{
-                        $notNull: true
+                $and: [
+                    { approved: { $eq: true } },
+                    {
+                        charity: {
+                            id: {
+                                $notNull: true
+                            }
+                        }
                     }
-                }
+                ]
             }
-            , populate: ["image", "user","charity"],
+            , populate: ["image", "user", "charity"],
             sort: ['donations_count:desc'],
         })
     let res = await (await fetch(server_url + "/api/fund-raises?" + query)).json()

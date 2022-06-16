@@ -145,9 +145,12 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
         method: "GET",
 
     })).json();
-
-
-
+    if(!fundraiser['data'][0] || !fundraiser['data'][0]['attributes']['approved']){
+        return{
+            notFound:true
+        }
+    }
+    
     return {
         props: {
             fundraiser: fundraiser['data'][0],

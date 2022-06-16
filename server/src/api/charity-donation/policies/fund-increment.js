@@ -13,9 +13,8 @@ module.exports = async (policyContext, config, { strapi }) => {
             }
         },
     })
-    console.log(body);
-    console.log(charity);
     if (!charity) { return false; };
+    if(!charity.approved){return false}
     let direct_funds = charity.direct_funds;
     let direct_funds_count = parseInt(charity.direct_funds_count);
     await strapi.db.query("api::charity.charity").update({

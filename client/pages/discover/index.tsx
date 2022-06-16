@@ -103,7 +103,7 @@ export default function fundraisers({ fundraisers }: Props) {
 export async function getServerSideProps(context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<Record<string, unknown>>> {
     const query = qs.stringify({
         filters: {
-            individual: {
+            approved: {
                 $eq: true
             }
         }, populate: ["image", "user", 'charity'], pagination: {

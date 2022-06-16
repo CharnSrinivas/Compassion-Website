@@ -34,7 +34,7 @@ export default function fundraisers({ charities }: Props) {
                 <div className=' bg-primary bg-opacity-5 flex flex-col mx-auto py-5 items-center' style={{ minHeight: "60vh" }}>
                     {charities && charities.length > 0 &&
                         <h1 className=" text-3xl font-medium  my-8 title-font text-gray-700">
-                            Top charities
+                            Charities listed
                         </h1>
                     }
                     <div className=' w-[80%] flex justify-center'>
@@ -105,7 +105,9 @@ export default function fundraisers({ charities }: Props) {
 export async function getServerSideProps(context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<Record<string, unknown>>> {
     const query = qs.stringify({
         filters: {
-
+            approved: {
+                $eq: true
+            }
         }, populate: ["image", "user"], pagination: {
             pageSize: 10,
         },
@@ -117,7 +119,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
     if (res['data']) {
         return {
             props: {
-                charities:res['data']
+                charities: res['data']
             }
         }
     }

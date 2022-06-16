@@ -488,9 +488,18 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
   }
   const query = qs.stringify({
     filters: {
-      slug: {
-        $eq: slug
-      }
+      $and: [
+        {
+          approved: {
+            $eq: true
+          }
+        },
+        {
+          slug: {
+            $eq: slug
+          }
+        }
+      ]
     },
     populate: ["image", "user", 'charity']
   })
@@ -521,7 +530,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
       pageSize: !isNaN(ds) ? ds : 10,
       page: !isNaN(dp) ? dp : 1
     }
-  }, { encodeValuesOnly: true })
+  }, { encodeValuesOnly: true });
 
   var donations = await (await fetch(server_url + '/api/charity-donations?' + donations_query, {
     method: "GET",

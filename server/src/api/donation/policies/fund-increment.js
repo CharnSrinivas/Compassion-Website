@@ -16,6 +16,7 @@ module.exports = async (policyContext, config, { strapi }) => {
     })
 
     if (!fundraiser) { return false; };
+    if(!fundraiser.approved){return false}
     let fund_raised = fundraiser.fund_raised;
     let donations_count = parseInt(fundraiser.donations_count);
     await strapi.db.query("api::fund-raise.fund-raise").update({

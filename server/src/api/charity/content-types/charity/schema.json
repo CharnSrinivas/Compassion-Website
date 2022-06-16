@@ -94,6 +94,10 @@
         "BITCOIN"
       ],
       "required": true
+    },
+    "approved": {
+      "type": "boolean",
+      "default": false
     }
   }
 }

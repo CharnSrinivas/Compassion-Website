@@ -154,7 +154,11 @@ export default function medical({ fundraisers }: Props) {
                                                             href={`/create/fundraiser/details?charity_id=${charity.id}`}
                                                             className=' cursor-pointer p-2 py-4  flex flex-row gap-3 items-center'
                                                         >
-                                                            <img className='w-[5rem] h-[4rem] object-cover' src={server_url + charity['attributes']['image']['data']['attributes']['url']} alt={charity['attributes']['name']} />
+                                                            {charity['attributes']['image']['data'] &&
+                                                                <img className='w-[5rem] h-[4rem] object-cover' src={server_url + charity['attributes']['image']['data']['attributes']['url']} alt={charity['attributes']['name']} />
+                                                            }{!charity['attributes']['image']['data'] &&
+                                                                <img className='w-[5rem] h-[4rem] object-cover' src={'/assets/image-placeholder.jpg'} />
+                                                            }
                                                             <div className='flex flex-col items-start gap-1'>
                                                                 <h4 className='font-light text-gray-600 text-xl'>{charity['attributes']['name']}</h4>
                                                                 <h4 className='text-gray-500 text-sm'>{charity['attributes']['address']}</h4>

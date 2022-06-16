@@ -1,16 +1,19 @@
 import React, { ChangeEvent, ChangeEventHandler, useState } from 'react'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext, GetServerSidePropsResult, Redirect } from 'next';
-import { fundraiser_ref, jwt_aut_token, server_url } from '../../../../config';
+import { charity_ref, jwt_aut_token, server_url } from '../../../../config';
 import qs from 'qs';
 import axios from 'axios';
 
 interface Props {
   is_auth: boolean,
-  fundraiser: any | null;
+  charity: any | null;
   token: string
 }
-export default function addImage({ is_auth, token, fundraiser }: Props) {
+
+export default function addImage({ is_auth, token, charity }: Props) {
+  console.log(charity);
+
   const router = useRouter();
   const [uploading, setUploading] = useState(false);
   const [uploadPercentage, setUploadPercentage] = useState(0);
@@ -18,23 +21,23 @@ export default function addImage({ is_auth, token, fundraiser }: Props) {
   const changeImage = (e: ChangeEvent<HTMLInputElement>) => {
     const display_img = document.getElementById('img-display') as HTMLImageElement;
     const file = e.target.files;
-    if (!display_img || !file) return;
-    var reader = new FileReader();
+    const reader = new FileReader();
+    if (!display_img || !file || !file[0]) return;
     reader.readAsDataURL(file[0]);
     reader.onload = function (e) {
       display_img.src = e.target!.result as string;
     }
   }
 
-  const uploadImage = async () => {
+  const uploadDocument = async () => {
     const img = (document.getElementById('img-upload') as HTMLInputElement).files;
     if (!img) return;
     const formData = new FormData();
-    formData.append('files', img[0])
-    formData.append('refId', fundraiser.id)
-    formData.append('ref', fundraiser_ref)
+    formData.append('files', img[0]);
+    formData.append('refId', charity.id);
+    formData.append('ref', charity_ref);
     formData.append('field', 'image');
-    setUploading(true)
+    setUploading(true);
     let res = await axios.post(server_url + "/api/upload", formData, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -49,26 +52,17 @@ export default function addImage({ is_auth, token, fundraiser }: Props) {
       },
     })
     if (res.status <= 201) {
-      router.push(`/create/fundraiser/${fundraiser.attributes.slug}/add-documents`); return;
+      router.push(`/create/charity/${charity.attributes.slug}/add-documents`); return;
     }
-    // await fetch(server_url + "/api/upload/", {
-    //   method: "POST", body: formData, headers: {
-    //     Authorization: `Bearer ${token}`
-    //   }
-    // }).then(res => {
-    //   if (res.ok) {
-    //     router.push(`/create/${fundraiser.attributes.slug}/story`)
-    //   }
-    // })
   }
   return (
     <>
       <div className='absolute top-[5rem] w-screen px-7 py-5 bg-[#e7f0f7]'>
         <p className='w-fit mx-auto text-center text-gray-900'>
-          <strong>Note: </strong> Please upload image wisely. You can't change image again.
+          <strong>Note:ㅤ</strong> Please upload your charity brand image wisely. You can't change image again.
         </p>
       </div>
-      <div className="border p-8 px-4 lg:px-10 lg:w-[45%] w-[95%] mt-[7rem] mb-12 bg-white shadow-xl md:min-w-1/2  mx-auto rounded-xl">
+      <div className="border p-8 px-10 lg:w-[45%] w-[95%] bg-white shadow-xl md:min-w-1/2  mx-auto rounded-xl">
         {!uploading &&
           <>
             <div className="w-full py-3">
@@ -106,7 +100,7 @@ export default function addImage({ is_auth, token, fundraiser }: Props) {
                       </span>
                     </div>
                   </div>
-                  <div className="text-xs text-center md:text-base">Image</div>
+                  <div className="text-xs text-center md:text-base">Image & Document</div>
                 </div>
                 <div className="w-1/3">
                   <div className="relative mb-2">
@@ -136,7 +130,7 @@ export default function addImage({ is_auth, token, fundraiser }: Props) {
               </div>
             </div>
             <div className="font-medium m-auto text-4xl text-green-900 my-7 text-center">
-              Upload image here
+              Upload your charity image here
             </div>
 
             <img
@@ -146,12 +140,12 @@ export default function addImage({ is_auth, token, fundraiser }: Props) {
               src="/assets/image-placeholder.jpg" alt=""
             />
             <label >
-              <input type="file" onChange={(e) => { changeImage(e) }} id='img-upload' accept='image/*' className="text-sm cursor-pointer w-36 hidden" />
+              <input type="file" onChange={(e) => { changeImage(e) }} id='img-upload' accept='*' className="text-sm cursor-pointer w-36 hidden" />
               <div className="mt-7 bg-transparent border-green-500 border-2 cursor-pointer hover:border-green-600 active:bg-green-500 active:text-white text-green-500  text-[1rem] font-medium px-14 py-3 rounded w-full text-center">
                 Upload
               </div>
             </label>
-            <button onClick={uploadImage} className="mt-7 bg-green-500 hover:bg-green-600 shadow-xl text-white  text-[1rem] font-medium px-14 py-3 rounded w-full">
+            <button onClick={uploadDocument} className="mt-7 bg-green-500 hover:bg-green-600 shadow-xl text-white  text-[1rem] font-medium px-14 py-3 rounded w-full">
               Next
             </button>
           </>
@@ -175,11 +169,12 @@ export default function addImage({ is_auth, token, fundraiser }: Props) {
       </div>
     </>
   )
+
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<Record<string, unknown>>> {
   const token = context.req.cookies[jwt_aut_token];
-  const slug = context.params ? context.params['slug'] : undefined;
+  const slug = context.params ? context.params['slug'] as string : undefined;
   const redirect_obj: Redirect = {
     destination: "/register",
     statusCode: 307,
@@ -198,25 +193,28 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
     }
   })
   try {
+
     if (!token) {
       return {
         redirect: redirect_obj
       }
-    }
-    let res = (await fetch(server_url + "/api/fund-raises?" + query, {
+    };
+
+    let res = (await fetch(server_url + "/api/charities?" + query, {
       headers: {
         Authorization: `Bearer ${token}`,
       }
-    })
-    )
+    }));
+
     if (res.status > 201) {
       return { redirect: redirect_obj }
     }
-    let fundraiser = await res.json();
-    if (!fundraiser.data || fundraiser.data.length <= 0) { return { redirect: redirect_obj } }
+
+    let charity = await res.json();
+    if (!charity.data || charity.data.length <= 0) { return { redirect: redirect_obj } }
     return {
       props: {
-        is_auth: true, fundraiser: fundraiser.data[0], token: token
+        is_auth: true, charity: charity.data[0], token: token
       }
     }
   } catch (err) {

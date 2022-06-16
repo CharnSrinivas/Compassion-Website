@@ -108,16 +108,19 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
     })
 
 
-    const fundraiser = await (await fetch(server_url + "/api/charities?" + query, {
+    const charity = await (await fetch(server_url + "/api/charities?" + query, {
         method: "GET",
 
     })).json();
 
-
-
+    if(!charity['data'][0] || !charity['data'][0]['attributes']['approved']){
+        return{
+            notFound:true
+        }
+    }
     return {
         props: {
-            fundraiser: fundraiser['data'][0],
+            fundraiser: charity['data'][0],
             slug
         }
     }

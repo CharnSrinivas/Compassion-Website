@@ -79,7 +79,7 @@ export default function fundraiser({ is_auth, user, token }: Props) {
         }
       );
       if (res.status <= 201) {
-        router.push(`/create/charity/${e.name}/add-image`)
+        router.push(`/create/charity/${ stringToSlug(e.name)}/add-image`)
       }
     }
   });

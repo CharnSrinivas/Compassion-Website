@@ -178,7 +178,7 @@ export default function fundraiser({ is_individual: _is_individual, is_auth, use
                   </div>
                 </div>
 
-                <div className="text-xs text-center md:text-base">Add User</div>
+                <div className="text-xs text-center md:text-base">Image & Document</div>
               </div>
 
               <div className="w-1/3">

@@ -4,9 +4,10 @@ import React from 'react'
 import { server_url } from '../../config'
 
 interface Props {
-    fundraisers: any[]
+    fundraisers: any[];
+    search_query:string
 }
-export default function index({ fundraisers }: Props) {
+export default function index({ fundraisers,search_query }: Props) {
     return (
         <div>
             <section className="text-gray-600 body-font ">
@@ -27,7 +28,7 @@ export default function index({ fundraisers }: Props) {
                 <div className=' bg-primary bg-opacity-5 flex flex-col mx-auto py-5 items-center' style={{ minHeight: "60vh" }}>
                     {fundraisers && fundraisers.length > 0 &&
                         <h1 className="sm:text-3xl text-2xl font-medium title-font mb-2  text-gray-900">
-                            Top individual fundraisers
+                            Results for your search : '{search_query}'
                         </h1>
                     }
                     <div className=' w-[80%] flex justify-center'>
@@ -41,7 +42,7 @@ export default function index({ fundraisers }: Props) {
                                                 {item.attributes.image && item.attributes.image.data &&
                                                     <img
                                                         className="h-40 rounded w-full object-cover object-center mb-6"
-                                                        src={server_url + item.attributes.image.data.attributes.url}
+                                                        src={server_url + item.attributes.image.data[0].attributes.url}
                                                         alt="content"
                                                     />
                                                 }{(!item.attributes.image || !item.attributes.image.data) &&
@@ -117,6 +118,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
                 }
             ]
         },
+        sort:['fund_raised:desc','donations_count:desc'],
         populate: ["image", "user", 'charity'],
         pagination: {
             pageSize: 10

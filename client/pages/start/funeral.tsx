@@ -40,7 +40,7 @@ export default function medical({fundraisers,tag}: Props) {
                                             {item.attributes.image && item.attributes.image.data &&
                                                 <img
                                                     className="h-40 rounded w-full object-cover object-center mb-6"
-                                                    src={server_url + item.attributes.image.data.attributes.url}
+                                                    src={server_url + item.attributes.image.data[0].attributes.url}
                                                     alt="content"
                                                 />
                                             }{(!item.attributes.image || !item.attributes.image.data) &&

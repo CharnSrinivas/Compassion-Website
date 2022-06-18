@@ -112,7 +112,6 @@ const Home: NextPage = () => {
           </a>
         </div>
       </div>
-
     </div>
   )
 }

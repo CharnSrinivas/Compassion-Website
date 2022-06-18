@@ -234,7 +234,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
     const admin_token = context.req.cookies[jwt_admin_auth_token];
 
     const redirect: Redirect = {
-        destination: "/register",
+        destination: "/admin/login",
         statusCode: 307,
         basePath: false
     }

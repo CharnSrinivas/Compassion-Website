@@ -223,14 +223,11 @@ export default function edit({ fundraiser, admin_token, slug }: Props) {
 
                                 </button>
                             }
-
-
                         </div>
-
                         {fundraiser.image &&
                             <img
                                 className="lg:w-1/3 w-full lg:h-[40rem] h-52 object-cover object-center rounded"
-                                src={server_url + fundraiser.image.url}
+                                src={server_url + fundraiser.image[0].url}
                                 alt={fundraiser.title}
                             />
                         }{!fundraiser.image &&
@@ -240,9 +237,6 @@ export default function edit({ fundraiser, admin_token, slug }: Props) {
                                 alt={fundraiser.title}
                             />
                         }
-
-
-
                     </div>
                 </div>
             </section>
@@ -257,7 +251,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
     const admin_token = context.req.cookies[jwt_admin_auth_token];
 
     const redirect: Redirect = {
-        destination: "/register",
+        destination: "/admin/login",
         statusCode: 307,
         basePath: false
     }

@@ -12,7 +12,6 @@ interface Props {
 export default function myDonations({ donations, donations_meta,charity_donations_meta }: Props) {
 
     const [url, setUrl] = useState('');
-    console.log(donations_meta);
     useEffect(() => {
         setUrl(window.location.pathname);
     }, []);
@@ -156,7 +155,7 @@ export default function myDonations({ donations, donations_meta,charity_donation
                                                                 <img
                                                                     className="w-10 h-10 rounded-full object-cover"
                                                                     // src="https://avatars0.githubusercontent.com/u/57622665?s=460&u=8f581f4c4acd4c18c33a87b3e6476112325e8b38&v=4"
-                                                                    src={`${server_url}${donation.attributes.fund_raise.data.attributes.image.data.attributes.formats.thumbnail.url}`}
+                                                                    src={`${server_url}${donation.attributes.fund_raise.data.attributes.image.data[0].attributes.formats.thumbnail.url}`}
                                                                     alt=""
                                                                 />
                                                             }{!donation.attributes.fund_raise.data.attributes.image.data &&
@@ -306,9 +305,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
 
     const charity_donations  = await (await fetch(server_url + "/api/charity-donations?" + charity_donations_query, {
         method: "GET",
-        headers: {
-            Authorization: `Bearer ${token}`,
-        }
     })).json();
 
     return {

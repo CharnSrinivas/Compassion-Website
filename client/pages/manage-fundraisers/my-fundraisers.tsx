@@ -8,6 +8,7 @@ interface Props {
 }
 
 export default function manage({ fundraisers }: Props) {
+console.log(fundraisers);
 
     return (
         <div>
@@ -38,43 +39,56 @@ export default function manage({ fundraisers }: Props) {
                     <div className=' w-[80%] flex justify-center'>
                         <div className="flex flex-wrap w-full ">
                             {fundraisers &&
-                                fundraisers.map((item, index) => {
+                                fundraisers.map((fundraiser, index) => {
                                     return (
-                                        <a key={index} href={`/manage-fundraisers/${item.attributes.slug}/overview`} className="xl:w-1/4 md:w-1/2 p-4 cursor-pointer " >
+                                        <a key={index} href={`/manage-fundraisers/${fundraiser.attributes.slug}/overview`} className="xl:w-1/4 md:w-1/2 p-4 cursor-pointer " >
                                             <div className="bg-gray-50 drop-shadow-md rounded-lg p-0  min-h-[26rem]  hover:shadow-lg">
-                                                {item.attributes.image && item.attributes.image.data &&
+                                                {fundraiser.attributes.image && fundraiser.attributes.image.data &&
                                                     <img
                                                         className="h-40 rounded w-full object-cover object-center mb-6"
-                                                        src={server_url + item.attributes.image.data.attributes.url}
-                                                        alt="content"
+                                                        src={server_url + fundraiser.attributes.image.data[0].attributes.url}
+                                                        alt={fundraiser.attributes.image.data[0].attributes.name}
                                                     />
-                                                }{(!item.attributes.image.data || !item.attributes.image) &&
+                                                }{(!fundraiser.attributes.image.data || !fundraiser.attributes.image) &&
                                                     <img
                                                         className="h-40 rounded w-full object-cover object-center mb-6"
                                                         src={"/assets/image-placeholder.jpg"}
-                                                        alt="content"
+                                                        alt={fundraiser.attributes.name}
                                                     />
                                                 }
                                                 <div className='p-6'>
                                                     <h3 className="tracking-widest text-indigo-500 text-xs font-medium title-font">
-                                                        {item.attributes.tag}
+                                                        {fundraiser.attributes.tag}
                                                     </h3>
                                                     <h2 className="text-lg text-gray-900 font-medium title-font mb-4">
-                                                        {item.attributes.title}
+                                                        {fundraiser.attributes.title}
                                                     </h2>
-                                                    {item.attributes.description &&
+                                                    {fundraiser.attributes.description &&
                                                         <p className="leading-relaxed text-base">
-                                                            {(item.attributes.description as string).slice(0, 60) + "..."}
+                                                            {(fundraiser.attributes.description as string).slice(0, 60) + "..."}
                                                         </p>
                                                     }
-                                                    {!item.attributes.description &&
+                                                    {!fundraiser.attributes.description &&
                                                         <p className="leading-relaxed text-base">No story.  </p>
                                                     }
+                                                    <div className='flex flex-row items-baseline gap-3'>
+                                                        <p className='font-medium text-gray-600'>Approval:</p>
+                                                        {fundraiser.attributes.approved &&
+                                                            <span className="ml-0 mt-2 px-3 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100">
+                                                                Approved
+                                                            </span>
+                                                        }
+                                                        {!fundraiser.attributes.approved &&
+                                                            <span className="ml-0 mt-2 px-3 py-1 font-semibold leading-tight text-orange-700 bg-orange-100 rounded-full dark:text-white dark:bg-orange-600">
+                                                                Pending
+                                                            </span>
+                                                        }
+                                                    </div>
                                                     <div className='text-gray-900 font-medium mt-4'>
-                                                        <strong>{item.attributes.fund_raised.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} raised</strong> out of {item.attributes.fund_target.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                                                        <strong>{fundraiser.attributes.fund_raised.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} raised</strong> out of {fundraiser.attributes.fund_target.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                                                     </div>
                                                     <div className="w-full bg-green-400 bg-opacity-20 h-1 mt-1 mb-3" >
-                                                        <div className="bg-green-500 h-1" style={{ width: `${Math.floor((item.attributes.fund_raised / item.attributes.fund_target) * 100)}%` }}></div>
+                                                        <div className="bg-green-500 h-1" style={{ width: `${Math.floor((fundraiser.attributes.fund_raised / fundraiser.attributes.fund_target) * 100)}%` }}></div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -130,6 +144,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
     });
 
     let res = await (await fetch(server_url + "/api/fund-raises?" + query)).json()
+    
+    
     if (res['data']) {
         return {
             props: {

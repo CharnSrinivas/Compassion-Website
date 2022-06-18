@@ -92,6 +92,11 @@
       "relation": "oneToMany",
       "target": "api::charity-donation.charity-donation",
       "mappedBy": "user"
+    },
+    "approved": {
+      "type": "boolean",
+      "default": false,
+      "required": true
     }
   }
 }

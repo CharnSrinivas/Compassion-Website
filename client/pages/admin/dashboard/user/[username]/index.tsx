@@ -1,28 +1,25 @@
 import { GetServerSidePropsContext, GetServerSidePropsResult, Redirect } from 'next';
-import React from 'react'
+import React from 'react';
 
-type Props = {}
-
-export default function index({}: Props) {
-  return (
-    <div>index</div>
-  )
+export default function index() {
+    return (
+        <></>
+    )
 }
 
-
 export async function getServerSideProps(context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<Record<string, unknown>>> {
-    const slug = context.params ? context.params['slug']?.toString().toLocaleLowerCase() : [];
-    if(!slug){
-        return{
-            notFound:true
+    const username = context.params ? context.params['username']?.toString() : '';
+    if (!username) {
+        return {
+            notFound: true
         }
     }
     const redirect: Redirect = {
-        destination: `/admin/dashboard/charity/${slug}/details`,
+        destination: `/admin/dashboard/user/${username}/details`,
         permanent:true,
         basePath: false
     }
-    return{
+    return {
         redirect
     }
 }

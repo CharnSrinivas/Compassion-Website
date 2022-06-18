@@ -64,7 +64,8 @@ export default function edit({ charity, token }: Props) {
                             address: e.address,
                             register_no: (  e.registerNumber && !isNaN(e.registerNumber)) ? e.registerNumber : null,
                             description: e.description,
-                            recv_details: e.recvDetails
+                            recv_details: e.recvDetails,
+                            id:charity.id
                         }
                     }),
                     headers: {

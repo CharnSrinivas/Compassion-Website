@@ -38,14 +38,14 @@ export default function medical({ fundraisers }: Props) {
                                             {item.attributes.image && item.attributes.image.data &&
                                                 <img
                                                     className="h-40 rounded w-full object-cover object-center mb-6"
-                                                    src={server_url + item.attributes.image.data.attributes.url}
-                                                    alt="content"
+                                                    src={server_url + item.attributes.image.data[0].attributes.url}
+                                                    alt={item.attributes.image.data[0].attributes}
                                                 />
                                             }{(!item.attributes.image || !item.attributes.image.data) &&
                                                 <img
                                                     className="h-40 rounded w-full object-cover object-center mb-6"
                                                     src={"/assets/image-placeholder.jpg"}
-                                                    alt="content"
+                                                    alt={item.attributes.name}
                                                 />
                                             }
                                             <>

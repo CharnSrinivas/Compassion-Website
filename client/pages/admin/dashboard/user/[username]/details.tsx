@@ -5,25 +5,23 @@ import { useRouter } from 'next/router';
 import qs from 'qs';
 import * as Yup from 'yup'
 
-import React, { useEffect, useState } from 'react'
-import { jwt_admin_auth_token, jwt_aut_token, server_url } from '../../../../../config';
+import React, {  useState } from 'react'
+import { jwt_admin_auth_token, server_url } from '../../../../../config';
 import DashboardLayout from '../../../../../components/DashboardLayout';
 
 interface Props {
-    fundraiser: any | null;
+    user: any | null;
     admin_token: string;
-    slug: string
+    username: string
 }
 
-export default function edit({ fundraiser, admin_token, slug }: Props) {
+export default function edit({ user, admin_token,  username }: Props) {
     const router = useRouter();
-    console.log(fundraiser);
-
     const [approving, setApprving] = useState(false);
     const toggleApproval = async () => {
         setApprving(true);
-        let res = await axios.put(server_url + '/content-manager/collection-types/api::fund-raise.fund-raise/' + fundraiser.id, {
-            approved: !fundraiser.approved
+        let res = await axios.put(server_url + '/content-manager/collection-types/api::fund-raise.fund-raise/' + user.id, {
+            approved: !user.approved
         }, {
             headers: {
                 Authorization: `Bearer ${admin_token}`,
@@ -35,16 +33,14 @@ export default function edit({ fundraiser, admin_token, slug }: Props) {
     }
     return (
         <DashboardLayout>
-            
             <section className="text-gray-600 body-font ">
                 <div className="container px-5 py-24 mx-auto">
                     <div className="lg:w-full mx-auto justify-evenly flex gap-2 flex-wrap">
                         <div className="lg:w-1/2 w-full lg:pr-10 lg:py-6 mb-6 lg:mb-0">
-                            {/* <h2 className="text-sm title-font text-gray-500 tracking-widest">
-                                BRAND NAME
-                            </h2> */}
-                            <a href='/admin/dashboard' className='flex w-fit items-center text-gray-600 px-3 justify-evenly  border-2 border-gray-300 rounded-md my-4'
-
+                            <h2 className="text-sm title-font text-gray-500 tracking-widest">
+                                FUNDRAISER
+                            </h2>
+                            <a href={`/admin/dashboard/`} className='flex w-fit items-center text-gray-600 px-3 justify-evenly  border-2 border-gray-300 rounded-md my-4'
                             >
                                 <svg
                                     className='w-5 h-5 '
@@ -65,45 +61,58 @@ export default function edit({ fundraiser, admin_token, slug }: Props) {
                                 <p>Back</p>
                             </a>
                             <h1 className="text-gray-900 text-3xl title-font font-medium mb-4">
-                                {fundraiser.title}
+                                {user.title}
                             </h1>
                             <div className="flex mb-4">
-                                <a href={`/admin/dashboard/fundraiser/${slug}/details`} className="flex-grow border-b-2  py-2 text-lg px-1  border-gray-300">
+                                <a href={`/admin/dashboard/user/${username}/details`} className="flex-grow text-indigo-500 border-b-2 border-indigo-500 py-2 text-lg px-1">
                                     Details
                                 </a>
-                                <a href={`/admin/dashboard/fundraiser/${slug}/documents`} className="flex-grow text-indigo-500 border-indigo-500  border-b-2 py-2 text-lg px-1">
+                                <a href={`/admin/dashboard/user/${username}/documents`} className="flex-grow border-b-2 border-gray-300 py-2 text-lg px-1">
                                     Documents
                                 </a>
                             </div>
 
-                            <div>
-                                {fundraiser.documents &&
-                                    <div className='flex flex-wrap gap-4 py-5  border-b-2 mb-8 border-b-gray-300'>
-                                        {(fundraiser.documents as any[]).map((document) => {
-                                            return (
-                                                <a href={server_url + document.url} target={'_blank'} className='flex flex-col bg-white rounded-md shadow-lg h-auto w-[14rem]'>
-                                                    {document.formats &&
-                                                        <img className='h-28 w-full object-cover rounded-md' src={server_url + document.formats.thumbnail.url} alt={document.name} />
-                                                    }
-                                                    {!document.formats &&
-                                                        <img className='h-28 w-full object-cover rounded-md' src={'/assets/document-placeholder.png'} alt={document.name} />
-                                                    }
-                                                    <div className='p-2'>
-                                                        <p className='text-sm ' style={{ lineBreak: "anywhere" }}>{document.name}</p>
-                                                        <p className='bg-gray-100 w-fit px-1 rounded-md text-sm'>{(document.ext as string)?.replace('.', '')?.toUpperCase()}</p>
-                                                    </div>
-                                                </a>
-                                            )
-                                        })}
+                            <>
+
+                                <div className="flex border-t border-gray-200 py-2">
+                                    <span className="text-gray-500">Username</span>
+                                    <span className="ml-auto text-gray-900">{user.username}</span>
+                                </div>
+                                {/* {user.charity &&
+                                    <div className="flex border-t border-gray-200 py-2">
+                                        <span className="text-gray-500">Organised by</span>
+                                        <a href='' className="ml-auto text-blue-800">{user.charity.name}</a>
                                     </div>
                                 }
-                                {!fundraiser.documents &&
-                                    <h3 className='text-3xl text-center my-8'>
-                                        No documents uploaded
-                                    </h3>}
-                            </div>
-                            {!fundraiser.approved &&
-                                <button onClick={toggleApproval} disabled={fundraiser.approved} className={`flex gap-1  items-center text-white  bg-green-500 hover:bg-green-600   border-0 py-2 px-4 focus:outline-none rounded`}>
+                                {!user.charity &&
+                                    <div className="flex border-t border-gray-200 py-2">
+                                        <span className="text-gray-500">Organised by</span>
+                                        <span className=" ml-auto px-3 py-1 font-semibold leading-tight text-gray-700-700 bg-gray-100 rounded-full dark:text-white dark:bg-orange-600">
+                                            Individual
+                                        </span>
+                                    </div>
+                                } */}
+
+                                <div className="flex border-t border-gray-200 py-2">
+                                    <span className="text-gray-500">Email</span>
+                                    <span className="ml-auto text-gray-900" style={{lineBreak:"anywhere"}}>{user.email}</span>
+                                </div>
+                                <div className="flex border-t border-gray-200 py-2 mb-3">
+                                    <span className="text-gray-500">Status</span>
+                                    {user.approved &&
+                                        <span className=" ml-auto px-3 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100">
+                                            Approved
+                                        </span>
+                                    }
+                                    {!user.approved &&
+                                        <span className=" ml-auto px-3 py-1 font-semibold leading-tight text-orange-700 bg-orange-100 rounded-full dark:text-white dark:bg-orange-600">
+                                            Pending
+                                        </span>
+                                    }
+                                </div>
+                            </>
+                            {!user.approved &&
+                                <button onClick={toggleApproval} disabled={user.approved} className={`flex gap-1  items-center text-white  bg-green-500 hover:bg-green-600   border-0 py-2 px-4 focus:outline-none rounded`}>
                                     Approve
                                     {approving &&
                                         <svg
@@ -146,7 +155,7 @@ export default function edit({ fundraiser, admin_token, slug }: Props) {
                                 </button>
                             }
 
-                            {fundraiser.approved &&
+                            {user.approved &&
                                 <button onClick={toggleApproval} className={`flex gap-1  items-center text-white  bg-red-400 hover:bg-red-500' : 'bg-green-500 hover:bg-red-600 border-0 py-2 px-4 focus:outline-none rounded`}>
                                     Disapprove
                                     {approving &&
@@ -192,36 +201,31 @@ export default function edit({ fundraiser, admin_token, slug }: Props) {
 
                                 </button>
                             }
-
                         </div>
-
-                        {fundraiser.image &&
+                        {user.image &&
                             <img
                                 className="lg:w-1/3 w-full lg:h-[40rem] h-52 object-cover object-center rounded"
-                                src={server_url + fundraiser.image[0].url}
-                                alt={fundraiser.title}
+                                src={server_url + user.image[0].url}
+                                alt={user.title}
                             />
-                        }{!fundraiser.image &&
+                        }{!user.image &&
                             <img
                                 className="lg:w-1/3 w-full lg:h-[40rem] h-52 object-cover object-center rounded"
                                 src={"/assets/image-placeholder.jpg"}
-                                alt={fundraiser.title}
+                                alt={user.title}
                             />
                         }
-
-
-
                     </div>
                 </div>
             </section>
 
-        </DashboardLayout>
+        </DashboardLayout >
     )
 }
 
 
 export async function getServerSideProps(context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<Record<string, unknown>>> {
-    const slug = context.params ? context.params['slug']?.toString().toLocaleLowerCase() : [];
+    const username = context.params ? context.params['username']?.toString() : '';
     const admin_token = context.req.cookies[jwt_admin_auth_token];
 
     const redirect: Redirect = {
@@ -242,21 +246,21 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
         return { redirect }
     }
     // let admin = await admin_res.json();
-    const query = qs.stringify({
+    const user_query = qs.stringify({
         filters: {
-            slug: {
-                $eq: slug
+            username: {
+                $eq: username
             }
         }, populate: "*"
-    });
+    },{encodeValuesOnly:true});
 
-    let fundraiser = await (await fetch(server_url + "/content-manager/collection-types/api::fund-raise.fund-raise?" + query, {
+    let users = await (await fetch(server_url + "/content-manager/collection-types/plugin::users-permissions.user?" + user_query, {
         method: "GET",
         headers: {
             Authorization: `Bearer ${admin_token}`,
         }
     })).json();
-    if (!fundraiser['results'][0]) {
+    if (!users['results'][0]) {
         return {
             props: {
                 fundraiser: null, admin_token
@@ -266,8 +270,9 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
 
     return {
         props: {
-            fundraiser: fundraiser['results'][0],
-            admin_token, slug
+            user: users['results'][0],
+            admin_token,
+            username
         }
     }
 

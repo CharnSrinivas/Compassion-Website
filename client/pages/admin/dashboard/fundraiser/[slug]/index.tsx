@@ -19,7 +19,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
     }
     const redirect: Redirect = {
         destination: `/admin/dashboard/fundraiser/${slug}/details`,
-        statusCode: 307,
+        permanent:true,
         basePath: false
     }
     return{

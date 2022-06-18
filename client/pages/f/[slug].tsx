@@ -6,7 +6,8 @@ import qs from 'qs';
 import React, { useEffect, useState } from 'react'
 import { jwt_aut_token, server_url } from '../../config';
 import { isMobile } from '../../utils';
-
+import { Carousel } from 'react-responsive-carousel'
+import 'react-responsive-carousel/lib/styles/carousel.min.css'
 interface Props {
   fundraiser: any; user: any | null;
   donations: any[], donations_meta: any; slug: string
@@ -70,7 +71,7 @@ export default function fundraiser({ fundraiser, user, slug, donations, donation
         <meta property="og:title" content={"Compassion| " + fundraiser.attributes.title} />
         <meta property="og:description" content={fundraiser.attributes.description} />
         {fundraiser.attributes.image && fundraiser.attributes.image.data &&
-          <meta property="og:image" content={server_url + fundraiser.attributes.image.data.attributes.url} />}
+          <meta property="og:image" content={server_url + fundraiser.attributes.image.data[0].attributes.url} />}
       </Head>
       <div>
         <section className="text-gray-600 body-font">
@@ -78,16 +79,34 @@ export default function fundraiser({ fundraiser, user, slug, donations, donation
             <div className="lg:w-4/5 lg:justify-center mx-auto flex flex-wrap ">
               <div className='lg:w-1/2'>
                 {fundraiser.attributes.image && fundraiser.attributes.image.data &&
-                  <img
-                    className="lg:w-full w-full lg:h-[32rem] h-[28rem] object-cover object-center rounded-lg"
-                    src={server_url + fundraiser.attributes.image.data.attributes.url}
-                    alt="content"
-                  />
+
+                  <Carousel
+                    // showIndicators={false}
+                    showArrows
+                    showStatus
+                    showIndicators
+                    showThumbs={false}
+                    swipeable={true}
+                    useKeyboardArrows
+                    axis='horizontal'
+                  // autoPlay={true}
+                  >
+                    {fundraiser.attributes.image.data.map((image: any) => {
+
+                      return (
+                        <div className='w-fit'>
+                          <img
+                            className="lg:w-full w-full lg:h-[32rem] h-[28rem] object-cover object-center rounded-lg"
+                            src={server_url + image['attributes']['url']} />
+                        </div>
+                      )
+                    })}
+                  </Carousel>
                 }{!fundraiser.attributes.image &&
                   <img
                     className="lg:w-full w-full lg:h-[32rem] h-[28rem] object-cover object-center rounded-lg"
                     src={"/assets/image-placeholder.jpg"}
-                    alt="content"
+                    alt={fundraiser.attributes.name}
                   />
                 }
                 <div className="flex justify-between align-baseline h-auto w-fit fill-gray-600 mt-5">

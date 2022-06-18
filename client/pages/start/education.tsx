@@ -28,7 +28,7 @@ export default function medical({fundraisers,tag}: Props) {
             <div className=' w-full bg-[#fbf8f6] py-5'>
                 <div className='px-8 mx-auto w-90% lg:w-[60%] pt-[5rem]'>
                     <div className='mb-5'>
-                        <h1 className='font-semibold mb-1 text-3xl text-gray-700'>Trending in emergency fundraising</h1>
+                        <h1 className='font-semibold mb-1 text-3xl text-gray-700'>Trending in education fundraising</h1>
                         <div className="h-1 w-24 bg-primary rounded " />
                     </div>
                     <div className="flex flex-wrap ">
@@ -40,7 +40,7 @@ export default function medical({fundraisers,tag}: Props) {
                                             {item.attributes.image && item.attributes.image.data &&
                                                 <img
                                                     className="h-40 rounded w-full object-cover object-center mb-6"
-                                                    src={server_url + item.attributes.image.data.attributes.url}
+                                                    src={server_url + item.attributes.image.data[0].attributes.url}
                                                     alt="content"
                                                 />
                                             }{(!item.attributes.image || !item.attributes.image.data) &&
@@ -89,7 +89,7 @@ export default function medical({fundraisers,tag}: Props) {
     )
 }
 export async function getServerSideProps(context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<Record<string, unknown>>> {
-    const tag = 'emergency'
+    const tag = 'education'
     
     if (fundraiser_tags.indexOf(tag) < 0) {
         return {

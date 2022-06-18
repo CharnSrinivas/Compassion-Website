@@ -35,7 +35,7 @@ export default function fundraiser({ fundraiser, slug }: Props) {
                 <meta property="og:title" content={"Compassion| " + fundraiser.attributes.name} />
                 <meta property="og:description" content={fundraiser.attributes.description} />
                 {fundraiser.attributes.image && fundraiser.attributes.image.data &&
-                    <meta property="og:image" content={server_url + fundraiser.attributes.image.data.attributes.url} />}
+                    <meta property="og:image" content={server_url + fundraiser.attributes.image.data[0].attributes.url} />}
             </Head>
 
             <section className="text-gray-600 body-font w-fit">
@@ -45,14 +45,14 @@ export default function fundraiser({ fundraiser, slug }: Props) {
                             {fundraiser.attributes.image && fundraiser.attributes.image.data &&
                                 <img
                                     className="w-full h-[20rem] object-cover object-center rounded-lg"
-                                    src={server_url + fundraiser.attributes.image.data.attributes.url}
-                                    alt="content"
+                                    src={server_url + fundraiser.attributes.image.data[0].attributes.url}
+                                    alt={fundraiser.attributes.image.data[0].attributes}
                                 />
                             }{!fundraiser.attributes.image &&
                                 <img
                                     className="w-full h-[20rem] object-cover object-center rounded-lg"
                                     src={"/assets/image-placeholder.jpg"}
-                                    alt="content"
+                                    alt={fundraiser.attributes.name}
                                 />
                             }
 

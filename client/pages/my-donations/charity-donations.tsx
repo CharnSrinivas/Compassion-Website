@@ -12,7 +12,6 @@ interface Props {
 export default function myDonations({  charity_donations, donations_meta, charity_donations_meta }: Props) {
 
     const [url, setUrl] = useState('');
-    console.log(donations_meta);
     useEffect(() => {
         setUrl(window.location.pathname);
     }, []);
@@ -307,10 +306,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
     })
 
     const charity_donations = await (await fetch(server_url + "/api/charity-donations?" + charity_donations_query, {
-        method: "GET",
-        headers: {
-            Authorization: `Bearer ${token}`,
-        }
+        method: "GET"
     })).json();
 
     return {

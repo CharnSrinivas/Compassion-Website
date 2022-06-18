@@ -1,17 +1,35 @@
 import { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
 import qs from 'qs';
 import React, { useState } from 'react'
-import { fundraiser_tags, jwt_aut_token, server_url } from '../../config';
-
+import { server_url } from '../../config';
+import Carousel from "react-multi-carousel";
+import "react-multi-carousel/lib/styles.css";
 interface Props {
     fundraisers: any[];
+    top_charities: any[] | null;
 }
-
-export default function medical({ fundraisers }: Props) {
+const responsive = {
+    desktop: {
+        breakpoint: { max: 3000, min: 1024 },
+        items: 3,
+        paritialVisibilityGutter: 60
+    },
+    tablet: {
+        breakpoint: { max: 1024, min: 464 },
+        items: 2,
+        paritialVisibilityGutter: 50
+    },
+    mobile: {
+        breakpoint: { max: 464, min: 0 },
+        items: 1,
+        paritialVisibilityGutter: 30
+    }
+};
+export default function medical({ fundraisers, top_charities }: Props) {
 
     const [open_popup, setOpenPopUp] = useState(false);
     const [searching_charities, setIsSearching] = useState(false);
-    const [charities, setCharities] = useState([]);
+    const [search_charities, setSearchCharities] = useState(top_charities);
     const [selected_charity, setSelectedCharity] = useState<number | null>(null);
 
     const searchCharities = (search: string) => {
@@ -45,7 +63,7 @@ export default function medical({ fundraisers }: Props) {
                     res.json().then(res_json => {
                         setIsSearching(false);
                         if (res_json['data']) {
-                            setCharities(res_json['data']);
+                            setSearchCharities(res_json['data']);
                         }
                     })
                 })
@@ -102,6 +120,28 @@ export default function medical({ fundraisers }: Props) {
                             placeholder="Find nonprofits by name"
                         />
                     </div>
+
+                    {search_charities && search_charities.length > 0 &&
+                        <Carousel
+                            partialVisbile responsive={responsive}
+                            swipeable
+                            showDots
+                            infinite
+                            className='justify-center  my-4'
+                        >
+                            <div className='flex flex-row items-center gap-5 my-5'>
+                                {search_charities.map((charity) => {
+                                    if (charity['attributes']['image']['data']) {
+                                        return (
+                                            <a href={`/create/fundraiser/details?charity_id=${charity.id}`} className='w-fit flex flex-col items-center'>
+                                                <img className='h-[80px]' src={server_url + charity['attributes']['image']['data']['attributes']['url']} />
+                                            </a>
+                                        )
+                                    } return (<></>)
+                                })}
+                            </div>
+                        </Carousel>
+                    }
                 </div>
                 {open_popup &&
                     <div
@@ -146,8 +186,8 @@ export default function medical({ fundraisers }: Props) {
 
                                         <div className='flex flex-col py-5 gap-3'>
                                             {
-                                                charities && charities.length > 0 &&
-                                                charities.map((charity: any, key) => {
+                                                search_charities && search_charities.length > 0 &&
+                                                search_charities.map((charity: any, key) => {
                                                     return (
                                                         <a
                                                             key={key}
@@ -246,7 +286,7 @@ export default function medical({ fundraisers }: Props) {
                                             {item.attributes.image && item.attributes.image.data &&
                                                 <img
                                                     className="h-40 rounded w-full object-cover object-center mb-6"
-                                                    src={server_url + item.attributes.image.data.attributes.url}
+                                                    src={server_url + item.attributes.image.data[0].attributes.url}
                                                     alt="content"
                                                 />
                                             }{(!item.attributes.image || !item.attributes.image.data) &&
@@ -318,16 +358,28 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
     );
 
     let res = await (await fetch(server_url + "/api/fund-raises?" + query)).json();
+    let charities = await (await fetch(server_url + "/api/charities?" + qs.stringify({
+        pagination: {
+            pageSize: 10
+        }, sort: ['createdAt:desc', 'direct_funds_count:desc'], populate: ['image']
+    }
+    ), { method: "GET" }
+    )).json();
+
+    console.log(charities);
     if (res['data'] && res['data'].length > 0) {
         return {
             props: {
-                fundraisers: res['data']
+                fundraisers: res['data'],
+                top_charities: charities['data']
             }
         }
     }
+
     return {
         props: {
-            fundraisers: null
+            fundraisers: null,
+            top_charities: null
         }
     }
 }

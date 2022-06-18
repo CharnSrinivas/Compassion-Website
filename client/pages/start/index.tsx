@@ -48,7 +48,7 @@ export default function start(props: Props) {
                             </div>
                             <h3 className='font-medium text-gray-700 ml-2 my-5'>Charity</h3>
                         </a>
-                        <a href={`/start/Education`} className="xl:w-1/4 md:w-1/2  bg-white  cursor-pointer m-3  drop-shadow-md first-letter:p-0   " >
+                        <a href={`/start/education`} className="xl:w-1/4 md:w-1/2  bg-white  cursor-pointer m-3  drop-shadow-md first-letter:p-0   " >
                             <div className="bg-gray-50">
                                 <img className='h-[17rem] object-cover' src="https://d25oniaj7o2jcw.cloudfront.net/photo-category-education-uk@2x.jpg" alt="Education" />
                             </div>

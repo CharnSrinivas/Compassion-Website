@@ -20,7 +20,7 @@ export default function ({ fundraiser, donations, donations_meta, slug }: Props)
   
   
   useEffect(() => {
-    setUrl(window.location.pathname);
+    setUrl(window.location.origin);
   }, [])
 
   const shareOnWhatsapp = () => {
@@ -81,7 +81,7 @@ export default function ({ fundraiser, donations, donations_meta, slug }: Props)
                 {fundraiser.attributes.image && fundraiser.attributes.image.data &&
                   <img
                     className="lg:w-[30rem] h-[25rem] object-cover object-center rounded-lg"
-                    src={server_url + fundraiser.attributes.image.data.attributes.url}
+                    src={server_url + fundraiser.attributes.image.data[0].attributes.url}
                     alt="content"
                   />
                 }{!fundraiser.attributes.image || !fundraiser.attributes.image.data &&

@@ -5,7 +5,7 @@ module.exports = {
             path: '/fund-raises/:id',
             handler: 'fund-raise.update',
             config: {
-                policies: ['validate-user']
+                policies: ['validate-update']
             }
         },{
             method: 'DELETE',
@@ -14,6 +14,11 @@ module.exports = {
             config: {
                 policies: ['validate-user-delete']
             }
+        },
+        {
+            method:'GET',
+            path: '/fund-raises/remove-image/:id',
+            handler:'custom.removeImage'
         }
     ]
 }

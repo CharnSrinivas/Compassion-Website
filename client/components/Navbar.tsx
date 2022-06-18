@@ -40,9 +40,7 @@ export default function Navbar() {
     useEffect(() => {
         setOpenMenu(false)
         init();
-        window.onbeforeunload = init;
         (document.querySelectorAll('body') as any)[0].style.overflow = 'scroll';
-
     }, []);
     const singOut = () => {
         let sure = confirm("Are you sure?");
@@ -50,7 +48,8 @@ export default function Navbar() {
         localStorage.removeItem(jwt_aut_token);
         router.reload();
     }
-    const init = () => {
+    
+    const init = async () => {
         setOpenMenu(false);
         if (!window) return;
         const token = localStorage.getItem(jwt_aut_token);
@@ -81,43 +80,46 @@ export default function Navbar() {
         if (!token) {
             setIsAuth(false)
         }
-        fetch(server_url + "/api/users/me", {
+        let user_res = await fetch(server_url + "/api/users/me", {
             method: "GET",
             headers: {
                 Authorization: `Bearer ${token}`,
             }
-        }).then((res) => {
-            if (res.status <= 201) {
-                Cookies.set(jwt_aut_token, token!);
-                res.json().then(res_json => {
-                    setUser(res_json)
-                    const query = QueryString.stringify({
-                        filters: {
-                            user: {
-                                id: { $eq: res_json.id }
-                            }
-                        },
-                    })
-                    fetch(server_url + `/api/charities?` + query, {
-                        method: "GET",
-                        headers: {
-                            Authorization: `Bearer ${token}`,
+        })
+        if (user_res.status <= 201) {
+            Cookies.set(jwt_aut_token, token!);
+            let user = await user_res.json();
+            if ((!user['approved']) && window.location.pathname !== '/thankyou') {
+                window.location.href = ('/thankyou');
+            } else {
+                setUser(user);
+                const query = QueryString.stringify({
+                    filters: {
+                        user: {
+                            id: { $eq: user.id }
                         }
-                    }).then(charity_res => {
-                        charity_res.json().then(charity_data => {
-                            if (charity_data.data && charity_data.data.length === 1) {
-                                setHasCharity(true);
-                            }
-                        })
+                    },
+                })
+                fetch(server_url + `/api/charities?` + query, {
+                    method: "GET",
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    }
+                }).then(charity_res => {
+                    charity_res.json().then(charity_data => {
+                        if (charity_data.data && charity_data.data.length === 1) {
+                            setHasCharity(true);
+                        }
                     })
                 })
                 setIsAuth(true)
-            } else {
-                localStorage.removeItem(jwt_aut_token);
-                Cookies.remove(jwt_aut_token)
-                setIsAuth(false);
             }
-        })
+        } else {
+            localStorage.removeItem(jwt_aut_token);
+            Cookies.remove(jwt_aut_token)
+            setIsAuth(false);
+        }
+
     }
     return (
         <>

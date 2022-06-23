@@ -13,6 +13,8 @@ interface Props {
     charities: any[];
     charity_donations_meta: any;
     pending_charity_approval: any;
+    page_no: number;
+    page_size: number;
 }
 
 
@@ -71,8 +73,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
         }, encodeValuesOnly: true,
     })).then(res => {
         charity_donations_meta = res.data['meta']['pagination'];
-        if(charity_donations_meta.pageSize > charity_donations_meta.total){
-            charity_donations_meta.pageSize=charity_donations_meta.total;
+        if (charity_donations_meta.pageSize > charity_donations_meta.total) {
+            charity_donations_meta.pageSize = charity_donations_meta.total;
         }
     });
 
@@ -102,14 +104,16 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
             charities_meta,
             charities,
             charity_donations_meta,
-            pending_charity_approval
+            pending_charity_approval,
+            page_no,
+            page_size
         }
     }
 
 }
 
 
-export default function index({ charity_donations_meta, pending_charity_approval, charities, charities_meta }: Props) {
+export default function index({ charity_donations_meta, pending_charity_approval, charities, charities_meta, page_no, page_size }: Props) {
     const [pathname, setPathName] = useState('')
 
     useEffect(() => {
@@ -241,7 +245,7 @@ export default function index({ charity_donations_meta, pending_charity_approval
                                 <table className="w-full whitespace-no-wrap">
                                     <thead>
                                         <tr className="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800">
-                                        <th className="px-2 py-3">S.No</th>
+                                            <th className="px-2 py-3">S.No</th>
                                             <th className="px-4 py-3">Charity</th>
                                             <th className="px-4 py-3">Directfunds raised</th>
                                             <th className="px-4 py-3">Approval</th>
@@ -250,7 +254,7 @@ export default function index({ charity_donations_meta, pending_charity_approval
                                     </thead>
                                     <tbody className="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
                                         {charities && charities.length > 0 &&
-                                            charities.map((charity,index) => {  
+                                            charities.map((charity, index) => {
                                                 return (
                                                     <tr className="text-gray-700 dark:text-gray-400">
                                                         <td className="pl-4 py-3 text-sm">{(charities_meta.pageSize * charities_meta.page) - (charities_meta.pageSize - index - 1)}</td>
@@ -309,19 +313,24 @@ export default function index({ charity_donations_meta, pending_charity_approval
                             </div>
                             <div className="flex px-4 py-3 text-xs font-semibold justify-between tracking-wide text-gray-500 uppercase border-t dark:border-gray-700 bg-gray-50 sm:grid-cols-9 dark:text-gray-400 dark:bg-gray-800">
                                 <span className="flex items-center col-span-3">
+
                                     <div className="flex justify-center">
                                         <div className="mb-3 xl:w-96">
                                             <select
                                                 onChange={(e) => {
-                                                    window.location.href = `${pathname}?page=${charities_meta.page}&pageSize=${e.target.value}`
+                                                    window.location.href = `${pathname}?dp=${charity_donations_meta.page}&ds=${e.target.value}`
                                                 }}
                                                 className="form-select appearance-none block px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
                                                 aria-label="Default select example"
                                             >
-                                                <option selected value={10}>10</option>
-                                                <option value={20}>20</option>
-                                                <option value={50}>50</option>
-                                                <option value={100}>100</option>
+                                                {[10, 20, 50, 100].map((num) => {
+                                                    return (
+                                                        <option selected={page_size === num} value={num}>{num}</option>
+                                                    )
+                                                })}
+                                                {/* <option value={20}>20</option>
+                            <option value={50}>50</option>
+                            <option value={100}>100</option> */}
                                             </select>
                                         </div>
                                     </div>
@@ -332,12 +341,12 @@ export default function index({ charity_donations_meta, pending_charity_approval
                                     <nav aria-label="Table navigation">
                                         <ul className="inline-flex items-center">
                                             {/* Left button */}
-                                            {charities_meta.page > 1 &&
+                                            {charity_donations_meta.page > 1 &&
                                                 <li>
                                                     <a
                                                         className="px-3 py-1 rounded-md rounded-l-lg focus:outline-none focus:shadow-outline-purple"
                                                         aria-label="Previous"
-                                                        href={`${pathname}?page=${charities_meta.page - 1}`}
+                                                        href={`${pathname}?dp=${charity_donations_meta.page - 1}`}
                                                     >
                                                         <svg
                                                             aria-hidden="true"
@@ -356,15 +365,15 @@ export default function index({ charity_donations_meta, pending_charity_approval
                                             }
                                             <li>
                                                 <button className="px-3 py-1 text-white transition-colors duration-150 bg-purple-600 border border-r-0 border-purple-600 rounded-md focus:outline-none focus:shadow-outline-purple">
-                                                    {charities_meta.page}
+                                                    {charity_donations_meta.page}
                                                 </button>
                                             </li>
-                                            {!(charities_meta.page * charities_meta.pageSize >= charities_meta.total) &&
+                                            {!(charity_donations_meta.page * charity_donations_meta.pageSize >= charity_donations_meta.total) &&
                                                 <li >
                                                     <a
                                                         className="px-3 py-1 rounded-md rounded-r-lg focus:outline-none focus:shadow-outline-purple"
                                                         aria-label="Next"
-                                                        href={`${pathname}?page=${charities_meta.page + 1}`}
+                                                        href={`${pathname}?dp=${charity_donations_meta.page + 1}`}
                                                     >
                                                         <svg
                                                             className="w-5 h-5 fill-current"
@@ -385,6 +394,7 @@ export default function index({ charity_donations_meta, pending_charity_approval
                                     </nav>
                                 </span>
                             </div>
+
                         </div>
                     </div>
                 </main>

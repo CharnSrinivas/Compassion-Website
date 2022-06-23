@@ -33,7 +33,7 @@ export default function donate({ fundraiser, slug, user, strapi_publisable_key }
             price: donation_amount,
             description: fundraiser.attributes.description,
             charity: fundraiser.attributes['charity']['data'] ? fundraiser.attributes['charity']['data']['id'] : null,
-            user: fundraiser.attributes['user']['data'] ? fundraiser.attributes['user']['data']['id'] : null,
+            user: user ? user['id'] : null,
             comment: comment,
             fund_raise: fundraiser.id
         }
@@ -42,11 +42,10 @@ export default function donate({ fundraiser, slug, user, strapi_publisable_key }
         });
         if (checkoutSession.data.error) {
             alert("Oops! Something went wrong");
-            console.error(checkoutSession.data.error);return;
+            console.error(checkoutSession.data.error); return;
         }
         const { error } = await stripe.redirectToCheckout({
             sessionId: checkoutSession.data.id,
-            // successUrl:"http://localhost:3000/api/success"
         })
         if (error) {
             alert("Our payment system is borken! Try again after some time.");

@@ -42,6 +42,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         // console.log('------------------ webhoook event -----------------')
         // console.log(event);
         // console.log('------------------ webhoook event -----------------')
+        console.log(checkout_res);
 
         res.status(checkout_res.status).send(checkout_res.body);
     }

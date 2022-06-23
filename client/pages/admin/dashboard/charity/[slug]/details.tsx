@@ -40,7 +40,7 @@ export default function edit({ charity, admin_token, slug }: Props) {
                             <h2 className="text-sm title-font text-gray-500 tracking-widest">
                     CHARITY
                             </h2>
-                            <a href={`/admin/dashboard/`} className='flex w-fit items-center text-gray-600 px-3 justify-evenly  border-2 border-gray-300 rounded-md my-4'
+                            <a href={`/admin/dashboard/charity`} className='flex w-fit items-center text-gray-600 px-3 justify-evenly  border-2 border-gray-300 rounded-md my-4'
                             >
                                 <svg
                                     className='w-5 h-5 '

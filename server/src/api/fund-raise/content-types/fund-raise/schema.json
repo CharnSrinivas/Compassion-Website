@@ -14,7 +14,8 @@
   "attributes": {
     "fund_target": {
       "type": "decimal",
-      "required": true
+      "required": true,
+      "default": 0
     },
     "title": {
       "type": "string",
@@ -72,8 +73,8 @@
     },
     "donations_count": {
       "type": "biginteger",
-      "default": "0",
-      "required": true
+      "required": true,
+      "default": "0"
     },
     "user": {
       "type": "relation",

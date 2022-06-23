@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-    
-    res.send("cancel")
+
+    res.send(" payment canceled");
 }

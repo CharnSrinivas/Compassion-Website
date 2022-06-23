@@ -22,7 +22,7 @@ module.exports = createCoreController('api::donation.donation', ({ strapi }) => 
             payment_method_types: ['card'],
             line_items: [transformedItem],
             mode: 'payment',
-            success_url: redirect_url + '/api/success',
+            success_url: redirect_url +  '/my-donations/fundraiser-donations',
             cancel_url: redirect_url + '/api/cancel',
         });
         try {

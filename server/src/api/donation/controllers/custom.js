@@ -22,11 +22,10 @@ module.exports = createCoreController('api::donation.donation', ({ strapi }) => 
             payment_method_types: ['card'],
             line_items: [transformedItem],
             mode: 'payment',
-            success_url: redirect_url + '/api/success',
+            success_url: redirect_url + '/my-donations/fundraiser-donations',
             cancel_url: redirect_url + '/api/cancel',
         });
         try {
-
             let donation = await strapi.query("api::donation.donation").create({
                 data: {
                     payment_id: session.id,
@@ -39,19 +38,6 @@ module.exports = createCoreController('api::donation.donation', ({ strapi }) => 
                     publishedAt: new Date().toISOString()
                 }
             });
-            let fund_raiser = await strapi.query("api::fund-raise.fund-raise").findOne({
-                where: {
-                    id: item.fund_raise
-                }
-            });
-            let updated_fund_raiser = await strapi.query("api::fund-raise.fund-raise").update({
-                where: {
-                    id: item.fund_raise
-                }, data: {
-                    fund_raised: fund_raiser.fund_raised + donation.amount,
-                    donations_count: fund_raiser.donations_count + 1
-                }
-            });
             ctx.send({ id: session.id });
         } catch (err) {
             ctx.send({ error: err.message })
@@ -59,7 +45,7 @@ module.exports = createCoreController('api::donation.donation', ({ strapi }) => 
     },
 
     async donationSuccess(ctx) {
-        const endpointSecret = process.env.STRIPE_WEBHOOK_DONATIION_SUCCESS;
+        const endpointSecret = process.env.STRIPE_WEBHOOK_KEY;
 
         const sig = ctx.request.body['stripe-signature'];
         const rawBody = ctx.request.body['raw-body'];
@@ -68,32 +54,102 @@ module.exports = createCoreController('api::donation.donation', ({ strapi }) => 
             if (!sig || !rawBody) return;
             event = stripe.webhooks.constructEvent(rawBody, sig, endpointSecret);
 
+            if (event.type !== 'checkout.session.completed') {
+                try {
+                    await strapi.query("api::donation.donation").delete({
+                        where: {
+                            payment_id: event.data.object.id
+                        }
+                    })
+                } catch (error) { }
+                try {
+                    await strapi.query("api::charity-donation.charity-donation").delete({
+                        where: {
+                            payment_id: event.data.object.id
+                        }
+                    })
+                } catch (error) { }
+                ctx.res.status = 400;
+            }
+
+            let donation = await strapi.query("api::donation.donation").findOne({
+                where: {
+                    payment_id: event.data.object.id
+                },
+                populate: { charity: true, fund_raise: true }
+            })
+            if (!donation) {
+                donation = await strapi.query("api::charity-donation.charity-donation").findOne({
+                    where: {
+                        payment_id: event.data.object.id
+                    },
+                    populate: { charity: true, fund_raise: true }
+                })
+            }
+            if (donation.fund_raise) {
+                if(!donation.fund_raise.approved){
+                    ctx.res.status = 400;
+                    return;
+                }
+                let fund_raiser = await strapi.query("api::fund-raise.fund-raise").findOne({
+                    where: {
+                        id: donation.fund_raise.id
+                    }
+                });
+                let updated_fund_raiser = await strapi.query("api::fund-raise.fund-raise").update({
+                    where: {
+                        id: donation.fund_raise.id
+                    }, data: {
+                        fund_raised: parseInt(fund_raiser.fund_raised) + parseInt(donation.amount),
+                        donations_count: parseInt(fund_raiser.donations_count) + 1
+                    }
+                });
+                await strapi.query("api::donation.donation").update({
+                    where: {
+                        payment_id: event.data.object.id
+                    }, data: {
+                        success: true
+                    },
+                    populate: { charity: true, fund_raise: true }
+                })
+                console.log(updated_fund_raiser);
+            }
+            if (donation.charity) {
+                if(!donation.charity.approved){
+                    ctx.res.status = 400;
+                    return;
+                }
+                let charity = await strapi.query("api::charity.charity").findOne({
+                    where: {
+                        id: donation.charity.id
+                    }
+                });
+                let updated_charity = await strapi.query("api::charity.charity").update({
+                    where: { id: donation.charity.id },
+                    data: {
+                        direct_funds: parseInt(charity.direct_funds) + parseInt(donation.amount),
+                        direct_funds_count: parseInt(charity.direct_funds_count) + 1
+                    }
+                });
+                await strapi.query("api::charity-donation.charity-donation").update({
+                    where: {
+                        payment_id: event.data.object.id
+                    }, data: {
+                        success: true
+                    },
+                    populate: { charity: true, fund_raise: true }
+                })
+                console.log(updated_charity);
+            }
+
+            ctx.res.status = 200;
         } catch (err) {
             // ctx.res.status(400).send(`Webhook Error: ${err.message}`);
             console.error(err.message);
             return ctx.res.status = 400;
             // .send(`Webhook Error: ${err.message}`);
         }
-        if (event.type === 'checkout.session.completed') {
-            let donation = await strapi.query("api::donation.donation").update({
-                where: {
-                    payment_id: event.data.object.id
-                },
-                data: {
-                    success: true
-                }
-            })
-            ctx.res.status = 200;
-        } else {
-            if (event) {
-                await strapi.query("api::donation.donation").delete({
-                    where: {
-                        payment_id: event.data.object.id
-                    }
-                })
-            }
-            ctx.res.status = 400;
-        }
+
 
     }
 }))

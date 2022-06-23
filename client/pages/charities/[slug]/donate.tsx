@@ -15,6 +15,8 @@ interface Props {
 export default function donate({ charity, slug, user, strapi_publisable_key }: Props) {
     const [donation_amount, setDonationAmount] = useState(0);
     const [comment, setComment] = useState('')
+    console.log(charity.attributes['user']);
+    
     const startCheckOut = async () => {
         if (donation_amount <= 0) {
             alert("Enter valid amount");
@@ -31,7 +33,7 @@ export default function donate({ charity, slug, user, strapi_publisable_key }: P
             image: charity.attributes.image.data ? server_url + charity.attributes.image.data['attributes']['url'] : window.location.origin + "/assets/image-placeholder.jpg",
             price: donation_amount,
             description: charity.attributes.description,
-            user: charity.attributes['user']['data'] ? charity.attributes['user']['data']['id'] : null,
+            user: user ? user['id'] : null,
             comment: comment,
             charity: charity.id
         }

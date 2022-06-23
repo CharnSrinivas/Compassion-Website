@@ -5,8 +5,6 @@ const opt: any = {}
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!,opt);
 export default async (req: NextApiRequest, res: NextApiResponse) => {
     if (req.method === 'POST') {
-        console.log(process.env.STRIPE_SECRET_KEY);
-        
         const { item } = req.body;
         const transformedItem = {
             price_data: {

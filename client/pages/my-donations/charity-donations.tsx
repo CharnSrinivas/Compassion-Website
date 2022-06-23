@@ -9,7 +9,7 @@ interface Props {
     charity_donations_meta: any
 }
 
-export default function myDonations({  charity_donations, donations_meta, charity_donations_meta }: Props) {
+export default function myDonations({ charity_donations, donations_meta, charity_donations_meta }: Props) {
 
     const [url, setUrl] = useState('');
     useEffect(() => {
@@ -155,7 +155,7 @@ export default function myDonations({  charity_donations, donations_meta, charit
                                                                 <img
                                                                     className="w-10 h-10 rounded-full object-cover"
                                                                     // src="https://avatars0.githubusercontent.com/u/57622665?s=460&u=8f581f4c4acd4c18c33a87b3e6476112325e8b38&v=4"
-                                                                    src={`${server_url}${donation.attributes.charity.data.attributes.image.data.attributes.formats.thumbnail.url}`}
+                                                                    src={`${server_url}${donation.attributes.charity.data.attributes.image.data.attributes.url}`}
                                                                     alt=""
                                                                 />
                                                             }{!donation.attributes.charity.data.attributes.image.data &&
@@ -170,7 +170,7 @@ export default function myDonations({  charity_donations, donations_meta, charit
                                                         <div className="ml-4">
                                                             <a href={`/charities/${donation.attributes.charity.data.attributes.slug}`} className="text-sm font-medium text-blue-800">
                                                                 {donation.attributes.charity.data.attributes.title}
-                                                                </a>
+                                                            </a>
                                                             <div className="text-sm text-gray-500">{donation.attributes.charity.data.attributes.tag}</div>
                                                         </div>
                                                     </div>
@@ -179,7 +179,7 @@ export default function myDonations({  charity_donations, donations_meta, charit
                                                     <div className="text-lg text-gray-900">{donation.attributes.amount}</div>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
-                                                    <div className="text-xs text-gray-900">{donation.attributes.comment}</div>
+                                                    <div className="text-xs text-gray-900">{(donation.attributes.comment as string).length > 60 ? (donation.attributes.comment as string).slice(0, 60) + "..." : (donation.attributes.comment as string)}</div>
                                                 </td>
                                                 <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
                                                     {new Date(donation.attributes.createdAt).toLocaleDateString().replaceAll("/", '-')}
@@ -297,7 +297,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
                 id: { $eq: user.id }
             }
         },
-        populate: ["image", "user", 'charity','charity.image'],
+        populate: ["image", "user", 'charity', 'charity.image'],
         sort: ['createdAt:desc'],
         pagination: {
             pageSize: !isNaN(ds) ? ds : 10,
@@ -312,7 +312,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
     return {
         props: {
             donations_meta: donations['meta']['pagination'],
-            charity_donations:charity_donations['data'],
+            charity_donations: charity_donations['data'],
             charity_donations_meta: charity_donations['meta']['pagination'],
 
         }

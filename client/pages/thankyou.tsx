@@ -47,10 +47,19 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
     })
     )
     if (usr_res.status > 201) {
-        return { props: { is_auth: false, user: null, fundraisers: null } }
+        return { redirect: redirect }
     }
 
     let user = await usr_res.json();
+    if (user.approved) {
+        return {
+            redirect: {
+                destination: '/',
+                statusCode: 307,
+                basePath: false
+            }
+        }
+    }
     return {
         props: {
             user

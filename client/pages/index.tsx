@@ -1,13 +1,12 @@
-import axios from 'axios'
 import type { NextPage } from 'next'
-import { useEffect } from 'react'
 
 const tagLines = [
   'Donate in crypto: Global donations made possible with Compassion',
   'Donate in crypto from around the world with compassion',
   'The first global crypto fundraiser platform in the world',
   'There is no small act of kindness',
-  'Help is just a fundraiser away!'
+  'Help is just a fundraiser away!',
+  'Compassion is the greatest form of love humans have to offer'
 ]
 
 const Home: NextPage = () => {
@@ -23,7 +22,7 @@ const Home: NextPage = () => {
         >
           <h3 className='  text-white z-20 text-2xl lg:text-5xl  ' style={{
             letterSpacing: "0.6px",
-          }}>Compassion is the greatest form of love humans have to offer</h3>
+          }}>{tagLines[Math.floor(Math.random() * tagLines.length)]}</h3>
           <a href='/create/fundraiser/details' className='w-fit px-5 py-4   text-xl  mt-10 rounded-full text-white z-20 bg-[#32a95c]'>
             <p>
               Start a Fundraiser!

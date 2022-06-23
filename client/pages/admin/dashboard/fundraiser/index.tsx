@@ -12,6 +12,8 @@ interface Props {
     donations_meta: any;
     pending_approval: any;
     fundraisers: any[];
+    page_no:number
+    page_size:number
 }
 
 
@@ -100,14 +102,15 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
             fund_raisers_meta,
             pending_approval,
             fundraisers,
-
+            page_no,
+            page_size
         }
     }
 
 }
 
 
-export default function index({ donations_meta, fund_raisers_meta, pending_approval, fundraisers, }: Props) {
+export default function index({ donations_meta, fund_raisers_meta, pending_approval, fundraisers,page_no,page_size }: Props) {
     const [pathname, setPathName] = useState('')
     useEffect(() => {
         document.getElementById("navbar")!.style!.display = 'none'
@@ -125,7 +128,7 @@ export default function index({ donations_meta, fund_raisers_meta, pending_appro
                         </h2>
                         {/* CTA */}
 
-                        {/* Cards */}
+                        {/* CarpageSize */}
                         <div className="grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-4">
                             {/* Card */}
                             <div className="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
@@ -290,15 +293,17 @@ export default function index({ donations_meta, fund_raisers_meta, pending_appro
                                         <div className="mb-3 xl:w-96">
                                             <select
                                                 onChange={(e) => {
-                                                    window.location.href = `${pathname}?page=${fund_raisers_meta.page}&pageSize=${e.target.value}`
+                                                    window.location.href = `${pathname}?page=${donations_meta.page}&pageSize=${e.target.value}`
                                                 }}
                                                 className="form-select appearance-none block px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
                                                 aria-label="Default select example"
                                             >
-                                                <option selected value={10}>10</option>
-                                                <option value={20}>20</option>
-                                                <option value={50}>50</option>
-                                                <option value={100}>100</option>
+                                                {[10, 20, 50, 100].map((num) => {
+                                                    return (
+                                                        <option selected={page_size === num} value={num}>{num}</option>
+                                                    )
+                                                })}
+
                                             </select>
                                         </div>
                                     </div>
@@ -309,12 +314,12 @@ export default function index({ donations_meta, fund_raisers_meta, pending_appro
                                     <nav aria-label="Table navigation">
                                         <ul className="inline-flex items-center">
                                             {/* Left button */}
-                                            {fund_raisers_meta.page > 1 &&
+                                            {donations_meta.page > 1 &&
                                                 <li>
                                                     <a
                                                         className="px-3 py-1 rounded-md rounded-l-lg focus:outline-none focus:shadow-outline-purple"
                                                         aria-label="Previous"
-                                                        href={`${pathname}?page=${fund_raisers_meta.page - 1}`}
+                                                        href={`${pathname}?page=${donations_meta.page - 1}`}
                                                     >
                                                         <svg
                                                             aria-hidden="true"
@@ -333,15 +338,15 @@ export default function index({ donations_meta, fund_raisers_meta, pending_appro
                                             }
                                             <li>
                                                 <button className="px-3 py-1 text-white transition-colors duration-150 bg-purple-600 border border-r-0 border-purple-600 rounded-md focus:outline-none focus:shadow-outline-purple">
-                                                    {fund_raisers_meta.page}
+                                                    {donations_meta.page}
                                                 </button>
                                             </li>
-                                            {!(fund_raisers_meta.page * fund_raisers_meta.pageSize >= fund_raisers_meta.total) &&
+                                            {!(donations_meta.page * donations_meta.pageSize >= donations_meta.total) &&
                                                 <li >
                                                     <a
                                                         className="px-3 py-1 rounded-md rounded-r-lg focus:outline-none focus:shadow-outline-purple"
                                                         aria-label="Next"
-                                                        href={`${pathname}?page=${fund_raisers_meta.page + 1}`}
+                                                        href={`${pathname}?page=${donations_meta.page + 1}`}
                                                     >
                                                         <svg
                                                             className="w-5 h-5 fill-current"

@@ -9,18 +9,23 @@ import { isMobile } from '../../../utils';
 
 interface Props {
   charity: any; user: any | null;
-  donations: any[], donations_meta: any; slug: string
+  donations: any[], donations_meta: any; slug: string;
+  dp: number;
+  ds: number;
 }
 
-export default function fundraiser({ charity, user, slug, donations, donations_meta }: Props) {
+export default function fundraiser({ charity, user, slug, donations, donations_meta, dp, ds }: Props) {
   const [url, setUrl] = useState('');
   const [open_share, setOpenShare] = useState(false);
   const [read_more, setReadMore] = useState(false);
   const router = useRouter();
   const [show_embedded, setShowEmbedded] = useState(false);
+  const [pathname, setPathName] = useState('');
 
   useEffect(() => {
-    setUrl(window.location.origin)
+    setUrl(window.location.origin);
+    setPathName(window.location.pathname);
+
   }, [])
   const shareOnWhatsapp = () => {
     if (!window) return;
@@ -147,9 +152,9 @@ export default function fundraiser({ charity, user, slug, donations, donations_m
               <div className="lg:w-1/3 w-1/2   lg:pl-10 m-auto sm:mt-5   lg:mt-0 relative">
                 <div className='rounded-lg drop-shadow-xl bg-white max-w-sm flex-col p-5 justify-start relative'>
                   <div className="flex  flex-wrap items-baseline gap-2">
-                    <div className='flex items-baseline gap-0'>
+                    <div className='flex items-baseline gap-1'>
                       <p className='text-gray-800 text-2xl title-font font-medium'>{charity.attributes.direct_funds}</p>
-                      <p className='text-gray-600 font-medium ' >{charity.attributes.fund_type}</p>
+                      <p className='text-gray-600 font-medium ' >{(charity.attributes.fund_type as string).toUpperCase()}</p>
                     </div>
                     <p>direct funds raised</p>
                   </div>
@@ -247,10 +252,14 @@ export default function fundraiser({ charity, user, slug, donations, donations_m
                                         alt=""
                                       />
                                     </div>
-                                    <div className="ml-4">
-                                      <div className="text-sm font-medium text-gray-900">{donation.attributes.user.data.attributes.username}</div>
-                                      <div className="text-sm text-gray-500">{donation.attributes.user.data.attributes.email}</div>
-                                    </div>
+                                    {donation.attributes.user.data &&
+                                      <div className="ml-4">
+                                        <div className="text-sm font-medium text-gray-900">{donation.attributes.user.data.attributes.username}</div>
+                                        <div className="text-sm text-gray-500">{donation.attributes.user.data.attributes.email}</div>
+                                      </div>
+                                    }{!donation.attributes.user.data &&
+                                      <div className="text-sm font-medium text-gray-900">Anonymous</div>
+                                    }
                                   </div>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
@@ -280,49 +289,87 @@ export default function fundraiser({ charity, user, slug, donations, donations_m
                     }
 
                   </div>
-                  <div className="flex my-5 mx-auto justify-center">
-                    {donations_meta['page'] !== 1 &&
-                      <a href={`${url}/charity/${slug}?dp=${donations_meta['page'] - 1}`} className="border border-teal-500 text-teal-500 block rounded-sm font-bold py-4 px-6 mr-2 flex items-center hover:bg-teal-500 hover:text-white">
-                        <svg
-                          className="h-5 w-5 mr-2 fill-current"
-                          id="Layer_1"
-                          xmlns="http://www.w3.org/2000/svg"
-                          xmlnsXlink="http://www.w3.org/1999/xlink"
-                          x="0px"
-                          y="0px"
-                          viewBox="-49 141 512 512"
-                          xmlSpace="preserve"
-                        >
-                          <path
-                            id="XMLID_10_"
-                            d="M438,372H36.355l72.822-72.822c9.763-9.763,9.763-25.592,0-35.355c-9.763-9.764-25.593-9.762-35.355,0 l-115.5,115.5C-46.366,384.01-49,390.369-49,397s2.634,12.989,7.322,17.678l115.5,115.5c9.763,9.762,25.593,9.763,35.355,0 c9.763-9.763,9.763-25.592,0-35.355L36.355,422H438c13.808,0,25-11.193,25-25S451.808,372,438,372z"
-                          />
-                        </svg>
-                        Previous
-                      </a>
-                    }
-                    {donations_meta['page'] < donations_meta['pageCount'] &&
-                      <a href={`${url}/charity/${slug}?dp=${donations_meta['page'] + 1}`} className="border border-teal-500 bg-teal-500 text-white block rounded-sm font-bold py-4 px-6 ml-2 flex items-center">
-                        Next
-                        <svg
-                          className="h-5 w-5 ml-2 fill-current"
-                          id="Layer_1"
-                          xmlns="http://www.w3.org/2000/svg"
-                          xmlnsXlink="http://www.w3.org/1999/xlink"
-                          x="0px"
-                          y="0px"
-                          viewBox="-49 141 512 512"
-                          xmlSpace="preserve"
-                        >
-                          <path
-                            id="XMLID_11_"
-                            d="M-24,422h401.645l-72.822,72.822c-9.763,9.763-9.763,25.592,0,35.355c9.763,9.764,25.593,9.762,35.355,0
-      l115.5-115.5C460.366,409.989,463,403.63,463,397s-2.634-12.989-7.322-17.678l-115.5-115.5c-9.763-9.762-25.593-9.763-35.355,0
-      c-9.763,9.763-9.763,25.592,0,35.355l72.822,72.822H-24c-13.808,0-25,11.193-25,25S-37.808,422-24,422z"
-                          />
-                        </svg>
-                      </a>
-                    }
+
+                  <div className="flex px-4 py-3 text-xs font-semibold justify-between tracking-wide text-gray-500 uppercase border-t dark:border-gray-700 bg-gray-50 sm:grid-cols-9 dark:text-gray-400 dark:bg-gray-800">
+                    <span className="flex items-center col-span-3">
+
+                      <div className="flex justify-center">
+                        <div className="mb-3 xl:w-96">
+                          <select
+                            onChange={(e) => {
+                              window.location.href = `${pathname}?dp=${donations_meta.page}&ds=${e.target.value}`
+                            }}
+                            className="form-select appearance-none block px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+                            aria-label="Default select example"
+                          >
+                            {[10, 20, 50, 100].map((num) => {
+                              let selected;
+                              return (
+                                <option selected={ds === num} value={num}>{num}</option>
+                              )
+                            })}
+                          </select>
+                        </div>
+                      </div>
+                    </span>
+                    <span className="col-span-2" />
+                    {/* Pagination */}
+                    <span className="flex col-span-4 mt-2 justify-end sm:mt-auto sm:justify-end">
+                      <nav aria-label="Table navigation">
+                        <ul className="inline-flex items-center">
+                          {/* Left button */}
+                          {donations_meta.page > 1 &&
+                            <li>
+                              <a
+                                className="px-3 py-1 rounded-md rounded-l-lg focus:outline-none focus:shadow-outline-purple"
+                                aria-label="Previous"
+                                href={`${pathname}?dp=${donations_meta.page - 1}`}
+                              >
+                                <svg
+                                  aria-hidden="true"
+                                  className="w-5 h-5 fill-current"
+
+                                  viewBox="0 0 20 20"
+                                >
+                                  <path
+                                    d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                                    clipRule="evenodd"
+                                    fillRule="evenodd"
+                                  />
+                                </svg>
+                              </a>
+                            </li>
+                          }
+                          <li>
+                            <button className="px-3 py-1 text-white transition-colors duration-150 bg-purple-600 border border-r-0 border-purple-600 rounded-md focus:outline-none focus:shadow-outline-purple">
+                              {donations_meta.page}
+                            </button>
+                          </li>
+                          {!(donations_meta.page * donations_meta.pageSize >= donations_meta.total) &&
+                            <li >
+                              <a
+                                className="px-3 py-1 rounded-md rounded-r-lg focus:outline-none focus:shadow-outline-purple"
+                                aria-label="Next"
+                                href={`${pathname}?dp=${donations_meta.page + 1}`}
+                              >
+                                <svg
+                                  className="w-5 h-5 fill-current"
+                                  aria-hidden="true"
+                                  viewBox="0 0 20 20"
+                                >
+                                  <path
+                                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                    clipRule="evenodd"
+                                    fillRule="evenodd"
+                                  />
+                                </svg>
+                              </a>
+                            </li>
+                          }
+
+                        </ul>
+                      </nav>
+                    </span>
                   </div>
                 </div>
               </div>
@@ -526,6 +573,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
       }
     },
     populate: ["user", 'charity'],
+    sort: ['createdAt:desc'],
     pagination: {
       pageSize: !isNaN(ds) ? ds : 10,
       page: !isNaN(dp) ? dp : 1
@@ -544,7 +592,13 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
 
   if (user_res.status > 201) {
     return {
-      props: { fundraiser: charity['data'][0], user: null }
+      props: {
+        charity: charity['data'][0],
+        user: null,
+        donations: donations['data'] ? donations['data'] : [],
+        donations_meta: donations['meta']['pagination'],
+        slug, ds, dp
+      }
     }
   }
   const user = await user_res.json();
@@ -554,7 +608,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
       user,
       donations: donations['data'] ? donations['data'] : [],
       donations_meta: donations['meta']['pagination'],
-      slug
+      slug, ds, dp
     }
   }
 }

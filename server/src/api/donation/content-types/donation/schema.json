@@ -30,6 +30,15 @@
     },
     "comment": {
       "type": "text"
+    },
+    "success": {
+      "type": "boolean",
+      "default": false,
+      "required": true
+    },
+    "payment_id": {
+      "type": "uid",
+      "required": true
     }
   }
 }

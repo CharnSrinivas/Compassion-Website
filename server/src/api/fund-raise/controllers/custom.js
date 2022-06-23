@@ -13,10 +13,9 @@ module.exports = createCoreController('api::fund-raise.fund-raise', ({ strapi })
         // meta.date = Date.now()
         // return { data, meta };
         try {
-            
+
         } catch (err) {
             ctx.body = err
         }
     },
-
 }));

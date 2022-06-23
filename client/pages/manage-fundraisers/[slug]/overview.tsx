@@ -642,8 +642,12 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
       Authorization: `Bearer ${token}`,
     }
   })).json();
-
-  if (!fundraiser['data'][0]['attributes']['user']) { return { redirect: redirect_obj } };
+  if(fundraiser['data'].length <= 0){
+    return{
+      notFound:true
+    }
+  }
+  if (  !fundraiser['data'][0]['attributes']['user']) { return { redirect: redirect_obj } };
 
   const dp = parseInt(donations_page ? donations_page.toString() : '1');
   const ds = parseInt(donations_size ? donations_size.toString() : '10');

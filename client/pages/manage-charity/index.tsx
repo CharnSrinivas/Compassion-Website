@@ -75,7 +75,7 @@ export default function index({ charity, fundraisers, }: Props) {
             </div>
 
             <div className='flex-col items-center '>
-              <a href={`/f/${charity.attributes.slug}`} target={'_blank'} >
+              <a href={`/charities/${charity.attributes.slug}`} target={'_blank'} >
                 <div className='rounded-full stroke-[#32a95c]  p-3  border-[#32a95c]   border-2 '>
                   <svg
                     fill="none"

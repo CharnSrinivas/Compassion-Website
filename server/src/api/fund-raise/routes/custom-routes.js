@@ -7,7 +7,7 @@ module.exports = {
             config: {
                 policies: ['validate-update']
             }
-        },{
+        }, {
             method: 'DELETE',
             path: '/fund-raises/:id',
             handler: 'fund-raise.delete',
@@ -16,9 +16,9 @@ module.exports = {
             }
         },
         {
-            method:'GET',
+            method: 'GET',
             path: '/fund-raises/remove-image/:id',
-            handler:'custom.removeImage'
-        }
+            handler: 'custom.removeImage'
+        },
     ]
 }

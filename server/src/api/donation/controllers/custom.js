@@ -59,7 +59,7 @@ module.exports = createCoreController('api::donation.donation', ({ strapi }) => 
     },
 
     async donationSuccess(ctx) {
-        const endpointSecret = "whsec_6zIGcwrsY5HOgQnOEkNzZL1d4vcMSEuo";
+        const endpointSecret = process.env.STRIPE_WEBHOOK_DONATIION_SUCCESS;
 
         const sig = ctx.request.body['stripe-signature'];
         const rawBody = ctx.request.body['raw-body'];

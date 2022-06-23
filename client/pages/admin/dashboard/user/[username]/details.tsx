@@ -20,7 +20,7 @@ export default function edit({ user, admin_token,  username }: Props) {
     const [approving, setApprving] = useState(false);
     const toggleApproval = async () => {
         setApprving(true);
-        let res = await axios.put(server_url + '/content-manager/collection-types/api::fund-raise.fund-raise/' + user.id, {
+        let res = await axios.put(server_url + '/content-manager/collection-types/plugin::users-permissions.user/' + user.id, {
             approved: !user.approved
         }, {
             headers: {

@@ -97,8 +97,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
             }
         }
     }
-    console.log(fundraiser_tags.indexOf(tag));
-
     if (fundraiser_tags.indexOf(tag) < 0) {
         return {
             notFound: true

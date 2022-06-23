@@ -17,8 +17,6 @@ interface Props {
 }
 
 export default function fundraiser({ is_auth, user, token, fundraiser }: Props) {
-    console.log(fundraiser.individual);
-
     const [submitting, setSubmitting] = useState(false);
     const router = useRouter();
     const formik = useFormik({

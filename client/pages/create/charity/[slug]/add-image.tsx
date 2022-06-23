@@ -12,8 +12,6 @@ interface Props {
 }
 
 export default function addImage({ is_auth, token, charity }: Props) {
-  console.log(charity);
-
   const router = useRouter();
   const [uploading, setUploading] = useState(false);
   const [uploadPercentage, setUploadPercentage] = useState(0);

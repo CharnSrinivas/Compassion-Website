@@ -4,7 +4,6 @@ const Stripe = require('stripe');
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 module.exports = createCoreController('api::donation.donation', ({ strapi }) => ({
     async createStripeSession(ctx) {
-        console.log(process.env.STRIPE_SECRET_KEY);
         const { item } = ctx.request.body;
         const transformedItem = {
             price_data: {
@@ -53,9 +52,6 @@ module.exports = createCoreController('api::donation.donation', ({ strapi }) => 
                     donations_count: fund_raiser.donations_count + 1
                 }
             });
-            console.log("-------------- updated fund_raiser ------------------- ");
-            console.log(updated_fund_raiser);
-            console.log("-------------- updated fund_raiser ------------------- ");
             ctx.send({ id: session.id });
         } catch (err) {
             ctx.send({ error: err.message })
@@ -74,9 +70,7 @@ module.exports = createCoreController('api::donation.donation', ({ strapi }) => 
 
         } catch (err) {
             // ctx.res.status(400).send(`Webhook Error: ${err.message}`);
-            console.log('------------------ webhoook error -----------------')
             console.error(err.message);
-            console.log('------------------ webhoook error -----------------')
             return ctx.res.status = 400;
             // .send(`Webhook Error: ${err.message}`);
         }
@@ -90,9 +84,6 @@ module.exports = createCoreController('api::donation.donation', ({ strapi }) => 
                 }
             })
             ctx.res.status = 200;
-            console.log("-------------- updated donation ------------------- ");
-            console.log(donation);
-            console.log("-------------- updated donation ------------------- ");
         } else {
             if (event) {
                 await strapi.query("api::donation.donation").delete({
@@ -103,12 +94,6 @@ module.exports = createCoreController('api::donation.donation', ({ strapi }) => 
             }
             ctx.res.status = 400;
         }
-        console.log('------------------ webhoook event -----------------')
-        console.log(event.data.object);
-
-        console.log('------------------ webhoook event -----------------')
-        console.log(`Unhandled event type ${event.type}`);
-        // stripe-signature
 
     }
 }))

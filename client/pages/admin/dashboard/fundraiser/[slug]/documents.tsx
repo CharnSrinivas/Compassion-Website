@@ -17,8 +17,6 @@ interface Props {
 
 export default function edit({ fundraiser, admin_token, slug }: Props) {
     const router = useRouter();
-    console.log(fundraiser);
-
     const [approving, setApprving] = useState(false);
     const toggleApproval = async () => {
         setApprving(true);

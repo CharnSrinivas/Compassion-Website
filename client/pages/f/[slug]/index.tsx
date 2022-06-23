@@ -552,7 +552,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
     return { notFound: true };
   }
   const fundraiser = await fundraiser_res.json();
-  console.log(fundraiser);
   if (!fundraiser.data || fundraiser.data.length <= 0) {
     return {
       notFound: true

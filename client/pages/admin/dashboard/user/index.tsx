@@ -21,7 +21,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
     const _page_no = context.query['page'];
     const _page_size = context.query['pageSize'];
     var page_no = parseInt(_page_no ? _page_no.toString() : '1');
-    var page_size = parseInt(_page_size ? _page_size.toString() : '4');
+    var page_size = parseInt(_page_size ? _page_size.toString() : '10');
     page_no = page_no <= 0 ? 1 : page_no;
     page_size = page_size <= 0 ? 10 : page_size;
 
@@ -61,7 +61,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
         if (users_meta.pageSize > users_meta.total) {
             users_meta.pageSize = users_meta.total;
         }
-        console.log(users_meta);
         users = res.data['results']
     });
     await axios.get(server_url + "/content-manager/collection-types/plugin::users-permissions.user?" + qs.stringify({
@@ -87,7 +86,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
     }
     )
         .then(res => {
-            console.log(res['data']);
             pending_approval = res.data['pagination']
         })
 
@@ -260,7 +258,6 @@ export default function index({ users_meta, pending_approval, users, }: Props) {
                                         <div className="mb-3 xl:w-96">
                                             <select
                                                 onChange={(e) => {
-                                                    console.log(e.target.value)
                                                     window.location.href = `${pathname}?page=${users_meta.page}&pageSize=${e.target.value}`
                                                 }}
                                                 className="form-select appearance-none block px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"

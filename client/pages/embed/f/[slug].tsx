@@ -14,7 +14,6 @@ interface Props {
 export default function fundraiser({ fundraiser, slug }: Props) {
 
     const [url, setUrl] = useState('');
-    console.log(fundraiser);
     
     useEffect(() => {
         setUrl(window.location.origin);

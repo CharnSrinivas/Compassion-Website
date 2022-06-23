@@ -26,7 +26,6 @@ module.exports = createCoreController('api::donation.donation', ({ strapi }) => 
             cancel_url: redirect_url + '/api/cancel',
         });
         try {
-            console.log(item);
             let charity_donation = await strapi.query("api::charity-donation.charity-donation").create({
                 data: {
                     payment_id: session.id,
@@ -82,10 +81,7 @@ module.exports = createCoreController('api::donation.donation', ({ strapi }) => 
                     });
 
                     ctx.res.status = 200;
-                    console.log("-------------- updated charity ------------------- ");
-                    console.log(updated_charity);
-                    console.log("-------------- updated charity ------------------- ");
-                }
+                                    }
             } else {
                 if (event) {
                     await strapi.query("api::donation.donation").delete({
@@ -98,9 +94,7 @@ module.exports = createCoreController('api::donation.donation', ({ strapi }) => 
             }
         } catch (err) {
             // ctx.res.status(400).send(`Webhook Error: ${err.message}`);
-            console.log('------------------ webhoook error -----------------')
             console.error(err.message);
-            console.log('------------------ webhoook error -----------------')
             return ctx.res.status = 400;
             // .send(`Webhook Error: ${err.message}`);
         }

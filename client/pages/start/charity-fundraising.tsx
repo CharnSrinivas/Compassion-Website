@@ -366,7 +366,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
     ), { method: "GET" }
     )).json();
 
-    console.log(charities);
     if (res['data'] && res['data'].length > 0) {
         return {
             props: {

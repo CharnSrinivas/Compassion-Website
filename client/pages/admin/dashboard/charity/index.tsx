@@ -94,7 +94,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
             pageSize: 0
         }
     })).then(res => {
-        console.log(res.data);
         pending_charity_approval = res.data['meta']['pagination']
     })
 
@@ -310,12 +309,10 @@ export default function index({ charity_donations_meta, pending_charity_approval
                             </div>
                             <div className="flex px-4 py-3 text-xs font-semibold justify-between tracking-wide text-gray-500 uppercase border-t dark:border-gray-700 bg-gray-50 sm:grid-cols-9 dark:text-gray-400 dark:bg-gray-800">
                                 <span className="flex items-center col-span-3">
-
                                     <div className="flex justify-center">
                                         <div className="mb-3 xl:w-96">
                                             <select
                                                 onChange={(e) => {
-                                                    console.log(e.target.value)
                                                     window.location.href = `${pathname}?page=${charities_meta.page}&pageSize=${e.target.value}`
                                                 }}
                                                 className="form-select appearance-none block px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"

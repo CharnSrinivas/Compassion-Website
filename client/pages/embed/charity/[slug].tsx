@@ -10,8 +10,6 @@ interface Props {
 }
 
 export default function fundraiser({ fundraiser, slug }: Props) {
-    console.log(fundraiser.attributes.image.data.attributes);
-
     const [url, setUrl] = useState('');
     useEffect(() => {
         setUrl(window.location.origin);

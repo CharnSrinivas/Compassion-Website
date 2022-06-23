@@ -17,8 +17,6 @@ export default function ({ fundraiser, fundraiser_meta,donations, donations_meta
   const [show_embedded, setShowEmbedded] = useState(false);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  console.log(fundraiser_meta);
-  
   useEffect(() => {
     setUrl(window.location.pathname);
 

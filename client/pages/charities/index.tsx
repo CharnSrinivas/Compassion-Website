@@ -7,8 +7,6 @@ interface Props {
 }
 
 export default function fundraisers({ charities }: Props) {
-    console.log(charities);
-
     return (
         <div>
             <section className="text-gray-600 body-font ">

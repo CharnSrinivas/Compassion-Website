@@ -17,8 +17,6 @@ function MyApp({ Component, pageProps }: AppProps) {
 export default MyApp;
 
 export async function getServerSideProps(context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<Record<string, unknown>>> {
-  console.log(context.req.cookies);
-  
   return {
     props: {
       approved:true

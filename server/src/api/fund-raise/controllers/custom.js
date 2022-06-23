@@ -4,7 +4,6 @@ const { createCoreController } = require('@strapi/strapi').factories;
 
 module.exports = createCoreController('api::fund-raise.fund-raise', ({ strapi }) => ({
     async removeImage(ctx) {
-        console.log(ctx);
         // // some custom logic here
         // ctx.query = { ...ctx.query, local: 'en' }
         // // Calling the default core action

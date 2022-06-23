@@ -7,7 +7,6 @@ interface Props {
 }
 
 export default function thankyou({ user }: Props) {
-    console.log(user);
 
     return (
         <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden  sm:py-12 bg-white">

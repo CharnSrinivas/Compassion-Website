@@ -76,9 +76,8 @@ export default function edit({ charity, token }: Props) {
             );
             if (res.status <= 201) {
                 res.json().then(res_json => {
-                    console.log(res_json);
-                    
-                    // router.reload()
+                    // console.log(res_json);
+                    router.reload()
                 })
             }
         }

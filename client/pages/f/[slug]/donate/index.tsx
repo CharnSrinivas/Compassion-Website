@@ -1,29 +1,91 @@
 import { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
 import qs from 'qs';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { jwt_aut_token, server_url } from '../../../../config';
-import { loadStripe } from '@stripe/stripe-js'
+import { PaymentRequestButtonElement, useStripe, Elements } from '@stripe/react-stripe-js'
+import { loadStripe, } from '@stripe/stripe-js';
 import axios, { AxiosError } from 'axios';
+import { useRouter } from 'next/router';
+import Stripe from 'stripe';
 
 interface Props {
     fundraiser: any;
     user: any;
     slug: string;
     strapi_publisable_key: string;
+    stripe:Stripe;
 }
 
-export default function donate({ fundraiser, slug, user, strapi_publisable_key }: Props) {
+export default function Wrapper(props: any) {
+    const [stripe_promise, setStripePromise] = useState<any>();
+    useEffect(() => {
+        init();
+    },[]);
+
+    const init = async () => {
+        const stripePromise = await loadStripe(props.strapi_publisable_key);
+        setStripePromise(stripePromise);
+    }
+    if (stripe_promise) {
+        return <Elements stripe={stripe_promise}>
+            <MyComponent {...props} />
+        </Elements>
+    } else {
+        return <></>
+    }
+};
+
+export function MyComponent({ fundraiser, slug, user, strapi_publisable_key }: Props) {
     const [donation_amount, setDonationAmount] = useState(0);
     const [comment, setComment] = useState('');
     const [show_alert, setShowAlert] = useState(false);
     const [alert_text, setAlertText] = useState('');
+    const [paymentRequest, setPaymentRequest] = useState<any>(null);
+    const router = useRouter()
+    const stripe = useStripe();
+    useEffect(() => {
 
+        if (stripe) {
+            const pr = stripe.paymentRequest({
+                country: 'IN',
+                currency: 'inr',
+                total: {
+                    label: 'Demo total',
+                    amount: 1350,
+                },
+                requestPayerName: true,
+                requestPayerEmail: true,
+                // requestShipping: true,
+                // shippingOptions: [
+                //     {
+                //         id: 'standard-global',
+                //         label: 'Global shipping',
+                //         detail: 'Arrives in 5 to 7 days',
+                //         amount: 350,
+                //     },
+                // ],
+            });
+            pr.canMakePayment().then((result) => {
+                console.log('------------------------------------------------------------------');
+
+                console.log(result);
+                console.log('------------------------------------------------------------------');
+
+                if (result) {
+
+                    pr.on('paymentmethod', handlePaymentMethodReceived);
+                    setPaymentRequest(pr);
+                } else {
+
+                }
+            });
+        }
+    }, [stripe])
     const startCheckOut = async () => {
         if (donation_amount <= 0) {
             setAlertText('Donation amount should be atleast 50 cents ($0.5)'); setShowAlert(true);
             return;
         }
-        const stripe = await loadStripe(strapi_publisable_key);
         if (!stripe) {
             alert("Our payment system is borken! Try again after some time.");
             return;
@@ -64,24 +126,79 @@ export default function donate({ fundraiser, slug, user, strapi_publisable_key }
         }
 
     }
+
+    const handlePaymentMethodReceived = async (event: any) => {
+        console.log(event);
+        if (!stripe) return;
+
+        // Send the payment details to our function.
+        const paymentDetails = {
+            payment_method: event.paymentMethod.id,
+            shipping: {
+                name: event.shippingAddress.recipient,
+                phone: event.shippingAddress.phone,
+                address: {
+                    line1: event.shippingAddress.addressLine[0],
+                    city: event.shippingAddress.city,
+                    postal_code: event.shippingAddress.postalCode,
+                    state: event.shippingAddress.region,
+                    country: event.shippingAddress.country,
+                },
+            },
+        };
+        const response = await fetch('/.netlify/functions/create-payment-intent', {
+            method: 'post',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ paymentDetails }),
+        }).then((res) => {
+            return res.json();
+        });
+        if (response.error) {
+            // Report to the browser that the payment failed.
+            console.log(response.error);
+            event.complete('fail');
+        } else {
+            // Report to the browser that the confirmation was successful, prompting
+            // it to close the browser payment method collection interface.
+            event.complete('success');
+            // Let Stripe.js handle the rest of the payment flow, including 3D Secure if needed.
+            const { error, paymentIntent } = await stripe.confirmCardPayment(
+                response.paymentIntent.client_secret
+            );
+            if (error) {
+                console.log(error);
+                return;
+            }
+            if (paymentIntent.status === 'succeeded') {
+                router.push('/');
+            } else {
+                console.warn(
+                    `Unexpected status: ${paymentIntent.status} for ${paymentIntent}`
+                );
+            }
+        }
+    };
+    // if (paymentRequest) {
+    //     return <PaymentRequestButtonElement options={{ paymentRequest }} />;
+    // }
+
     return (
         <>
-        {/* <div className='absolute w-screen h-screen bg-gray-400 bg-opacity-60 z-10 '>
-
-        </div> */}
-            <div className="h-screen min-w-screen bg-slate-200 py-6 flex flex-col justify-center overflow-hidden sm:py-12">
+            <div className="m-h-screen min-w-screen bg-slate-200 py-6 flex flex-col justify-center overflow-hidden sm:py-12">
                 {!user && <div
-                    className="p-4 mb-4 self-center lg:w-[45%] text-sm text-green-700 bg-green-100 rounded-lg dark:bg-green-200 dark:text-green-800"
+                    className="p-4 mb-4 self-center lg:w-[45%] text-sm text-green-700 bg-green-100 rounded-lg"
                     role="alert"
                 >
                     <span className="font-medium"> You are not registerd.</span> Your donation will be anonymous in Compassion.
 
                 </div>
                 }
-                <div className="flex flex-col border p-8 px-10 lg:w-[45%] bg-white shadow-xl w-[95%]  mx-auto rounded-xl">
+                <div className="flex h-auto flex-col border p-8 px-10 lg:w-[45%] bg-white shadow-xl w-[95%]  mx-auto rounded-xl">
                     <div
                         style={{ transition: 'all 0.6s ease' }}
-                        className={`relative ${show_alert ? 'block translate-x-[0px] opacity-[100%]' : 'translate-x-[200px] opacity-0'}   p-4 mb-4 text-sm text-yellow-700 bg-yellow-100 rounded-lg dark:bg-yellow-200 dark:text-yellow-800`}
+                        className={`relative ${show_alert ? 'block translate-x-[0px] opacity-[100%]' : 'translate-x-[200px] opacity-0'}   p-4 mb-4 text-sm text-yellow-700 bg-yellow-100 rounded-lg `}
                         role="alert"
                     >
                         <button onClick={() => { setShowAlert(false) }} className='absolute cursor-pointer top-[15px] right-[15px] font-semibold '>X</button>
@@ -159,7 +276,7 @@ export default function donate({ fundraiser, slug, user, strapi_publisable_key }
                     <div className="w-full mx-auto mt-5">
                         <label
                             htmlFor="message"
-                            className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400"
+                            className="block mb-2 text-sm font-medium text-gray-900 "
                         >
                             Word of support
                         </label>
@@ -170,12 +287,12 @@ export default function donate({ fundraiser, slug, user, strapi_publisable_key }
                                 setComment(e.target.value);
                             }}
                             value={comment}
-                            className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 s"
                             placeholder="Your message..."
                         />
                     </div>
                     <p className='mb-8 text-gray-700 font-light mt-5'>We protect your donation with the Compassion Giving Guarantee</p>
-                    <div  className='flex flex-wrap gap-8' >
+                    <div className='flex flex-wrap gap-8' >
                         <div onClick={startCheckOut} className='flex w-[13rem] flex-col items-center bg-white text-gray-600 px-4 py-4 rounded-lg my-5 shadow-2xl hover:scale-[1.02] transition-all cursor-pointer'   >
                             {/* <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg> */}
                             <img src="/assets/credit-card.png" className='w-16 h-16' alt="" />
@@ -188,6 +305,14 @@ export default function donate({ fundraiser, slug, user, strapi_publisable_key }
                             <h4 className='font-medium mt-2'>UPI</h4>
                             <h5 className='text-sm'>(via QRcode) </h5>
                         </a>
+                        <div className='flex-col w-[13rem] items-center justify-center px-4 py-4  my-5'   >
+
+                            {
+                                paymentRequest &&
+                                <PaymentRequestButtonElement className='w-[100%]' options={{ paymentRequest }} />
+                            }
+                            <h4 className='font-medium mt-2 text-center'>Via Gpay</h4>
+                        </div>
                     </div>
                     {/* <button  className="px-4 w-fit py-2 rounded text-white mt-8 lg:mt-0 bg-[#32a95c]">
                         Continue

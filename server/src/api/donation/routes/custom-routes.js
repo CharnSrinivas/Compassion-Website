@@ -16,6 +16,12 @@ module.exports = {
             method: 'POST',
             path: '/donations/success',
             handler: "custom.donationSuccess"
+        },
+        // create-payment-intent
+        {
+            method: 'POST',
+            path: '/donations/gap-create-payment-intent',
+            handler: "custom.donationSuccess"
         }
     ]
 }

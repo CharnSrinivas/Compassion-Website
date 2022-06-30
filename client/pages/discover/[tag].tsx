@@ -67,7 +67,7 @@ export default function Tag({ fundraisers, tag }: Props) {
                                                     <strong>{item.attributes.fund_raised.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} raised</strong> out of {item.attributes.fund_target.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                                                 </div>
                                                 <div className="w-full bg-green-400 bg-opacity-20 h-1 mt-1 mb-3" >
-                                                    <div className="bg-green-500 h-1" style={{ width: `${Math.floor((item.attributes.fund_raised / item.attributes.fund_target) * 100)}%` }}></div>
+                                                    <div className="bg-green-500 h-1 w-max-[100%] " style={{ width: `${Math.floor((item.attributes.fund_raised / item.attributes.fund_target) * 100)}%` }}></div>
                                                 </div>
                                             </>
                                         </div>

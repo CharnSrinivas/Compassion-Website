@@ -137,6 +137,12 @@ export default function myDonations({ charity_donations, donations_meta, charity
                                             scope="col"
                                             className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
                                         >
+                                            Approved
+                                        </th>
+                                        <th
+                                            scope="col"
+                                            className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
+                                        >
                                             Date
                                         </th>
                                         {/* <th scope="col" className="relative px-6 py-3">
@@ -180,6 +186,17 @@ export default function myDonations({ charity_donations, donations_meta, charity
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <div className="text-xs text-gray-900">{(donation.attributes.comment as string).length > 60 ? (donation.attributes.comment as string).slice(0, 60) + "..." : (donation.attributes.comment as string)}</div>
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                    {donation.attributes.success&&
+                                                        <span className="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100">
+                                                            Approved
+                                                        </span>
+                                                    }
+                                                    {!donation.attributes.success&&
+                                                        <span className="px-2 py-1 font-semibold leading-tight text-orange-700 bg-orange-100 rounded-full dark:text-white dark:bg-orange-600">
+                                                            Pending
+                                                        </span>}
                                                 </td>
                                                 <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
                                                     {new Date(donation.attributes.createdAt).toLocaleDateString().replaceAll("/", '-')}

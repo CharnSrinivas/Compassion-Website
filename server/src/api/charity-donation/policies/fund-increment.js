@@ -3,6 +3,7 @@ module.exports = async (policyContext, config, { strapi }) => {
     const body = policyContext.request.body.data;
     const charity_id = body.charity;
     let amount = body.amount;
+    console.log(body.item);
     if (amount <= 0) {
         return false;
     }
@@ -27,6 +28,6 @@ module.exports = async (policyContext, config, { strapi }) => {
             direct_funds: direct_funds + amount,
             direct_funds_count: direct_funds_count + 1
         }
-    })
+    });
     return true
 }

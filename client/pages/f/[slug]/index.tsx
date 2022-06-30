@@ -190,15 +190,15 @@ export default function fundraiser({ fundraiser, user, slug, donations, donation
               <div className="lg:w-1/3 w-1/2   lg:pl-10 m-auto sm:mt-5   lg:mt-0 relative">
                 <div className='rounded-lg drop-shadow-xl bg-white max-w-sm flex-col p-5 justify-start relative'>
                   <div className="flex items-baseline gap-1">
-                    <div className='flex items-baseline gap-0'>
+                    <div className='flex items-baseline gap-1'>
                       <p className='text-gray-900 text-2xl title-font font-medium'>{fundraiser.attributes.fund_raised}</p>
-                      <p className='text-gray-600 font-medium ' >{fundraiser.attributes.fund_type}</p>
+                      <p className='text-gray-600 font-medium ' >{(fundraiser.attributes.fund_type as string).toUpperCase()}</p>
                     </div>
                     <p>raised</p>
                     <p className='font-light text-sm text-gray-500'>&nbsp;of&nbsp; {fundraiser.attributes.fund_target}</p>
                   </div>
                   <div className="w-full bg-green-400 bg-opacity-20 h-1 mt-1 mb-3" >
-                    <div className="bg-green-500 h-1" style={{ width: `${Math.floor((fundraiser.attributes.fund_raised / fundraiser.attributes.fund_target) * 100)}%` }}></div>
+                    <div className="bg-green-500 h-1 w-max-[100%]" style={{ width: `${Math.floor((fundraiser.attributes.fund_raised / fundraiser.attributes.fund_target) * 100)}%` }}></div>
                   </div>
                   <p className='font-normal my-3 text-sm text-gray-500'>{fundraiser.attributes.donations_count}&nbsp;donations</p>
                   <a href={`/f/${slug}/donate`} className="flex w-full mt-10 text-white items-center gap-2 bg-primary justify-center border-0 py-2 px-4 focus:outline-none active:bg-secondary rounded">
@@ -294,10 +294,18 @@ export default function fundraiser({ fundraiser, user, slug, donations, donation
                                         alt=""
                                       />
                                     </div>
-                                    <div className="ml-4">
-                                      <div className="text-sm font-medium text-gray-900">{donation.attributes.user.data.attributes.username}</div>
-                                      <div className="text-sm text-gray-500">{donation.attributes.user.data.attributes.email}</div>
-                                    </div>
+                                    {donation.attributes.user.data &&
+
+                                      <div className="ml-4">
+                                        <div className="text-sm font-medium text-gray-900">{donation.attributes.user.data.attributes.username}</div>
+                                        <div className="text-sm text-gray-500">{donation.attributes.user.data.attributes.email}</div>
+                                      </div>
+                                    }
+                                    {!donation.attributes.user.data &&
+                                      <div className="ml-4">
+                                        <div className="text-sm font-medium text-gray-900">Anonymous</div>
+                                      </div>
+                                    }
                                   </div>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
@@ -411,7 +419,7 @@ export default function fundraiser({ fundraiser, user, slug, donations, donation
                       </nav>
                     </span>
                   </div>
-                  
+
                 </div>
               </div>
             </div>

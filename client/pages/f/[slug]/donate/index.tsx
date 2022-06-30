@@ -1,10 +1,9 @@
 import { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
 import qs from 'qs';
 import React, { useState } from 'react'
-import { jwt_aut_token, server_url } from '../../../config';
+import { jwt_aut_token, server_url } from '../../../../config';
 import { loadStripe } from '@stripe/stripe-js'
-import axios from 'axios';
-import fundraisers from '../../charities';
+import axios, { AxiosError } from 'axios';
 
 interface Props {
     fundraiser: any;
@@ -15,10 +14,13 @@ interface Props {
 
 export default function donate({ fundraiser, slug, user, strapi_publisable_key }: Props) {
     const [donation_amount, setDonationAmount] = useState(0);
-    const [comment, setComment] = useState('')
+    const [comment, setComment] = useState('');
+    const [show_alert, setShowAlert] = useState(false);
+    const [alert_text, setAlertText] = useState('');
+
     const startCheckOut = async () => {
         if (donation_amount <= 0) {
-            alert("Enter valid amount");
+            setAlertText('Donation amount should be atleast 50 cents ($0.5)'); setShowAlert(true);
             return;
         }
         const stripe = await loadStripe(strapi_publisable_key);
@@ -35,26 +37,57 @@ export default function donate({ fundraiser, slug, user, strapi_publisable_key }
             charity: fundraiser.attributes['charity']['data'] ? fundraiser.attributes['charity']['data']['id'] : null,
             user: user ? user['id'] : null,
             comment: comment,
-            fund_raise: fundraiser.id
+            fund_raise: fundraiser.id,
+            fundraiser_details: fundraiser
         }
-        const checkoutSession = await axios.post(server_url + '/api/donations/create-stripe-session', {
-            item: item
-        });
-        if (checkoutSession.data.error) {
-            alert("Oops! Something went wrong");
-            console.error(checkoutSession.data.error); return;
+        try {
+
+            const checkoutSession = await axios.post(server_url + '/api/donations/create-stripe-session', {
+                item: item
+            });
+            if (checkoutSession.data.error) {
+                setAlertText(checkoutSession.data.error);
+                setShowAlert(true);
+                console.error(checkoutSession.data.error); return;
+            }
+            const { error } = await stripe.redirectToCheckout({
+                sessionId: checkoutSession.data.id,
+            })
+            if (error) {
+                alert("Our payment system is borken! Try again after some time.");
+            }
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                setShowAlert(true);
+                setAlertText((error.response as any).data.error);
+            } return;
         }
-        const { error } = await stripe.redirectToCheckout({
-            sessionId: checkoutSession.data.id,
-        })
-        if (error) {
-            alert("Our payment system is borken! Try again after some time.");
-        }
+
     }
     return (
         <>
-            <div className="h-screen min-w-screen bg-slate-200 py-6 flex flex-col justify-center overflow-hidden sm:py-12 relative">
+        {/* <div className='absolute w-screen h-screen bg-gray-400 bg-opacity-60 z-10 '>
+
+        </div> */}
+            <div className="h-screen min-w-screen bg-slate-200 py-6 flex flex-col justify-center overflow-hidden sm:py-12">
+                {!user && <div
+                    className="p-4 mb-4 self-center lg:w-[45%] text-sm text-green-700 bg-green-100 rounded-lg dark:bg-green-200 dark:text-green-800"
+                    role="alert"
+                >
+                    <span className="font-medium"> You are not registerd.</span> Your donation will be anonymous in Compassion.
+
+                </div>
+                }
                 <div className="flex flex-col border p-8 px-10 lg:w-[45%] bg-white shadow-xl w-[95%]  mx-auto rounded-xl">
+                    <div
+                        style={{ transition: 'all 0.6s ease' }}
+                        className={`relative ${show_alert ? 'block translate-x-[0px] opacity-[100%]' : 'translate-x-[200px] opacity-0'}   p-4 mb-4 text-sm text-yellow-700 bg-yellow-100 rounded-lg dark:bg-yellow-200 dark:text-yellow-800`}
+                        role="alert"
+                    >
+                        <button onClick={() => { setShowAlert(false) }} className='absolute cursor-pointer top-[15px] right-[15px] font-semibold '>X</button>
+                        <p>{alert_text}</p>
+                    </div>
+
                     <a href={`/f/${slug}`} className='text-gray-800 flex items-center border-2 border-gray-400 rounded-md w-fit px-2 py-1' >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -93,7 +126,17 @@ export default function donate({ fundraiser, slug, user, strapi_publisable_key }
                             }
                         </div>
                     </div>
-
+                    <div className="flex items-baseline gap-1">
+                        <div className='flex items-baseline gap-1'>
+                            <p className='text-gray-900 text-2xl title-font font-medium'>{fundraiser.attributes.fund_raised}</p>
+                            <p className='text-gray-600 font-medium ' >{(fundraiser.attributes.fund_type as string).toUpperCase()}</p>
+                        </div>
+                        <p>raised</p>
+                        <p className='font-light text-sm text-gray-500'>&nbsp;of&nbsp; {fundraiser.attributes.fund_target}</p>
+                    </div>
+                    <div className="w-full bg-green-400 bg-opacity-20 h-1 mt-1 mb-3" >
+                        <div className="bg-green-500 h-1 w-max-[100%]" style={{ width: `${Math.floor((fundraiser.attributes.fund_raised / fundraiser.attributes.fund_target) * 100)}%` }}></div>
+                    </div>
                     <label htmlFor="price" className="block text-xl font-medium text-gray-700">
                         Enter your donation
                     </label>
@@ -132,9 +175,23 @@ export default function donate({ fundraiser, slug, user, strapi_publisable_key }
                         />
                     </div>
                     <p className='mb-8 text-gray-700 font-light mt-5'>We protect your donation with the Compassion Giving Guarantee</p>
-                    <button onClick={startCheckOut} className="px-4 w-fit py-2 rounded text-white mt-8 lg:mt-0 bg-[#32a95c]">
+                    <div  className='flex flex-wrap gap-8' >
+                        <div onClick={startCheckOut} className='flex w-[13rem] flex-col items-center bg-white text-gray-600 px-4 py-4 rounded-lg my-5 shadow-2xl hover:scale-[1.02] transition-all cursor-pointer'   >
+                            {/* <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg> */}
+                            <img src="/assets/credit-card.png" className='w-16 h-16' alt="" />
+                            <h4 className='font-medium mt-2'>Credit/Debit card</h4>
+                            <h5 className='text-sm'>(Processed via Stripe) </h5>
+                        </div>
+                        <a href={`/f/${slug}/donate/upi-payment`} className='flex flex-col w-[13rem] items-center bg-white text-gray-600 px-4 py-4 rounded-lg my-5 shadow-2xl hover:scale-[1.02] transition-all cursor-pointer'   >
+                            {/* <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg> */}
+                            <img src="/assets/upi-payment.png" className='w-16 h-16' alt="" />
+                            <h4 className='font-medium mt-2'>UPI</h4>
+                            <h5 className='text-sm'>(via QRcode) </h5>
+                        </a>
+                    </div>
+                    {/* <button  className="px-4 w-fit py-2 rounded text-white mt-8 lg:mt-0 bg-[#32a95c]">
                         Continue
-                    </button>
+                    </button> */}
                 </div>
             </div >
         </>

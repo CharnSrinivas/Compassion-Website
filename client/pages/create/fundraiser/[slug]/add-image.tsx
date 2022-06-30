@@ -34,7 +34,7 @@ export default function addImage({ is_auth, token, fundraiser }: Props) {
     formData.append('refId', fundraiser.id)
     formData.append('ref', fundraiser_ref)
     formData.append('field', 'image');
-    setUploading(true)
+    setUploading(true);
     let res = await axios.post(server_url + "/api/upload", formData, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -48,6 +48,7 @@ export default function addImage({ is_auth, token, fundraiser }: Props) {
         }
       },
     })
+    setUploading(false);
     if (res.status <= 201) {
       router.push(`/create/fundraiser/${fundraiser.attributes.slug}/add-documents`); return;
     }
@@ -138,7 +139,6 @@ export default function addImage({ is_auth, token, fundraiser }: Props) {
             <div className="font-medium m-auto text-4xl text-green-900 my-7 text-center">
               Upload image here
             </div>
-
             <img
               id='img-display'
               className="lg:w-full w-full lg:h-[32rem] h-[28rem] object-cover object-center rounded-lg"

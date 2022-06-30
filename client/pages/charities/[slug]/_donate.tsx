@@ -15,7 +15,6 @@ interface Props {
 export default function donate({ charity, slug, user, strapi_publisable_key }: Props) {
     const [donation_amount, setDonationAmount] = useState(0);
     const [comment, setComment] = useState('')
-    console.log(charity.attributes['user']);
     
     const startCheckOut = async () => {
         if (donation_amount <= 0) {
@@ -35,7 +34,8 @@ export default function donate({ charity, slug, user, strapi_publisable_key }: P
             description: charity.attributes.description,
             user: user ? user['id'] : null,
             comment: comment,
-            charity: charity.id
+            charity: charity.id,
+            charity_details:charity
         }
         const checkoutSession = await axios.post(server_url + '/api/charity-donations/create-stripe-session', {
             item: item

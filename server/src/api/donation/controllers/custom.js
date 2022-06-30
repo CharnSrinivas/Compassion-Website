@@ -4,28 +4,35 @@ const Stripe = require('stripe');
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 module.exports = createCoreController('api::donation.donation', ({ strapi }) => ({
     async createStripeSession(ctx) {
-        const { item } = ctx.request.body;
-        const transformedItem = {
-            price_data: {
-                currency: item.currency,
-                product_data: {
-                    images: [item.image],
-                    name: item.name,
-                }, unit_amount: item.price * 100,
-            },
-            description: item.description ? item.description : "No description",
-            quantity: 1,
-        };
-        const redirect_url = process.env.NODE_ENV === 'production' ? "http://compassion.toptechonly.com" : "http://localhost:3000";
-
-        const session = await stripe.checkout.sessions.create({
-            payment_method_types: ['card'],
-            line_items: [transformedItem],
-            mode: 'payment',
-            success_url: redirect_url + '/my-donations/fundraiser-donations',
-            cancel_url: redirect_url + '/api/cancel',
-        });
         try {
+            const { item } = ctx.request.body;
+            if (!item.currency || !item.name || !item.price || item.price <= 0 || !item.fund_raise  || !item.fundraiser_details['attributes']) {
+                throw Error("Invalid details!");
+            }
+            const transformedItem = {
+                price_data: {
+                    currency: item.currency,
+                    product_data: {
+                        images: [item.image],
+                        name: item.name,
+                    }, unit_amount: item.price * 100,
+                },
+                description: item.description ? item.description : "No description",
+                quantity: 1,
+            };
+
+            if (item.fundraiser_details['attributes']['fund_raised'] + item.price > item.fundraiser_details['attributes']['fund_target']) {
+                throw Error("Your donation is exceeding fundraiser's target.");
+            }
+
+            const redirect_url = process.env.NODE_ENV === 'production' ? "http://compassion.toptechonly.com" : "http://localhost:3000";
+            const session = await stripe.checkout.sessions.create({
+                payment_method_types: ['card'],
+                line_items: [transformedItem],
+                mode: 'payment',
+                success_url: redirect_url + '/my-donations/fundraiser-donations',
+                cancel_url: redirect_url + '/api/cancel',
+            });
             let donation = await strapi.query("api::donation.donation").create({
                 data: {
                     payment_id: session.id,
@@ -34,13 +41,17 @@ module.exports = createCoreController('api::donation.donation', ({ strapi }) => 
                     amount: item.price,
                     comment: item.comment,
                     user: item.user,
+                    type:'stripe',
                     fund_raise: item.fund_raise,
                     publishedAt: new Date().toISOString()
                 }
             });
-            ctx.send({ id: session.id });
+            ctx.send({ id: session.id }, 200);
         } catch (err) {
-            ctx.send({ error: err.message })
+            console.log('---------------- error ----------------------');
+            console.log(err.message);
+            console.log('---------------- error ----------------------');
+            ctx.send({ error: err.message }, 400)
         }
     },
 
@@ -53,7 +64,6 @@ module.exports = createCoreController('api::donation.donation', ({ strapi }) => 
         try {
             if (!sig || !rawBody) return;
             event = stripe.webhooks.constructEvent(rawBody, sig, endpointSecret);
-
             if (event.type !== 'checkout.session.completed') {
                 try {
                     await strapi.query("api::donation.donation").delete({
@@ -87,7 +97,7 @@ module.exports = createCoreController('api::donation.donation', ({ strapi }) => 
                 })
             }
             if (donation.fund_raise) {
-                if(!donation.fund_raise.approved){
+                if (!donation.fund_raise.approved) {
                     ctx.res.status = 400;
                     return;
                 }
@@ -115,7 +125,7 @@ module.exports = createCoreController('api::donation.donation', ({ strapi }) => 
                 console.log(updated_fund_raiser);
             }
             if (donation.charity) {
-                if(!donation.charity.approved){
+                if (!donation.charity.approved) {
                     ctx.res.status = 400;
                     return;
                 }
@@ -146,6 +156,7 @@ module.exports = createCoreController('api::donation.donation', ({ strapi }) => 
         } catch (err) {
             // ctx.res.status(400).send(`Webhook Error: ${err.message}`);
             console.error(err.message);
+
             return ctx.res.status = 400;
             // .send(`Webhook Error: ${err.message}`);
         }

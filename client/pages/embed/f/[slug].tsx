@@ -14,7 +14,7 @@ interface Props {
 export default function fundraiser({ fundraiser, slug }: Props) {
 
     const [url, setUrl] = useState('');
-    
+
     useEffect(() => {
         setUrl(window.location.origin);
         let navbar =
@@ -88,16 +88,16 @@ export default function fundraiser({ fundraiser, slug }: Props) {
                             }
                             <a href={`${url}/f/${slug}`} target={'_blank'} className='text-blue-600 mb-2'>more details...</a>
                             <div className="flex items-baseline gap-1">
-                    <div className='flex items-baseline gap-0'>
-                      <p className='text-gray-900 text-2xl title-font font-medium'>{fundraiser.attributes.fund_raised}</p>
-                      <p className='text-gray-600 font-medium ' >{fundraiser.attributes.fund_type}</p>
-                    </div>
-                    <p>raised</p>
-                    <p className='font-light text-sm text-gray-500'>&nbsp;of&nbsp; {fundraiser.attributes.fund_target}</p>
-                  </div>
+                                <div className='flex items-baseline gap-0'>
+                                    <p className='text-gray-900 text-2xl title-font font-medium'>{fundraiser.attributes.fund_raised}</p>
+                                    <p className='text-gray-600 font-medium ' >{fundraiser.attributes.fund_type}</p>
+                                </div>
+                                <p>raised</p>
+                                <p className='font-light text-sm text-gray-500'>&nbsp;of&nbsp; {fundraiser.attributes.fund_target}</p>
+                            </div>
 
                             <div className="w-full bg-green-400 bg-opacity-20 h-1 mt-1 mb-3" >
-                                <div className="bg-green-500 h-1" style={{ width: `${Math.floor((fundraiser.attributes.fund_raised / fundraiser.attributes.fund_target) * 100)}%` }}></div>
+                                <div className="bg-green-500 h-1 w-max-[100%]" style={{ width: `${Math.floor((fundraiser.attributes.fund_raised / fundraiser.attributes.fund_target) * 100)}%` }}></div>
                             </div>
                             <a href={`${url}/f/${slug}`} target={'_blank'} className="flex w-full mt-10 font-medium text-white items-center gap-2 bg-[#32a95c] justify-center border-0 py-2 px-4 focus:outline-none active:bg-green-700 rounded">
                                 <svg
@@ -144,12 +144,12 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
         method: "GET",
 
     })).json();
-    if(!fundraiser['data'][0] || !fundraiser['data'][0]['attributes']['approved']){
-        return{
-            notFound:true
+    if (!fundraiser['data'][0] || !fundraiser['data'][0]['attributes']['approved']) {
+        return {
+            notFound: true
         }
     }
-    
+
     return {
         props: {
             fundraiser: fundraiser['data'][0],

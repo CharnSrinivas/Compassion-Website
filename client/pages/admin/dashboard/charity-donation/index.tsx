@@ -7,23 +7,12 @@ import DashboardLayout from '../../../../components/DashboardLayout';
 
 import { jwt_admin_auth_token, server_url } from '../../../../config';
 
-interface Props {
-    fund_raisers_meta: any;
-    donations_meta: any;
-    pending_approval: any;
-    fundraisers: any[];
-    page_no:number
-    page_size:number
-}
-
-
-
 export async function getServerSideProps(context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<Record<string, unknown>>> {
     const admin_token = context.req.cookies[jwt_admin_auth_token];
-    const fundraisers_page_no = context.query['page'];
-    const fundraisers_page_size = context.query['pageSize'];
-    var page_no = parseInt(fundraisers_page_no ? fundraisers_page_no.toString() : '1');
-    var page_size = parseInt(fundraisers_page_size ? fundraisers_page_size.toString() : '10');
+    const donations_page_no = context.query['page'];
+    const donations_page_size = context.query['pageSize'];
+    var page_no = parseInt(donations_page_no ? donations_page_no.toString() : '1');
+    var page_size = parseInt(donations_page_size ? donations_page_size.toString() : '10');
     page_no = page_no <= 0 ? 1 : page_no;
     page_size = page_size <= 0 ? 10 : page_size;
 
@@ -44,47 +33,38 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
         return { redirect }
     }
 
-    const fundraiser_query = qs.stringify({
+    const donations_query = qs.stringify({
         page: page_no,
         pageSize: page_size,
         sort: ['createdAt:desc'],
-        populate: ['image', 'charity', 'user']
-    })
+        populate: ['image', 'charity', 'user', 'fund_raise', 'fund_raise.image', 'fund_raise.user']
+    });
 
-    var fund_raisers_meta;
-    var fundraisers;
     var donations_meta;
+    var donations;
     var pending_approval;
 
-    await axios.get(server_url + "/content-manager/collection-types/api::fund-raise.fund-raise?" + fundraiser_query, {
+    await axios.get(server_url + "/content-manager/collection-types/api::charity-donation.charity-donation?" + donations_query, {
         headers: {
             "Authorization": `Bearer ${admin_token}`
         }
     }).then(res => {
-        fund_raisers_meta = res.data['pagination']
-        if (fund_raisers_meta.pageSize > fund_raisers_meta.total) {
-            fund_raisers_meta.pageSize = fund_raisers_meta.total;
+        donations_meta = res.data['pagination']
+        if (donations_meta.pageSize > donations_meta.total) {
+            donations_meta.pageSize = donations_meta.total;
         }
-        fundraisers = res.data['results']
+        donations = res.data['results']
     });
 
-    await axios.get(server_url + "/api/donations?" + qs.stringify({
-        pagination: {
-            pageSize: 0
-        }, encodeValuesOnly: true,
-    })).then(res => {
-        donations_meta = res.data['meta']['pagination']
-    });
-
-    await axios.get(server_url + "/api/fund-raises?" + qs.stringify({
+    await axios.get(server_url + "/api/charity-donations?" + qs.stringify({
         filters: {
             $or: [
                 {
-                    approved: {
+                    success: {
                         $eq: false
                     }
                 }, {
-                    approved: {
+                    success: {
                         $null: true
                     }
                 }
@@ -99,9 +79,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
     return {
         props: {
             donations_meta,
-            fund_raisers_meta,
             pending_approval,
-            fundraisers,
+            donations,
             page_no,
             page_size
         }
@@ -110,9 +89,17 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
 }
 
 
-export default function index({ donations_meta, fund_raisers_meta, pending_approval, fundraisers,page_no,page_size }: Props) {
+interface Props {
+    donations_meta: any;
+    pending_approval: any;
+    donations: any[];
+    page_no: number
+    page_size: number
+}
+
+export default function index({ donations_meta, pending_approval, donations, page_no, page_size }: Props) {
     const [pathname, setPathName] = useState('');
-    
+
     useEffect(() => {
         document.getElementById("navbar")!.style!.display = 'none'
         document.getElementById("footer")!.style!.display = 'none'
@@ -125,18 +112,14 @@ export default function index({ donations_meta, fund_raisers_meta, pending_appro
                 <main className="h-full overflow-y-auto">
                     <div className="container px-6 mx-auto grid">
                         <h2 className="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">
-                            Fundraisers
+                            Donations
                         </h2>
                         {/* CTA */}
 
                         {/* CarpageSize */}
                         <div className="grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-4">
-                            {/* Card */}
-                            <div className="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
+                            {/* <div className="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
                                 <div className="p-3 mr-4 text-orange-500 bg-orange-100 rounded-full dark:text-orange-100 dark:bg-orange-500">
-                                    {/* <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                        <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
-                                    </svg> */}
                                     <svg
                                         className="w-5 h-5"
                                         fill='currentColor'
@@ -153,11 +136,11 @@ export default function index({ donations_meta, fund_raisers_meta, pending_appro
                                         Total fundraisers
                                     </p>
                                     <p className="text-lg font-semibold text-gray-700 dark:text-gray-200">
-                                        {fund_raisers_meta.total}
+                                        {donations_meta.total}
                                     </p>
                                 </div>
                             </div>
-                            {/* Card */}
+                             */}
                             <div className="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
                                 <div className="p-3 mr-4 text-green-500 bg-green-100 rounded-full dark:text-green-100 dark:bg-green-500">
                                     <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
@@ -177,23 +160,7 @@ export default function index({ donations_meta, fund_raisers_meta, pending_appro
                                     </p>
                                 </div>
                             </div>
-                            {/* Card */}
-                            {/* <div className="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
-                  <div className="p-3 mr-4 text-blue-500 bg-blue-100 rounded-full dark:text-blue-100 dark:bg-blue-500">
-                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <p className="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
-                      New sales
-                    </p>
-                    <p className="text-lg font-semibold text-gray-700 dark:text-gray-200">
-                      376
-                    </p>
-                  </div>
-                </div> */}
-                            {/* Card */}
+
                             <div className="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
                                 <div className="p-3 mr-4 text-teal-500 bg-teal-100 rounded-full dark:text-teal-100 dark:bg-teal-500">
                                     <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
@@ -220,65 +187,86 @@ export default function index({ donations_meta, fund_raisers_meta, pending_appro
                                 <table className="w-full whitespace-no-wrap">
                                     <thead>
                                         <tr className="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800">
-                                            <th className="px-2 py-3">S.No</th>
-                                            <th className="px-4 py-3">Fundraiser</th>
-                                            <th className="px-4 py-3">Target</th>
+                                            <th className="pl-2 py-3">S.No</th>
+                                            <th className="px-4 py-3">Charity</th>
+                                            <th className="px-4 py-3">User</th>
+                                            <th className="px-4 py-3">Amount</th>
+                                            <th className="px-4 py-3">Via</th>
                                             <th className="px-4 py-3">Approval</th>
                                             <th className="px-4 py-3">Date</th>
                                         </tr>
                                     </thead>
                                     <tbody className="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
-                                        {fundraisers && fundraisers.length > 0 &&
-                                            fundraisers.map((fundraiser, index) => {
+                                        {donations && donations.length > 0 &&
+                                            donations.map((donation, index) => {
                                                 return (
                                                     <tr className="text-gray-700 dark:text-gray-400">
-                                                        <td className="pl-4 py-3 text-sm">{(fund_raisers_meta.pageSize * fund_raisers_meta.page) - (fund_raisers_meta.pageSize - index - 1)}</td>
+                                                        <td className="pl-4 py-3 text-sm">{(donations_meta.pageSize * donations_meta.page) - (donations_meta.pageSize - index - 1)}</td>
                                                         <td className="px-2 py-3">
-                                                            <a href={`/admin/dashboard/fundraiser/${fundraiser['slug']}`} className="flex items-center text-sm">
+                                                            <a href={`/admin/dashboard/charity-donation/${donation['id']}/details`} className="flex items-center text-sm">
                                                                 {/* Avatar with inset shadow */}
                                                                 <div className="relative hidden w-8 h-8 mr-3 rounded-full md:block">
-                                                                    {fundraiser['image'] &&
+                                                                    {/* {donations['fund_raise']['image'] &&
                                                                         <img
                                                                             className="object-cover w-full h-full rounded-full"
-                                                                            src={`${server_url}${fundraiser['image'][0]['formats'] != null ? fundraiser['image'][0]['formats']['thumbnail']['url'] : fundraiser['image'][0]['url']}`}
+                                                                            src={`${server_url}${donations['fund_raise']['image'][0]['formats'] != null ? donations['fund_raise']['image'][0]['formats']['thumbnail']['url'] : donations['fund_raise']['image'][0]['url']}`}
                                                                             alt=""
                                                                             loading="lazy"
                                                                         />
                                                                     }
-                                                                    {!fundraiser['image'] &&
+                                                                    {!donations['fund_raise']['image'] &&
                                                                         <img
                                                                             className="object-cover w-full h-full rounded-full"
                                                                             src="/assets/image-placeholder.jpg"
                                                                             alt=""
                                                                             loading="lazy"
                                                                         />
-                                                                    }
+                                                                    } */}
                                                                     <div
                                                                         className="absolute inset-0 rounded-full shadow-inner"
                                                                         aria-hidden="true"
                                                                     />
                                                                 </div>
                                                                 <div>
-                                                                    <p className="font-semibold">{fundraiser['title']}</p>
-                                                                    <p className="text-xs text-gray-600 dark:text-gray-400">
-                                                                        {fundraiser['user']['username']}
-                                                                    </p>
+                                                                    <p className="font-semibold">{donation['charity']['name']}</p>
+                                                                    {/* <p className="text-xs text-gray-600 dark:text-gray-400">
+                                                                        {donation['fund_raise']['tag']}
+                                                                    </p> */}
                                                                 </div>
                                                             </a>
                                                         </td>
-                                                        <td className="px-4 py-3 text-sm">{fundraiser['fund_target']}</td>
+                                                        <td className="px-4 py-3 text-sm">
+                                                            {donation['user'] &&
+                                                                <>
+                                                                    <p className="font-semibold">{donation['user']['username']}</p>
+                                                                    <p className="text-xs text-gray-600 dark:text-gray-400">
+                                                                        {donation['user']['email']}
+                                                                    </p>
+                                                                </>
+                                                            }{!donation['user'] &&
+                                                                <p className="font-semibold">Anonymous</p>
+                                                            }
+
+                                                        </td>
+                                                        <td className="px-4 py-3 text-sm">
+                                                            {donation['amount']}
+                                                        </td>
+                                                        <td className="px-4 py-3 text-sm">
+                                                        {donation['type'] ? (donation['type'] as string).toUpperCase() : '-'}
+                                                        </td>
                                                         <td className="px-4 py-3 text-xs">
-                                                            {fundraiser.approved &&
+                                                            {donation.success &&
                                                                 <span className="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100">
                                                                     Approved
                                                                 </span>
                                                             }
-                                                            {!fundraiser.approved &&
+                                                            {!donation.success &&
                                                                 <span className="px-2 py-1 font-semibold leading-tight text-orange-700 bg-orange-100 rounded-full dark:text-white dark:bg-orange-600">
                                                                     Pending
-                                                                </span>}
+                                                                </span>
+                                                                }
                                                         </td>
-                                                        <td className="px-4 py-3 text-sm">{new Date(fundraiser.createdAt).toDateString()}</td>
+                                                        <td className="px-4 py-3 text-sm">{new Date(donation.createdAt).toDateString()}</td>
                                                     </tr>
                                                 )
                                             })
@@ -314,12 +302,12 @@ export default function index({ donations_meta, fund_raisers_meta, pending_appro
                                     <nav aria-label="Table navigation">
                                         <ul className="inline-flex items-center">
                                             {/* Left button */}
-                                            {fund_raisers_meta.page > 1 &&
+                                            {donations_meta.page > 1 &&
                                                 <li>
                                                     <a
                                                         className="px-3 py-1 rounded-md rounded-l-lg focus:outline-none focus:shadow-outline-purple"
                                                         aria-label="Previous"
-                                                        href={`${pathname}?page=${fund_raisers_meta.page - 1}`}
+                                                        href={`${pathname}?page=${donations_meta.page - 1}`}
                                                     >
                                                         <svg
                                                             aria-hidden="true"
@@ -337,15 +325,15 @@ export default function index({ donations_meta, fund_raisers_meta, pending_appro
                                             }
                                             <li>
                                                 <button className="px-3 py-1 text-white transition-colors duration-150 bg-purple-600 border border-r-0 border-purple-600 rounded-md focus:outline-none focus:shadow-outline-purple">
-                                                    {fund_raisers_meta.page}
+                                                    {donations_meta.page}
                                                 </button>
                                             </li>
-                                            {!(fund_raisers_meta.page * fund_raisers_meta.pageSize >= fund_raisers_meta.total) &&
+                                            {!(donations_meta.page * donations_meta.pageSize >= donations_meta.total) &&
                                                 <li >
                                                     <a
                                                         className="px-3 py-1 rounded-md rounded-r-lg focus:outline-none focus:shadow-outline-purple"
                                                         aria-label="Next"
-                                                        href={`${pathname}?page=${fund_raisers_meta.page + 1}`}
+                                                        href={`${pathname}?page=${donations_meta.page + 1}`}
                                                     >
                                                         <svg
                                                             className="w-5 h-5 fill-current"

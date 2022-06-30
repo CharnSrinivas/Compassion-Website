@@ -5,33 +5,37 @@ const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 module.exports = createCoreController('api::donation.donation', ({ strapi }) => ({
     async createStripeSession(ctx) {
         const { item } = ctx.request.body;
-        const transformedItem = {
-            price_data: {
-                currency: item.currency,
-                product_data: {
-                    images: [item.image],
-                    name: item.name,
-                }, unit_amount: item.price * 100,
-            },
-            description: item.description ? item.description : "No description",
-            quantity: 1,
-        };
-        const redirect_url = process.env.NODE_ENV === 'production' ? "http://compassion.toptechonly.com" : "http://localhost:3000";
-
-        const session = await stripe.checkout.sessions.create({
-            payment_method_types: ['card'],
-            line_items: [transformedItem],
-            mode: 'payment',
-            success_url: redirect_url +  '/my-donations/fundraiser-donations',
-            cancel_url: redirect_url + '/api/cancel',
-        });
         try {
+            if (!item.currency || !item.name || !item.price || item.price <= 0 ||  !item.charity || !item.charity_details['attributes']) {
+                throw Error("Invalid details!");
+            }
+            const transformedItem = {
+                price_data: {
+                    currency: item.currency,
+                    product_data: {
+                        images: [item.image],
+                        name: item.name,
+                    }, unit_amount: item.price * 100,
+                },
+                description: item.description ? item.description : "No description",
+                quantity: 1,
+            };
+            const redirect_url = process.env.NODE_ENV === 'production' ? "http://compassion.toptechonly.com" : "http://localhost:3000";
+    
+            const session = await stripe.checkout.sessions.create({
+                payment_method_types: ['card'],
+                line_items: [transformedItem],
+                mode: 'payment',
+                success_url: redirect_url +  '/my-donations/fundraiser-donations',
+                cancel_url: redirect_url + '/api/cancel',
+            });
             let charity_donation = await strapi.query("api::charity-donation.charity-donation").create({
                 data: {
                     payment_id: session.id,
                     success: false,
                     charity: item.charity,
                     amount: item.price,
+                    type:'stripe',
                     comment: item.comment,
                     user: item.user,
                     publishedAt: new Date().toISOString()

@@ -3,6 +3,7 @@ export const server_url = process.env['NODE_ENV'] === "production" ? "http://api
 export const jwt_aut_token = 'jwt-auth-token';
 export const jwt_admin_auth_token = 'jwt-admin-auth-token';
 export const fundraiser_ref = 'api::fund-raise.fund-raise';
+export const donations_ref='api::donation.donation'
 export const charity_ref = 'api::charity.charity';
 
 export const fundraiser_tags = [

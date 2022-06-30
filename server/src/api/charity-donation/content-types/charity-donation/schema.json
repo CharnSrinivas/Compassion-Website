@@ -38,7 +38,7 @@
     },
     "payment_id": {
       "type": "uid",
-      "required": true
+      "required": false
     }
   }
 }

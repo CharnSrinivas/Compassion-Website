@@ -7,11 +7,11 @@ interface Props {
     donations: any[];
     donations_meta: any;
     charity_donations_meta: any;
-    dp:number;
-    ds:number;
+    dp: number;
+    ds: number;
 }
 
-export default function myDonations({ donations, donations_meta, charity_donations_meta ,dp,ds}: Props) {
+export default function myDonations({ donations, donations_meta, charity_donations_meta, dp, ds }: Props) {
     const [pathname, setPathName] = useState('');
 
     const [url, setUrl] = useState('');
@@ -142,6 +142,12 @@ export default function myDonations({ donations, donations_meta, charity_donatio
                                             scope="col"
                                             className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
                                         >
+                                            Approved
+                                        </th>
+                                        <th
+                                            scope="col"
+                                            className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
+                                        >
                                             Date
                                         </th>
                                         {/* <th scope="col" className="relative px-6 py-3">
@@ -182,14 +188,22 @@ export default function myDonations({ donations, donations_meta, charity_donatio
                                                     <div className="text-lg text-gray-900">{donation.attributes.amount}</div>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className="text-xs text-gray-900">{ (donation.attributes.comment as string).length >60 ? (donation.attributes.comment as string).slice(0,60) +"...": (donation.attributes.comment as string)}</div>
+                                                    <div className="text-xs text-gray-900">{(donation.attributes.comment as string).length > 60 ? (donation.attributes.comment as string).slice(0, 60) + "..." : (donation.attributes.comment as string)}</div>
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                    {donation.attributes.success&&
+                                                        <span className="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100">
+                                                            Approved
+                                                        </span>
+                                                    }
+                                                    {!donation.attributes.success&&
+                                                        <span className="px-2 py-1 font-semibold leading-tight text-orange-700 bg-orange-100 rounded-full dark:text-white dark:bg-orange-600">
+                                                            Pending
+                                                        </span>}
                                                 </td>
                                                 <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
                                                     {new Date(donation.attributes.createdAt).toLocaleDateString().replaceAll("/", '-')}
                                                 </td>
-                                                {/* <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
-                            <a href="#" className="text-indigo-600 hover:text-indigo-900">Edit</a>
-                          </td> */}
                                             </tr>
                                         )
                                     })}
@@ -321,18 +335,9 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
 
     const donations_query = qs.stringify({
         filters: {
-            $and: [
-
-                {
-                    user: {
-                        id: { $eq: user.id }
-                    }
-                }, {
-                    success: {
-                        $eq: true
-                    }
-                }
-            ]
+            user: {
+                id: { $eq: user.id }
+            }
         },
         populate: ["image", "user", 'charity', 'fund_raise', 'fund_raise.image'],
         sort: ['createdAt:desc'],
@@ -378,7 +383,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
             donations: donations['data'],
             donations_meta: donations['meta']['pagination'],
             charity_donations_meta: charity_donations['meta']['pagination'],
-            dp,ds
+            dp, ds
         }
     }
 }

@@ -47,7 +47,7 @@ export default function addImage({ is_auth, token, fundraiser }: Props) {
               setUploadPercentage(100);
             }
           },
-        }))
+        }));
     }
     Promise.all(uploads).then((res) => {
       setUploading(false);

@@ -6,33 +6,19 @@ import { PaymentRequestButtonElement, useStripe, Elements } from '@stripe/react-
 import { loadStripe, } from '@stripe/stripe-js';
 import axios, { AxiosError } from 'axios';
 import { useRouter } from 'next/router';
-import Stripe from 'stripe';
 
 interface Props {
     fundraiser: any;
     user: any;
     slug: string;
     strapi_publisable_key: string;
-    stripe:Stripe;
 }
 
 export default function Wrapper(props: any) {
-    const [stripe_promise, setStripePromise] = useState<any>();
-    useEffect(() => {
-        init();
-    },[]);
-
-    const init = async () => {
-        const stripePromise = await loadStripe(props.strapi_publisable_key);
-        setStripePromise(stripePromise);
-    }
-    if (stripe_promise) {
-        return <Elements stripe={stripe_promise}>
-            <MyComponent {...props} />
-        </Elements>
-    } else {
-        return <></>
-    }
+    const stripePromise = loadStripe(props.strapi_publisable_key);
+    return <Elements stripe={stripePromise}>
+        <MyComponent {...props} />
+    </Elements>
 };
 
 export function MyComponent({ fundraiser, slug, user, strapi_publisable_key }: Props) {
@@ -44,11 +30,11 @@ export function MyComponent({ fundraiser, slug, user, strapi_publisable_key }: P
     const router = useRouter()
     const stripe = useStripe();
     useEffect(() => {
-
+        
         if (stripe) {
             const pr = stripe.paymentRequest({
-                country: 'IN',
-                currency: 'inr',
+                country: 'US',
+                currency: 'usd',
                 total: {
                     label: 'Demo total',
                     amount: 1350,
@@ -67,12 +53,9 @@ export function MyComponent({ fundraiser, slug, user, strapi_publisable_key }: P
             });
             pr.canMakePayment().then((result) => {
                 console.log('------------------------------------------------------------------');
-
                 console.log(result);
                 console.log('------------------------------------------------------------------');
-
                 if (result) {
-
                     pr.on('paymentmethod', handlePaymentMethodReceived);
                     setPaymentRequest(pr);
                 } else {
@@ -128,7 +111,10 @@ export function MyComponent({ fundraiser, slug, user, strapi_publisable_key }: P
     }
 
     const handlePaymentMethodReceived = async (event: any) => {
+        console.log('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++=');
         console.log(event);
+        console.log('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++=');
+
         if (!stripe) return;
 
         // Send the payment details to our function.

@@ -39,6 +39,13 @@
     "payment_id": {
       "type": "uid",
       "required": false
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": [
+        "stripe",
+        "upi"
+      ]
     }
   }
 }

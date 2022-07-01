@@ -1,8 +1,9 @@
 ToDo:
-    ---- send email on new donation
-    ---- UPI payment
     ---- post fundraiser updates
+    ---- coinbase integration
 Did
+    ---- UPI payment
+    ---- send email on new donation
     ---- donations admin pannel
     ---- user approval by admin
     ---- payment integration

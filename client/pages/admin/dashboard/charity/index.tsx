@@ -20,6 +20,7 @@ interface Props {
 
 
 export async function getServerSideProps(context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<Record<string, unknown>>> {
+    const server_url = 'http://127.0.0.1:1337';
     const admin_token = context.req.cookies[jwt_admin_auth_token];
     var _page_no = context.query['page'];
     var _page_size = context.query['pageSize'];

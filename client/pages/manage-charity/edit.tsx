@@ -246,6 +246,7 @@ export default function edit({ charity, token }: Props) {
 
 
 export async function getServerSideProps(context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<Record<string, unknown>>> {
+    const server_url = 'http://127.0.0.1:1337';
     const token = context.req.cookies[jwt_aut_token];
     const redirect: Redirect = {
         destination: "/register",

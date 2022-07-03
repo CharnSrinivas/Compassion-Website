@@ -3,7 +3,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { buffer } from 'micro'
 // import Stripe from 'stripe'
 // import axios from "axios";
-import { server_url } from "../../config";
+const server_url = 'http://127.0.0.1:1337';
 const opt: any = {}
 
 export const config = {

@@ -116,6 +116,7 @@ export default function story({ fundraiser, is_auth, token }: Props) {
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<Record<string, unknown>>> {
+    const server_url = 'http://127.0.0.1:1337';
     const token = context.req.cookies[jwt_aut_token];
     const slug = context.params ? context.params['slug'] : undefined;
     const redirect_obj: Redirect = {

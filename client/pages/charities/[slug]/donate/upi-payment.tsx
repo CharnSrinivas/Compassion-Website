@@ -6,6 +6,7 @@ import axios, { AxiosError } from 'axios';
 import { useRouter } from 'next/router';
 
 export async function getServerSideProps(context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<Record<string, unknown>>> {
+    const server_url = 'http://127.0.0.1:1337';
     const slug = context.params ? context.params['slug']?.toString().toLocaleLowerCase() : [];
     const token = context.req.cookies[jwt_aut_token];
 

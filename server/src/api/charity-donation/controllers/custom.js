@@ -35,7 +35,8 @@ async function sendMail(subject, html, text) {
 }
 module.exports = createCoreController('api::donation.donation', ({ strapi }) => ({
     async createStripeSession(ctx) {
-        const server_url = process.env['NODE_ENV'] === "production" ? "http://toptechonly.com/_api" : "http://localhost:3000"
+        const server_url = process.env['NODE_ENV'] === "production" ? "https://toptechonly.com" : "http://localhost:3000"
+
         const { item } = ctx.request.body;
         try {
             if (!item.currency || !item.name || !item.price || item.price <= 0 || !item.charity || !item.charity_details['attributes']) {
@@ -52,7 +53,7 @@ module.exports = createCoreController('api::donation.donation', ({ strapi }) => 
                 description: item.description ? item.description : "No description",
                 quantity: 1,
             };
-            const redirect_url = process.env.NODE_ENV === 'production' ? "http://compassion.toptechonly.com" : "http://localhost:3000";
+            const redirect_url = process.env.NODE_ENV === 'production' ? "https://toptechonly.com" : "http://localhost:3000";
             const session = await stripe.checkout.sessions.create({
                 payment_method_types: ['card'],
                 line_items: [transformedItem],
@@ -78,9 +79,9 @@ module.exports = createCoreController('api::donation.donation', ({ strapi }) => 
 
             var mail_subject = `${charity_donation.amount} ${charity_donation.charity.fund_type} to a charity ${item.charity_details['attributes'].name}`;
             var mail_html =
-            `
+                `
             <h3>
-                ${charity_donation.user.username} 
+                ${charity_donation.user ? charity_donation.user.username : 'Anonymous'} 
                 <b> donated ${charity_donation.amount}
                     <span>${charity_donation.charity.fund_type.toUpperCase()}</span>
                 </b>

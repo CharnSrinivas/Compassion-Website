@@ -225,6 +225,7 @@ export default function edit({ user, admin_token,  username }: Props) {
 
 
 export async function getServerSideProps(context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<Record<string, unknown>>> {
+    const server_url = 'http://127.0.0.1:1337';
     const username = context.params ? context.params['username']?.toString() : '';
     const admin_token = context.req.cookies[jwt_admin_auth_token];
 

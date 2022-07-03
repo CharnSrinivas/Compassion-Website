@@ -8,6 +8,7 @@ import DashboardLayout from '../../../../components/DashboardLayout';
 import { jwt_admin_auth_token, server_url } from '../../../../config';
 
 export async function getServerSideProps(context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<Record<string, unknown>>> {
+    const server_url = 'http://127.0.0.1:1337';
     const admin_token = context.req.cookies[jwt_admin_auth_token];
     const donations_page_no = context.query['page'];
     const donations_page_size = context.query['pageSize'];

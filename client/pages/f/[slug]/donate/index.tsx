@@ -27,44 +27,11 @@ export function MyComponent({ fundraiser, slug, user, strapi_publisable_key }: P
     const [show_alert, setShowAlert] = useState(false);
     const [alert_text, setAlertText] = useState('');
     const [paymentRequest, setPaymentRequest] = useState<any>(null);
+    const [loading, setLoading] = useState(false);
     const router = useRouter()
     const stripe = useStripe();
-    useEffect(() => {
-        
-        if (stripe) {
-            const pr = stripe.paymentRequest({
-                country: 'US',
-                currency: 'usd',
-                total: {
-                    label: 'Demo total',
-                    amount: 1350,
-                },
-                requestPayerName: true,
-                requestPayerEmail: true,
-                // requestShipping: true,
-                // shippingOptions: [
-                //     {
-                //         id: 'standard-global',
-                //         label: 'Global shipping',
-                //         detail: 'Arrives in 5 to 7 days',
-                //         amount: 350,
-                //     },
-                // ],
-            });
-            pr.canMakePayment().then((result) => {
-                console.log('------------------------------------------------------------------');
-                console.log(result);
-                console.log('------------------------------------------------------------------');
-                if (result) {
-                    pr.on('paymentmethod', handlePaymentMethodReceived);
-                    setPaymentRequest(pr);
-                } else {
-
-                }
-            });
-        }
-    }, [stripe])
     const startCheckOut = async () => {
+        if (loading) return;
         if (donation_amount <= 0) {
             setAlertText('Donation amount should be atleast 50 cents ($0.5)'); setShowAlert(true);
             return;
@@ -73,19 +40,20 @@ export function MyComponent({ fundraiser, slug, user, strapi_publisable_key }: P
             alert("Our payment system is borken! Try again after some time.");
             return;
         };
-        const item = {
-            currency: (fundraiser.attributes.fund_type as string).toUpperCase(),
-            name: fundraiser.attributes.title,
-            image: fundraiser.attributes.image.data ? server_url + fundraiser.attributes.image.data[0]['attributes']['url'] : window.location.origin + "/assets/image-placeholder.jpg",
-            price: donation_amount,
-            description: fundraiser.attributes.description,
-            charity: fundraiser.attributes['charity']['data'] ? fundraiser.attributes['charity']['data']['id'] : null,
-            user: user ? user['id'] : null,
-            comment: comment,
-            fund_raise: fundraiser.id,
-            fundraiser_details: fundraiser
-        }
         try {
+            setLoading(true);
+            const item = {
+                currency: (fundraiser.attributes.fund_type as string).toUpperCase(),
+                name: fundraiser.attributes.title,
+                image: fundraiser.attributes.image.data ? server_url + fundraiser.attributes.image.data[0]['attributes']['url'] : window.location.origin + "/assets/image-placeholder.jpg",
+                price: donation_amount,
+                description: fundraiser.attributes.description,
+                charity: fundraiser.attributes['charity']['data'] ? fundraiser.attributes['charity']['data']['id'] : null,
+                user: user ? user['id'] : null,
+                comment: comment,
+                fund_raise: fundraiser.id,
+                fundraiser_details: fundraiser
+            }
 
             const checkoutSession = await axios.post(server_url + '/api/donations/create-stripe-session', {
                 item: item
@@ -100,78 +68,98 @@ export function MyComponent({ fundraiser, slug, user, strapi_publisable_key }: P
             })
             if (error) {
                 alert("Our payment system is borken! Try again after some time.");
+                setLoading(false);
+                return;
             }
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 setShowAlert(true);
                 setAlertText((error.response as any).data.error);
-            } return;
+            }
+            setLoading(false);
+            return;
         }
 
     }
 
-    const handlePaymentMethodReceived = async (event: any) => {
-        console.log('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++=');
-        console.log(event);
-        console.log('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++=');
+    const startCoinBaseCharge = async () => {
+        if (loading) return;
+        if (donation_amount <= 0) {
+            setAlertText('Donation amount should be atleast 50 cents ($0.5)'); setShowAlert(true);
+            return;
+        }
+        try {
+            setLoading(true);
+            const item = {
+                currency: (fundraiser.attributes.fund_type as string).toUpperCase(),
+                name: fundraiser.attributes.title,
+                image: fundraiser.attributes.image.data ? server_url + fundraiser.attributes.image.data[0]['attributes']['url'] : window.location.origin + "/assets/image-placeholder.jpg",
+                price: donation_amount,
+                description: (fundraiser.attributes.description) ? (fundraiser.attributes.description as string).slice(0, 198) : 'No description',
+                charity: fundraiser.attributes['charity']['data'] ? fundraiser.attributes['charity']['data']['id'] : null,
+                user: user ? user['id'] : null,
+                comment: comment,
+                fund_raise: fundraiser.id,
+                fundraiser_details: fundraiser
+            }
 
-        if (!stripe) return;
-
-        // Send the payment details to our function.
-        const paymentDetails = {
-            payment_method: event.paymentMethod.id,
-            shipping: {
-                name: event.shippingAddress.recipient,
-                phone: event.shippingAddress.phone,
-                address: {
-                    line1: event.shippingAddress.addressLine[0],
-                    city: event.shippingAddress.city,
-                    postal_code: event.shippingAddress.postalCode,
-                    state: event.shippingAddress.region,
-                    country: event.shippingAddress.country,
-                },
-            },
-        };
-        const response = await fetch('/.netlify/functions/create-payment-intent', {
-            method: 'post',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ paymentDetails }),
-        }).then((res) => {
-            return res.json();
-        });
-        if (response.error) {
-            // Report to the browser that the payment failed.
-            console.log(response.error);
-            event.complete('fail');
-        } else {
-            // Report to the browser that the confirmation was successful, prompting
-            // it to close the browser payment method collection interface.
-            event.complete('success');
-            // Let Stripe.js handle the rest of the payment flow, including 3D Secure if needed.
-            const { error, paymentIntent } = await stripe.confirmCardPayment(
-                response.paymentIntent.client_secret
-            );
-            if (error) {
-                console.log(error);
+            const charge = await axios.post(server_url + '/api/donations/create-charge', {
+                item: item
+            });
+            if (charge.data.error) {
+                console.error(charge.data.error);
+                alert("Our payment system is borken! Try again after some time.");
+                setLoading(false);
                 return;
             }
-            if (paymentIntent.status === 'succeeded') {
-                router.push('/');
-            } else {
-                console.warn(
-                    `Unexpected status: ${paymentIntent.status} for ${paymentIntent}`
-                );
+            window.open(charge.data.hosted_url, '_blank');
+            setLoading(false);
+            return;
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                setShowAlert(true);
+                setAlertText((error.response as any).data.error);
             }
+            setLoading(false);
+            return;
         }
-    };
-    // if (paymentRequest) {
-    //     return <PaymentRequestButtonElement options={{ paymentRequest }} />;
-    // }
+    }
 
     return (
         <>
+            <style>
+                {`.loader {
+                	border-top-color: #3498db;
+                	-webkit-animation: spinner 1.5s linear infinite;
+                	animation: spinner 1.5s linear infinite;
+                }
+                
+                @-webkit-keyframes spinner {
+                	0% {
+                		-webkit-transform: rotate(0deg);
+                	}
+                	100% {
+                		-webkit-transform: rotate(360deg);
+                	}
+                }
+                
+                @keyframes spinner {
+                	0% {
+                		transform: rotate(0deg);
+                	}
+                	100% {
+                		transform: rotate(360deg);
+                	}
+                }
+            `}
+            </style>
+            {loading &&
+                <div className="fixed top-0 left-0 right-0 bottom-0 w-full h-screen z-50 overflow-hidden bg-gray-700 opacity-75 flex flex-col items-center justify-center">
+                    <div className="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4"></div>
+                    <h2 className="text-center text-white text-xl font-semibold">Loading...</h2>
+                    <p className="w-1/3 text-center text-white">This may take a few seconds, please don't close this page.</p>
+                </div>
+            }
             <div className="m-h-screen min-w-screen bg-slate-200 py-6 flex flex-col justify-center overflow-hidden sm:py-12">
                 {!user && <div
                     className="p-4 mb-4 self-center lg:w-[45%] text-sm text-green-700 bg-green-100 rounded-lg"
@@ -281,23 +269,27 @@ export function MyComponent({ fundraiser, slug, user, strapi_publisable_key }: P
                     <div className='flex flex-wrap gap-8' >
                         <div onClick={startCheckOut} className='flex w-[13rem] flex-col items-center bg-white text-gray-600 px-4 py-4 rounded-lg my-5 shadow-2xl hover:scale-[1.02] transition-all cursor-pointer'   >
                             {/* <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg> */}
-                            <img src="/assets/credit-card.png" className='w-16 h-16' alt="" />
+                            <img src="/assets/credit-card.png" className='w-16 h-16' alt="credit-card" />
                             <h4 className='font-medium mt-2'>Credit/Debit card</h4>
                             <h5 className='text-sm'>(Processed via Stripe) </h5>
                         </div>
                         <a href={`/f/${slug}/donate/upi-payment`} className='flex flex-col w-[13rem] items-center bg-white text-gray-600 px-4 py-4 rounded-lg my-5 shadow-2xl hover:scale-[1.02] transition-all cursor-pointer'   >
                             {/* <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg> */}
-                            <img src="/assets/upi-payment.png" className='w-16 h-16' alt="" />
+                            <img src="/assets/upi-payment.png" className='w-16 h-16' alt="upi-payment" />
                             <h4 className='font-medium mt-2'>UPI</h4>
                             <h5 className='text-sm'>(via QRcode) </h5>
                         </a>
-                        <div className='flex-col w-[13rem] items-center justify-center px-4 py-4  my-5'   >
-
-                            {
-                                paymentRequest &&
+                        {
+                            paymentRequest &&
+                            <div className='flex-col w-[13rem] items-center justify-center px-4 py-4  my-5'   >
                                 <PaymentRequestButtonElement className='w-[100%]' options={{ paymentRequest }} />
-                            }
-                            <h4 className='font-medium mt-2 text-center'>Via Gpay</h4>
+                                <h4 className='font-medium mt-2 text-center'>Via Gpay</h4>
+                            </div>
+                        }
+                        <div onClick={startCoinBaseCharge} className='flex w-[13rem] flex-col items-center bg-white text-gray-600 px-4 py-4 rounded-lg my-5 shadow-2xl hover:scale-[1.02] transition-all cursor-pointer' >
+                            <img src="/assets/crypto-wallet.png" className='w-16 h-16' alt="crypto-wallet" />
+                            <h4 className='font-medium mt-2'>Crypto</h4>
+                            <h5 className='text-sm'>(via CoinBase) </h5>
                         </div>
                     </div>
                     {/* <button  className="px-4 w-fit py-2 rounded text-white mt-8 lg:mt-0 bg-[#32a95c]">
@@ -311,6 +303,7 @@ export function MyComponent({ fundraiser, slug, user, strapi_publisable_key }: P
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<Record<string, unknown>>> {
+    const server_url = 'http://127.0.0.1:1337';
     const slug = context.params ? context.params['slug']?.toString().toLocaleLowerCase() : [];
     const token = context.req.cookies[jwt_aut_token];
 

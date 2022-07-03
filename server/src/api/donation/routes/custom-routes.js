@@ -22,6 +22,16 @@ module.exports = {
             method: 'POST',
             path: '/donations/gap-create-payment-intent',
             handler: "custom.donationSuccess"
+        },
+        {
+            method: 'POST',
+            path: '/donations/create-charge',
+            handler: "custom.createCharge"
+        },
+        {
+            method:"POST",
+            path: '/donations/coinbase-webhook-handler',
+            handler: "custom.coinbaseWebhookHandler"
         }
     ]
 }

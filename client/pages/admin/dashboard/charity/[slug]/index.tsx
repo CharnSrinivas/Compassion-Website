@@ -11,6 +11,7 @@ export default function index({}: Props) {
 
 
 export async function getServerSideProps(context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<Record<string, unknown>>> {
+    const server_url = 'http://127.0.0.1:1337';
     const slug = context.params ? context.params['slug']?.toString().toLocaleLowerCase() : [];
     if(!slug){
         return{

@@ -8,6 +8,7 @@ export default function index() {
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<Record<string, unknown>>> {
+    const server_url = 'http://127.0.0.1:1337';
     const username = context.params ? context.params['username']?.toString() : '';
     if (!username) {
         return {

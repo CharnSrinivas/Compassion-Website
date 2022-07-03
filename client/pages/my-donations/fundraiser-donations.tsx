@@ -311,6 +311,7 @@ export default function myDonations({ donations, donations_meta, charity_donatio
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<Record<string, unknown>>> {
+    const server_url = 'http://127.0.0.1:1337';
     const token = context.req.cookies[jwt_aut_token];
     const donations_page = context.query['dp'];
     const donations_size = context.query['ds'];

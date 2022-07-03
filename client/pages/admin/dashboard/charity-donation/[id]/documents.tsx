@@ -8,6 +8,7 @@ import DashboardLayout from '../../../../../components/DashboardLayout';
 
 
 export async function getServerSideProps(context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<Record<string, unknown>>> {
+    const server_url = 'http://127.0.0.1:1337';
     const id = context.params ? context.params['id']?.toString().toLocaleLowerCase() : [];
     const admin_token = context.req.cookies[jwt_admin_auth_token];
 

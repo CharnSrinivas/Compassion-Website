@@ -1,6 +1,6 @@
 import { GetServerSidePropsContext, GetServerSidePropsResult, Redirect } from 'next';
 import React from 'react'
-import { jwt_admin_auth_token, jwt_aut_token, server_url } from '../../config'
+import { jwt_admin_auth_token, jwt_aut_token } from '../../config'
 type Props = {}
 
 export default function index({ }: Props) {
@@ -11,6 +11,7 @@ export default function index({ }: Props) {
 
 
 export async function getServerSideProps(context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<Record<string, unknown>>> {
+    const server_url = 'http://127.0.0.1:1337';
     const admin_token = context.req.cookies[jwt_admin_auth_token];    
     const redirect: Redirect = {
         destination: "/admin/login",

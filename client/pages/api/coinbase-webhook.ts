@@ -49,6 +49,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             })
         })
 
-        res.send(checkout_res)
+        res.send(checkout_res);return;
     }
+    res.send("Meathod not allowed.")
 }

@@ -80,6 +80,7 @@ export default function donate({ charity, slug, user, strapi_publisable_key }: P
     const [comment, setComment] = useState('');
     const [show_alert, setShowAlert] = useState(false); 
     const [alert_text, setAlertText] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const startCheckOut = async () => {
         if (donation_amount <= 0) {
@@ -126,11 +127,84 @@ export default function donate({ charity, slug, user, strapi_publisable_key }: P
         }
 
     }
+
+    const startCoinBaseCharge = async () => {
+        if (loading) return;
+        if (donation_amount <= 0) {
+            setAlertText('Donation amount should be atleast 50 cents ($0.5)'); setShowAlert(true);
+            return;
+        }
+        try {
+            setLoading(true);
+            const item = {
+                currency: (charity.attributes.fund_type as string).toUpperCase(),
+                name: charity.attributes.name,
+                image: charity.attributes.image.data ? server_url + charity.attributes.image.data[0]['attributes']['url'] : window.location.origin + "/assets/image-placeholder.jpg",
+                price: donation_amount,
+                description: (charity.attributes.description) ? (charity.attributes.description as string).slice(0, 198) : 'No description',
+                charity: charity.id,
+                user: user ? user['id'] : null,
+                comment: comment,
+                charity_details: charity
+            }
+
+            const charge = await axios.post(server_url + '/api/donations/create-charge', {
+                item: item
+            });
+            if (charge.data.error) {
+                console.error(charge.data.error);
+                alert("Our payment system is borken! Try again after some time.");
+                setLoading(false);
+                return;
+            }
+            window.open(charge.data.hosted_url, '_blank');
+            setLoading(false);
+            return;
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                setShowAlert(true);
+                setAlertText((error.response as any).data.error);
+            }
+            setLoading(false);
+            return;
+        }
+    }
+
     return (
         <>
-            {/* <div className='absolute w-screen h-screen bg-gray-400 bg-opacity-60 z-10 '>
-
-        </div> */}
+     <style>
+                {`.loader {
+                	border-top-color: #3498db;
+                	-webkit-animation: spinner 1.5s linear infinite;
+                	animation: spinner 1.5s linear infinite;
+                }
+                
+                @-webkit-keyframes spinner {
+                	0% {
+                		-webkit-transform: rotate(0deg);
+                	}
+                	100% {
+                		-webkit-transform: rotate(360deg);
+                	}
+                }
+                
+                @keyframes spinner {
+                	0% {
+                		transform: rotate(0deg);
+                	}
+                	100% {
+                		transform: rotate(360deg);
+                	}
+                }
+            `}
+            </style>
+            {loading &&
+                <div className="fixed top-0 left-0 right-0 bottom-0 w-full h-screen z-50 overflow-hidden bg-gray-700 opacity-75 flex flex-col items-center justify-center">
+                    <div className="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4"></div>
+                    <h2 className="text-center text-white text-xl font-semibold">Loading...</h2>
+                    <p className="w-1/3 text-center text-white">This may take a few seconds, please don't close this page.</p>
+                </div>
+            }
             <div className="h-screen min-w-screen bg-slate-200 py-6 flex flex-col justify-center overflow-hidden sm:py-12">
                 {!user && <div
                     className="p-4 mb-4 self-center lg:w-[45%] text-sm text-green-700 bg-green-100 rounded-lg dark:bg-green-200 dark:text-green-800"

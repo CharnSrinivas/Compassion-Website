@@ -2,7 +2,7 @@ import { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
 import qs from 'qs';
 import React, { useEffect, useState } from 'react'
 import { jwt_aut_token, server_url } from '../../../../config';
-import { PaymentRequestButtonElement, useStripe, Elements } from '@stripe/react-stripe-js'
+import { PaymentRequestButtonElement} from '@stripe/react-stripe-js'
 import { loadStripe, } from '@stripe/stripe-js';
 import axios, { AxiosError } from 'axios';
 import { useRouter } from 'next/router';
@@ -14,14 +14,14 @@ interface Props {
     strapi_publisable_key: string;
 }
 
-export default function Wrapper(props: any) {
-    const stripePromise = loadStripe(props.strapi_publisable_key);
-    return <Elements stripe={stripePromise}>
-        <MyComponent {...props} />
-    </Elements>
-};
+// export default function Wrapper(props: any) {
+//     const stripePromise = loadStripe(props.strapi_publisable_key);
+//     return <Elements stripe={stripePromise}>
+//         <MyComponent {...props} />
+//     </Elements>
+// };
 
-export function MyComponent({ fundraiser, slug, user, strapi_publisable_key }: Props) {
+export default function donate({ fundraiser, slug, user, strapi_publisable_key }: Props) {
     const [donation_amount, setDonationAmount] = useState(0);
     const [comment, setComment] = useState('');
     const [show_alert, setShowAlert] = useState(false);
@@ -29,13 +29,13 @@ export function MyComponent({ fundraiser, slug, user, strapi_publisable_key }: P
     const [paymentRequest, setPaymentRequest] = useState<any>(null);
     const [loading, setLoading] = useState(false);
     const router = useRouter()
-    const stripe = useStripe();
     const startCheckOut = async () => {
         if (loading) return;
         if (donation_amount <= 0) {
             setAlertText('Donation amount should be atleast 50 cents ($0.5)'); setShowAlert(true);
             return;
         }
+        const stripe = await loadStripe(strapi_publisable_key);
         if (!stripe) {
             alert("Our payment system is borken! Try again after some time.");
             return;

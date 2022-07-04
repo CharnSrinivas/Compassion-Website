@@ -15,8 +15,8 @@ module.exports = {
         },
         {
             method: 'POST',
-            path: '/charity-donations/success',
-            handler: "custom.donationSuccess"
+            path: '/charity-donations/create-charge',
+            handler: "custom.createCharge"
         }
     ]
 }

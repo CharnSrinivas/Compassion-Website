@@ -297,6 +297,7 @@ module.exports = createCoreController('api::donation.donation', ({ strapi }) => 
                         populate: { charity: true, fund_raise: true, user: true }
                     })
                 }
+                console.log(donation);
                 if (donation.fund_raise) {
                     if (!donation.fund_raise.approved) {
                         ctx.res.status = 400;
@@ -317,7 +318,7 @@ module.exports = createCoreController('api::donation.donation', ({ strapi }) => 
                     });
                     await strapi.query("api::donation.donation").update({
                         where: {
-                            payment_id: event.data.object.id
+                            payment_id: event.data.id
                         }, data: {
                             success: true
                         },
@@ -351,6 +352,20 @@ module.exports = createCoreController('api::donation.donation', ({ strapi }) => 
                     })
                 }
                 ctx.res.status = 200;
+            }
+            else if(event.type === 'charge:failed'){
+                let donation = await strapi.query("api::donation.donation").delete({
+                    where: {
+                        payment_id: event.data.id
+                    }
+                })
+                if (!donation) {
+                    donation = await strapi.query("api::charity-donation.charity-donation").delete({
+                        where: {
+                            payment_id: event.data.id
+                        },
+                    })
+                }
             }
         } catch (error) {
             console.log('---------------- error ----------------------');

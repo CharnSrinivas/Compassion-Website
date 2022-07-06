@@ -11,9 +11,9 @@ const server_url = process.env['NODE_ENV'] === "production" ? "https://toptechon
 async function sendMail(subject, html, text) {
     try {
         let transporter = nodemailer.createTransport({
-            host: "smtp.gmail.com",
-            port: 587,
-            secure: false, // true for 465, false for other ports
+            host: "smtp.hostinger.com",
+            port: 465,
+            secure: true, // true for 465, false for other ports
             auth: {
                 user: process.env.FROM_EMAIL, // generated ethereal user
                 pass: process.env.EMAIL_PASS, // generated ethereal password

@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import * as Yup from 'yup';
 import { useFormik } from 'formik'
 import { useRouter } from 'next/router';
@@ -8,6 +8,10 @@ import Cookies from 'js-cookie';
 import axios from 'axios';
 export default function register() {
   const router = useRouter();
+  const [show_alert, setShowAlert] = useState(false);
+  const [alert_text, setAlertText] = useState('');
+  const [loading, setLoading] = useState(false);
+
   const formik = useFormik({
     initialValues: {
       email: '',
@@ -51,25 +55,38 @@ export default function register() {
     }),
 
     onSubmit: (e) => {
-      fetch(server_url + '/api/auth/local/register', {
-        mode: "cors",
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username: e.firstName + " " + e.lastName,
-          email: e.email,
-          password: e.password,
-          address: e.address,
-          mobile_no: e.mobileNo
+      try {
+        setLoading(true);
+        fetch(server_url + '/api/auth/local/register', {
+          mode: "cors",
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            username: e.firstName + " " + e.lastName,
+            email: e.email,
+            password: e.password,
+            address: e.address,
+            mobile_no: e.mobileNo
+          })
+        }).then((res) => {
+          res.json().then(res_json => {
+            if(res_json.error)
+            {
+              setAlertText(res_json.error.message);
+              setShowAlert(true);
+              setLoading(false);
+            }
+            if (!res_json.error && res_json.jwt) {
+              localStorage.setItem(jwt_aut_token, res_json.jwt);
+              router.push('/')
+            }
+          })
         })
-      }).then((res) => {
-        res.json().then(res_json => {
-          if (!res_json.error && res_json.jwt) {
-            localStorage.setItem(jwt_aut_token, res_json.jwt);
-            router.push('/')
-          }
-        })
-      })
+      } catch (error) {
+        setLoading(false);
+        console.error(error);
+      }
+
     }
   });
   useEffect(() => {
@@ -118,9 +135,51 @@ export default function register() {
 
   return (
     <div>
+      <style>
+        {`.loader {
+                	border-top-color: #3498db;
+                	-webkit-animation: spinner 1.5s linear infinite;
+                	animation: spinner 1.5s linear infinite;
+                }
+                
+                @-webkit-keyframes spinner {
+                	0% {
+                		-webkit-transform: rotate(0deg);
+                	}
+                	100% {
+                		-webkit-transform: rotate(360deg);
+                	}
+                }
+                
+                @keyframes spinner {
+                	0% {
+                		transform: rotate(0deg);
+                	}
+                	100% {
+                		transform: rotate(360deg);
+                	}
+                }
+            `}
+      </style>
+      {loading &&
+        <div className="fixed top-0 left-0 right-0 bottom-0 w-full h-screen z-50 overflow-hidden bg-gray-700 opacity-75 flex flex-col items-center justify-center">
+          <div className="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4"></div>
+          <h2 className="text-center text-white text-xl font-semibold">Loading...</h2>
+          <p className="w-1/3 text-center text-white">This may take a few seconds, please don't close this page.</p>
+        </div>
+      }
+
       <section className="text-gray-600 body-font relative">
         <div className="container px-5 py-24 mx-auto ">
           <div className="flex flex-col text-center w-full mb-12 ">
+            <div
+              style={{ transition: 'all 0.6s ease' }}
+              className={`relative ${show_alert ? 'block translate-x-[0px] opacity-[100%]' : 'translate-x-[200px] opacity-0'} lg:w-[50%] w-[100%] mx-auto  p-4 mb-4 text-sm text-yellow-700 bg-yellow-100 rounded-lg `}
+              role="alert"
+            >
+              <button onClick={() => { setShowAlert(false) }} className='absolute cursor-pointer top-[15px] right-[15px] font-semibold '>X</button>
+              <p>{alert_text}</p>
+            </div>
             <h1 className="sm:text-3xl text-2xl font-medium title-font mb-4 text-gray-900">
               Register to Compassion
             </h1>

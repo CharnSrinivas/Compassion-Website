@@ -262,7 +262,8 @@ export default function index({ donations_meta, fund_raisers_meta, pending_appro
                                                                 <div>
                                                                     <p className="font-semibold">{fundraiser['title']}</p>
                                                                     <p className="text-xs text-gray-600 dark:text-gray-400">
-                                                                        {fundraiser['user']['username']}
+                                                                        {fundraiser['user']? fundraiser['user']['username'] : 
+                                                                        'No user'}
                                                                     </p>
                                                                 </div>
                                                             </a>

@@ -9,7 +9,7 @@ interface Props {
     charity: any;
     user: any;
     slug: string;
-    strapi_publisable_key: string;
+    stripe_publishable_key: string;
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<Record<string, unknown>>> {
@@ -60,7 +60,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
         return {
             props: {
                 charity: charity['data'][0], user: null, slug,
-                strapi_publisable_key: process.env.STRIPE_PUBLISHABLE_KEY ? process.env.STRIPE_PUBLISHABLE_KEY : ''
+                stripe_publishable_key: process.env.STRIPE_PUBLISHABLE_KEY ? process.env.STRIPE_PUBLISHABLE_KEY : ''
             }
         }
     }
@@ -70,12 +70,12 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
             charity: charity['data'][0],
             user,
             slug,
-            strapi_publisable_key: process.env.STRIPE_PUBLISHABLE_KEY ? process.env.STRIPE_PUBLISHABLE_KEY : ''
+            stripe_publishable_key: process.env.STRIPE_PUBLISHABLE_KEY ? process.env.STRIPE_PUBLISHABLE_KEY : ''
         }
     }
 }
 
-export default function donate({ charity, slug, user, strapi_publisable_key }: Props) {
+export default function donate({ charity, slug, user, stripe_publishable_key }: Props) {
     const [donation_amount, setDonationAmount] = useState(0);
     const [comment, setComment] = useState('');
     const [show_alert, setShowAlert] = useState(false); 
@@ -87,7 +87,7 @@ export default function donate({ charity, slug, user, strapi_publisable_key }: P
             setAlertText('Donation amount should be atleast 50 cents ($0.5)'); setShowAlert(true);
             return;
         }
-        const stripe = await loadStripe(strapi_publisable_key);
+        const stripe = await loadStripe(stripe_publishable_key);
         if (!stripe) {
             alert("Our payment system is borken! Try again after some time.");
             return;

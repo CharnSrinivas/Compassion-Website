@@ -614,11 +614,19 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
   const ds = parseInt(donations_size ? donations_size.toString() : '10');
   const donations_query = qs.stringify({
     filters: {
-      fund_raise: {
-        id: {
-          $eq: fundraiser['data'][0]['id']
+      $and: [
+
+        {
+          fund_raise: {
+            id: {
+              $eq: fundraiser['data'][0]['id']
+            }
+          }
+        },
+        {
+          success: { $eq: true }
         }
-      }
+      ]
     },
     populate: ["image", "user", 'charity'],
     sort: ['createdAt:desc'],

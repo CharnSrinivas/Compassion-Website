@@ -134,7 +134,6 @@ module.exports = createCoreController('api::donation.donation', ({ strapi }) => 
                 ctx.res.status = 400;
                 return;
             }
-
             let donation = await strapi.query("api::donation.donation").findOne({
                 where: {
                     payment_id: event.data.object.id
@@ -149,6 +148,7 @@ module.exports = createCoreController('api::donation.donation', ({ strapi }) => 
                     populate: { charity: true, fund_raise: true, user: true }
                 })
             }
+
             if (donation.fund_raise) {
                 if (!donation.fund_raise.approved) {
                     ctx.res.status = 400;
@@ -167,6 +167,7 @@ module.exports = createCoreController('api::donation.donation', ({ strapi }) => 
                         donations_count: parseInt(fund_raiser.donations_count) + 1
                     }
                 });
+                console.log(updated_fund_raiser);
                 await strapi.query("api::donation.donation").update({
                     where: {
                         payment_id: event.data.object.id

@@ -11,7 +11,7 @@ interface Props {
     fundraiser: any;
     user: any;
     slug: string;
-    strapi_publisable_key: string;
+    stripe_publishable_key: string;
 }
 
 // export default function Wrapper(props: any) {
@@ -21,21 +21,22 @@ interface Props {
 //     </Elements>
 // };
 
-export default function donate({ fundraiser, slug, user, strapi_publisable_key }: Props) {
+export default function donate({ fundraiser, slug, user, stripe_publishable_key }: Props) {
     const [donation_amount, setDonationAmount] = useState(0);
     const [comment, setComment] = useState('');
     const [show_alert, setShowAlert] = useState(false);
     const [alert_text, setAlertText] = useState('');
     const [paymentRequest, setPaymentRequest] = useState<any>(null);
     const [loading, setLoading] = useState(false);
-    const router = useRouter()
+    console.log(stripe_publishable_key);
+    
     const startCheckOut = async () => {
         if (loading) return;
         if (donation_amount <= 0) {
             setAlertText('Donation amount should be atleast 50 cents ($0.5)'); setShowAlert(true);
             return;
         }
-        const stripe = await loadStripe(strapi_publisable_key);
+        const stripe = await loadStripe(stripe_publishable_key);
         if (!stripe) {
             alert("Our payment system is borken! Try again after some time.");
             return;
@@ -67,7 +68,7 @@ export default function donate({ fundraiser, slug, user, strapi_publisable_key }
                 sessionId: checkoutSession.data.id,
             })
             if (error) {
-                alert("Our payment system is borken! Try again after some time.");
+                alert("Our payment system is broken! Try again after some time.");
                 setLoading(false);
                 return;
             }
@@ -350,17 +351,18 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
         return {
             props: {
                 fundraiser: fundraiser['data'][0], user: null, slug,
-                strapi_publisable_key: process.env.STRIPE_PUBLISHABLE_KEY ? process.env.STRIPE_PUBLISHABLE_KEY : ''
+                stripe_publishable_key: process.env.STRIPE_PUBLISHABLE_KEY ? process.env.STRIPE_PUBLISHABLE_KEY : ''
             }
         }
     }
+    
     const user = await user_res.json();
     return {
         props: {
             fundraiser: fundraiser['data'][0],
             user,
             slug,
-            strapi_publisable_key: process.env.STRIPE_PUBLISHABLE_KEY ? process.env.STRIPE_PUBLISHABLE_KEY : ''
+            stripe_publishable_key: process.env.STRIPE_PUBLISHABLE_KEY ? process.env.STRIPE_PUBLISHABLE_KEY : ''
         }
     }
 }

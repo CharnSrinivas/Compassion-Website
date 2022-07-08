@@ -45,5 +45,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         console.log(checkout_res);
 
         res.status(checkout_res.status).send(checkout_res.body);
+    }else{
+        res.status(405);
+        res.send("Method Not Allowed.")
     }
 }

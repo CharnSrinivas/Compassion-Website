@@ -17,9 +17,10 @@ interface Props {
 
 export default function edit({ fundraiser, admin_token, slug }: Props) {
     const router = useRouter();
-    const [approving, setApprving] = useState(false);
+    const [approving, setApproving] = useState(false);
+    const [deleting, setDeleting] = useState(false);
     const toggleApproval = async () => {
-        setApprving(true);
+        setApproving(true);
         let res = await axios.put(server_url + '/content-manager/collection-types/api::fund-raise.fund-raise/' + fundraiser.id, {
             approved: !fundraiser.approved
         }, {
@@ -27,9 +28,23 @@ export default function edit({ fundraiser, admin_token, slug }: Props) {
                 Authorization: `Bearer ${admin_token}`,
             }
         });
-        setApprving(false);
+        setApproving(false);
         router.reload();
 
+    }
+    const _delete = async () => {
+        try {
+            setDeleting(true);
+            let res = await fetch(server_url + '/content-manager/collection-types/api::fund-raise.fund-raise/' + fundraiser.id, {
+                method: "DELETE", headers: {
+                    Authorization: `Bearer ${admin_token}`,
+                }
+            });
+            window.location.href = '/admin/dashboard/fundraiser'
+            setDeleting(false)
+        } catch (error) {
+            setDeleting(false);
+        }
     }
     return (
         <DashboardLayout>
@@ -95,20 +110,20 @@ export default function edit({ fundraiser, admin_token, slug }: Props) {
 
                                 <div className="flex border-t border-gray-200 py-2">
                                     <span className="text-gray-500">Address</span>
-                                    <span className="ml-auto text-gray-900" style={{lineBreak:"anywhere"}}>{fundraiser.address}</span>
+                                    <span className="ml-auto text-gray-900" style={{ lineBreak: "anywhere" }}>{fundraiser.address}</span>
                                 </div>
                                 <div className="flex border-t border-gray-200 py-2">
                                     <span className="text-gray-500">Target Funds</span>
-                                    <span className="ml-auto text-gray-900" style={{lineBreak:"anywhere"}}>{fundraiser.fund_target}</span>
+                                    <span className="ml-auto text-gray-900" style={{ lineBreak: "anywhere" }}>{fundraiser.fund_target}</span>
                                 </div>
 
                                 <div className="flex border-t border-gray-200 py-2">
                                     <span className="text-gray-500">Fund Raised</span>
-                                    <span className="ml-auto text-gray-900" style={{lineBreak:"anywhere"}}>{fundraiser.fund_raised}</span>
+                                    <span className="ml-auto text-gray-900" style={{ lineBreak: "anywhere" }}>{fundraiser.fund_raised}</span>
                                 </div>
                                 <div className="flex border-t border-gray-200 py-2">
                                     <span className="text-gray-500">Fund dithdrawl</span>
-                                    <span className="ml-auto text-gray-900" style={{lineBreak:"anywhere"}} >{fundraiser.recv_details}</span>
+                                    <span className="ml-auto text-gray-900" style={{ lineBreak: "anywhere" }} >{fundraiser.recv_details}</span>
                                 </div>
                                 <div className="flex border-t border-gray-200 py-2">
                                     <span className="text-gray-500">Status</span>
@@ -133,10 +148,118 @@ export default function edit({ fundraiser, admin_token, slug }: Props) {
                                     {!fundraiser.description && <>No description</>}
                                 </p>
                             </div>
-                            {!fundraiser.approved &&
-                                <button onClick={toggleApproval} disabled={fundraiser.approved} className={`flex gap-1  items-center text-white  bg-green-500 hover:bg-green-600   border-0 py-2 px-4 focus:outline-none rounded`}>
-                                    Approve
-                                    {approving &&
+                            <div className='flex flex-wrap gap-4 mt-8'>
+
+                                {!fundraiser.approved &&
+                                    <button onClick={toggleApproval} disabled={fundraiser.approved} className={`flex gap-1  items-center text-white  bg-green-500 hover:bg-green-600   border-0 py-1 px-4 focus:outline-none rounded`}>
+                                        Approve
+                                        {approving &&
+                                            <svg
+                                                className="animate-spin ml-1  h-5 w-5 text-white"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <circle
+                                                    className="opacity-25"
+                                                    cx={12}
+                                                    cy={12}
+                                                    r={10}
+                                                    stroke="currentColor"
+                                                    strokeWidth={4}
+                                                />
+                                                <path
+                                                    className="opacity-75"
+                                                    fill="currentColor"
+                                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                                />
+                                            </svg>
+                                        }
+                                        {!approving &&
+
+                                            <svg
+                                                width="16px"
+                                                height="16px"
+                                                viewBox="0 0 16 16"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth="2"
+                                            >
+                                                <polyline points="2.75 8.75,6.25 12.25,13.25 4.75" />
+                                            </svg>
+                                        }
+
+                                    </button>
+                                }
+
+                                {fundraiser.approved &&
+                                    <button onClick={toggleApproval} className={`flex gap-1  items-center text-white  bg-red-400 hover:bg-red-500' : 'bg-green-500 hover:bg-red-600 border-0 py-1 px-4 focus:outline-none rounded`}>
+                                        Disapprove
+                                        {approving &&
+                                            <svg
+                                                className="animate-spin ml-1  h-5 w-5 text-white"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <circle
+                                                    className="opacity-25"
+                                                    cx={12}
+                                                    cy={12}
+                                                    r={10}
+                                                    stroke="currentColor"
+                                                    strokeWidth={4}
+                                                />
+                                                <path
+                                                    className="opacity-75"
+                                                    fill="currentColor"
+                                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                                />
+                                            </svg>
+                                        }
+                                        {!approving &&
+
+                                            <svg
+                                                width="16px"
+                                                height="16px"
+                                                fill="white"
+                                                stroke="currentColor"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth="5"
+                                                viewBox="0 0 490 490"
+                                            >
+                                                <polygon
+                                                    points="456.851,0 245,212.564 33.149,0 0.708,32.337 212.669,245.004 0.708,457.678 33.149,490 245,277.443 456.851,490 489.292,457.678 277.331,245.004 489.292,32.337 "
+                                                />
+                                            </svg>
+
+                                        }
+
+                                    </button>
+                                }
+                                <button onClick={_delete} className={`flex gap-1 text-red-400  hover:text-white   items-center  hover:bg-red-400    border-2 border-red-400 py-2 px-4 focus:outline-none rounded`}>
+                                    Delete
+                                    {!deleting &&
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width={24}
+                                            height={24}
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            strokeWidth={2}
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            className="feather feather-trash"
+                                        >
+                                            <polyline points="3 6 5 6 21 6" />
+                                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                        </svg>
+                                    }{
+                                        deleting &&
                                         <svg
                                             className="animate-spin ml-1  h-5 w-5 text-white"
                                             xmlns="http://www.w3.org/2000/svg"
@@ -158,71 +281,8 @@ export default function edit({ fundraiser, admin_token, slug }: Props) {
                                             />
                                         </svg>
                                     }
-                                    {!approving &&
-
-                                        <svg
-                                            width="16px"
-                                            height="16px"
-                                            viewBox="0 0 16 16"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth="2"
-                                        >
-                                            <polyline points="2.75 8.75,6.25 12.25,13.25 4.75" />
-                                        </svg>
-                                    }
-
                                 </button>
-                            }
-
-                            {fundraiser.approved &&
-                                <button onClick={toggleApproval} className={`flex gap-1  items-center text-white  bg-red-400 hover:bg-red-500' : 'bg-green-500 hover:bg-red-600 border-0 py-2 px-4 focus:outline-none rounded`}>
-                                    Disapprove
-                                    {approving &&
-                                        <svg
-                                            className="animate-spin ml-1  h-5 w-5 text-white"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                        >
-                                            <circle
-                                                className="opacity-25"
-                                                cx={12}
-                                                cy={12}
-                                                r={10}
-                                                stroke="currentColor"
-                                                strokeWidth={4}
-                                            />
-                                            <path
-                                                className="opacity-75"
-                                                fill="currentColor"
-                                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                                            />
-                                        </svg>
-                                    }
-                                    {!approving &&
-
-                                        <svg
-                                            width="16px"
-                                            height="16px"
-                                            fill="white"
-                                            stroke="currentColor"
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth="5"
-                                            viewBox="0 0 490 490"
-                                        >
-                                            <polygon
-                                                points="456.851,0 245,212.564 33.149,0 0.708,32.337 212.669,245.004 0.708,457.678 33.149,490 245,277.443 456.851,490 489.292,457.678 277.331,245.004 489.292,32.337 "
-                                            />
-                                        </svg>
-
-                                    }
-
-                                </button>
-                            }
+                            </div>
                         </div>
                         {fundraiser.image &&
                             <img

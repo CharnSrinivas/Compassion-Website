@@ -213,7 +213,7 @@ export default function Navbar() {
                                         <Link href={'/info/how-it-works'}><a className="text-center block px-0 py-1  ml-2  hover:text-blue-500 mt-4 lg:mt-0">How compassion works</a></Link>
                                     </li>
                                     <li className="">
-                                        <Link href={'/info/crowdfunding'}><a className="text-center block px-0 py-1  ml-2  hover:text-blue-500 mt-4 lg:mt-0">What is crowdfunding</a></Link>
+                                        <Link href={'/info/giving'}><a className="text-center block px-0 py-1  ml-2  hover:text-blue-500 mt-4 lg:mt-0">What is giving</a></Link>
                                     </li>
                                     <li className="">
                                         <Link href={'/info/team-fundraising'}><a className="text-center block px-0 py-1  ml-2  hover:text-blue-500 mt-4 lg:mt-0">Team fundraising</a></Link>
@@ -394,7 +394,7 @@ export default function Navbar() {
                                             <Link href={'/info/how-it-works'}><a className="text-center block px-0 py-1  ml-2  hover:text-blue-500 mt-4 lg:mt-0">How compassion works</a></Link>
                                         </li>
                                         <li className="">
-                                            <Link href={'/info/crowdfunding'}><a className="text-center block px-0 py-1  ml-2  hover:text-blue-500 mt-4 lg:mt-0">What is crowdfunding</a></Link>
+                                            <Link href={'/info/giving'}><a className="text-center block px-0 py-1  ml-2  hover:text-blue-500 mt-4 lg:mt-0">What is giving</a></Link>
                                         </li>
                                         <li className="">
                                             <Link href={'/info/team-fundraising'}><a className="text-center block px-0 py-1  ml-2  hover:text-blue-500 mt-4 lg:mt-0">Team fundraising</a></Link>

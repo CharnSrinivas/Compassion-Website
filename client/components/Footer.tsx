@@ -52,8 +52,8 @@ export default function Footer() {
                             <li title='How compassion works' className='my-2'>
                                 <a href='/info/how-it-works' className="text-gray-600 hover:text-gray-800" >How compassion works</a>
                             </li>
-                            <li title='what is crowdfunding' className='my-2'>
-                                <a href='/info/crowdfunding' className="text-gray-600 hover:text-gray-800">What is crowdfunding?</a>
+                            <li title='what is giving' className='my-2'>
+                                <a href='/info/giving' className="text-gray-600 hover:text-gray-800">What is giving?</a>
                             </li>
                             <li title='Team funding' className='my-2'>
                                 <a href='/info/charity-fundraising' className="text-gray-600 hover:text-gray-800">Charity fundraising</a>

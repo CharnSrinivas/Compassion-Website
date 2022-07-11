@@ -27,7 +27,7 @@ export default function teamFundraising() {
                     </div>
                     <a href="/create/fundraiser/details"
                         className="block px-8 md:w-fit text-center text-[1.1rem] drop-shadow-xl py-3 space-x-10 rounded text-white mt-8  bg-[#32a95c] w-full mx-auto">
-                        Start crowdfunding
+                        Start giving
                     </a>
                 </div>
             </div>

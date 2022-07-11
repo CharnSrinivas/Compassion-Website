@@ -244,7 +244,7 @@ export default function how_it_works({ }: Props) {
             <div className="flex flex-wrap mx-auto items-center  mt-24 pb-20 py-5 bg-[#fbf8f6] w-full">
 
                 <h1 className='font-medium text-center my-5 text-3xl mx-auto text-[#32a95c]'>
-                    The #1 Crypto Crowdfunding Platform In The World For
+                    The #1 Crypto Giving Platform In The World For
                     Individuals And Charities
                 </h1>
                 <h4 className='text-gray-600 text-[1.1rem] text-light mx-auto w-[95%] lg:w-[50%]'>

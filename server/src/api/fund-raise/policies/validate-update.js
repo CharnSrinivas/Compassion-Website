@@ -2,7 +2,6 @@ module.exports = async (policyContext, config, { strapi }) => {
     const user = (policyContext.state.user);
     const body = policyContext.request.body.data;
     if(body.approved){return false;}
-    if(!user.approved){return false;}
     // const fundraiser_id = policyContext.
     let fundraiser = await strapi.db.query("api::fund-raise.fund-raise").findOne({
         where: {

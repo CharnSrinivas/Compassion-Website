@@ -99,10 +99,6 @@ export default function edit({ charity, admin_token, slug }: Props) {
                                     <span className="ml-auto text-gray-900" style={{ lineBreak: "anywhere" }}>{charity.direct_funds}</span>
                                 </div>
                                 <div className="flex border-t border-gray-200 py-2">
-                                    <span className="text-gray-500">Fund dithdrawl</span>
-                                    <span className="ml-auto text-gray-900" style={{ lineBreak: "anywhere" }} >{charity.recv_details}</span>
-                                </div>
-                                <div className="flex border-t border-gray-200 py-2">
                                     <span className="text-gray-500">Status</span>
                                     {charity.approved &&
                                         <span className=" ml-auto px-3 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100">

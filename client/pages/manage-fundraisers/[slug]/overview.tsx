@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import Header from 'next/head';
-import { jwt_aut_token, server_url } from '../../../config';
+import { jwt_aut_token, server_url, user_documents_ref } from '../../../config';
 import qs from 'qs';
 import { GetServerSidePropsContext, GetServerSidePropsResult, Redirect } from 'next/types';
 import { isMobile } from '../../../utils'
 import { useRouter } from 'next/router';
+import Cookies from 'js-cookie';
+import axios from 'axios';
+
 interface Props {
-  fundraiser: any; donations: any[]; donations_meta: any; slug: String
+  fundraiser: any; donations: any[]; donations_meta: any; slug: String, user: any
 }
 
 export default function ({ fundraiser, donations, donations_meta, slug }: Props) {
@@ -15,10 +17,15 @@ export default function ({ fundraiser, donations, donations_meta, slug }: Props)
   const [open_share, setOpenShare] = useState(false);
   const [url, setUrl] = useState('');
   const [show_embedded, setShowEmbedded] = useState(false);
+  const [open_withdraw, setOpenWithDraw] = useState(false);
+  const [documents, setDocuments] = useState<any>();
+  const [with_draw_loading, setWithDrawLoading] = useState(true);
+  const [uploading_docs, setUploadingDocs] = useState(false);
+  const [upload_docs_text, setUploadingDocsText] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  
-  
+
+
   useEffect(() => {
     setUrl(window.location.origin);
   }, [])
@@ -47,11 +54,11 @@ export default function ({ fundraiser, donations, donations_meta, slug }: Props)
     if (!can_delete) { return; };
     setLoading(true);
     const token = localStorage.getItem(jwt_aut_token);
-    let res = await fetch(server_url + "/api/fund-raises/" + fundraiser.id+"?user_id="+fundraiser['attributes']['user']['data']['id'], {
+    let res = await fetch(server_url + "/api/fund-raises/" + fundraiser.id + "?user_id=" + fundraiser['attributes']['user']['data']['id'], {
       method: "DELETE",
-      body:JSON.stringify({
-        data:{
-          user_id:fundraiser['attributes']['user']['data']['id']
+      body: JSON.stringify({
+        data: {
+          user_id: fundraiser['attributes']['user']['data']['id']
         }
       }),
       headers: {
@@ -63,6 +70,128 @@ export default function ({ fundraiser, donations, donations_meta, slug }: Props)
       setLoading(false);
       router.push('/manage-fundraisers/my-fundraisers')
     }
+  }
+  const onWithDrawClick = async () => {
+    setOpenWithDraw(true);
+    document.documentElement.style.overflow = 'hidden'
+    document.documentElement.scrollTop = 0
+    const token = localStorage.getItem(jwt_aut_token);
+
+    let documents_res = await fetch(server_url + '/api/user-documents?' + qs.stringify({
+      filter: {
+        user: {
+          id: {
+            $eq: fundraiser.attributes.user.data.id
+          }
+        }
+      },
+      populate: ['selfie', 'driving_license', 'passport']
+    }, { encodeValuesOnly: true }), {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      }
+    });
+    // if (user_res.status > 201) {
+    //   localStorage.removeItem(jwt_aut_token);
+    //   Cookies.remove(jwt_aut_token);
+    //   router.push('/register')
+    // }
+    let documents = (await documents_res.json()).data[0];
+    if (!documents) return;
+    setDocuments(documents.attributes)
+    setWithDrawLoading(false);
+
+  }
+  const uploadDocuments = async () => {
+    setWithDrawLoading(true);
+    const driving_license = document.getElementById('driving_license') as HTMLInputElement;
+    const passport = document.getElementById('passport') as HTMLInputElement;
+    const selfie = document.getElementById('selfie') as HTMLInputElement;
+    const token = localStorage.getItem(jwt_aut_token)
+    if (!driving_license || !selfie || !passport || !driving_license.files![0] || !selfie.files![0] || !passport.files![0]) {
+      alert("Oops! Something went wrong, Try again.");
+      setWithDrawLoading(false);
+      return;
+    }
+    setUploadingDocs(true);
+    let user_doc_res = await fetch(server_url + "/api/user-documents?" + qs.stringify({
+      filters: {
+        user: {
+          id: {
+            $eq: fundraiser.attributes.user.data.id
+          }
+        }
+      },
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      }
+    }), {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      }
+    });
+    let user_doc = await user_doc_res.json();
+    if (user_doc.data.length <= 0) {
+      user_doc_res = await fetch(server_url + "/api/user-documents", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }, body: JSON.stringify({
+          data: {
+            user: fundraiser.attributes.user.data.id
+          }
+        })
+      })
+      user_doc = await user_doc_res.json();
+    }
+    const drivingLicenseData = new FormData();
+    drivingLicenseData.append('files', driving_license?.files[0])
+    drivingLicenseData.append('refId', user_doc.data[0].id)
+    drivingLicenseData.append('ref', user_documents_ref)
+    drivingLicenseData.append('field', 'driving_license');
+    await axios.post(server_url + "/api/upload", drivingLicenseData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      onUploadProgress: (progressEvent) => {
+        let progress = (progressEvent.loaded / progressEvent.total) * 100;
+        setUploadingDocsText('Uploading Driving License ' + Math.floor(progress) + "%")
+      },
+    });
+
+    const passportImageData = new FormData();
+    passportImageData.append('files', passport.files[0])
+    passportImageData.append('refId', user_doc.data[0].id)
+    passportImageData.append('ref', user_documents_ref)
+    passportImageData.append('field', 'passport');
+    await axios.post(server_url + "/api/upload", passportImageData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      onUploadProgress: (progressEvent) => {
+        let progress = (progressEvent.loaded / progressEvent.total) * 100;
+        setUploadingDocsText('Uploading Passport ' + Math.floor(progress) + "%")
+      },
+    });
+    const selfieData = new FormData();
+    selfieData.append('files', selfie?.files[0])
+    selfieData.append('refId', user_doc.data[0].id)
+    selfieData.append('ref', user_documents_ref)
+    selfieData.append('field', 'selfie');
+    await axios.post(server_url + "/api/upload", selfieData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      onUploadProgress: (progressEvent) => {
+        let progress = (progressEvent.loaded / progressEvent.total) * 100;
+        setUploadingDocsText('Uploading Selfie ' + Math.floor(progress) + "%")
+      },
+    });
+
   }
   return (
     <>
@@ -99,7 +228,6 @@ export default function ({ fundraiser, donations, donations_meta, slug }: Props)
                 <div className='flex-col items-center '>
                   <button onClick={() => {
                     setOpenShare(true);
-                    document.querySelector('body')!.style.overflow = 'hidden';
                     document.documentElement.scrollTop = 0
                   }}
                     className='rounded-full bg-[#32a95c] p-3  stroke-white'
@@ -118,9 +246,28 @@ export default function ({ fundraiser, donations, donations_meta, slug }: Props)
                     </svg>
 
                   </button>
-                  <p className='mt-1 text-center'>share</p>
+                  <p className='mt-1 text-center text-gray-600'>share</p>
                 </div>
-
+                <div className='flex-col items-center'>
+                  <div onClick={onWithDrawClick} className='rounded-full text-[#32a95c] mx-auto p-3  border-[#32a95c] border-2 w-fit cursor-pointer'>
+                    <svg
+                      width={24}
+                      height={24}
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      className="w-6 h-6"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                      <polyline points="7 10 12 15 17 10" />
+                      <line x1={12} y1={15} x2={12} y2={3} />
+                    </svg>
+                  </div>
+                  <p className='mt-1 text-center text-gray-600'>Withdraw</p>
+                </div>
                 <div className='flex-col items-center '>
                   <a href={`/manage-fundraisers/${fundraiser.attributes.slug}/edit/details`} >
                     <div className='rounded-full stroke-[#32a95c]  p-3  border-[#32a95c]   border-2 '>
@@ -152,9 +299,8 @@ export default function ({ fundraiser, donations, donations_meta, slug }: Props)
                       </svg>
                     </div>
                   </a>
-                  <p className='mt-1 text-center'>Edit</p>
+                  <p className='mt-1 text-center text-gray-600'>Edit</p>
                 </div>
-
                 <div className='flex-col items-center '>
                   <a href={`/f/${fundraiser.attributes.slug}`} target={'_blank'} >
                     <div className='rounded-full stroke-[#32a95c]  p-3  border-[#32a95c]   border-2 '>
@@ -170,7 +316,7 @@ export default function ({ fundraiser, donations, donations_meta, slug }: Props)
 
                     </div>
                   </a>
-                  <p className='mt-1 text-center'>View</p>
+                  <p className='mt-1 text-center text-gray-600'>View</p>
                 </div>
 
               </div>
@@ -444,7 +590,7 @@ export default function ({ fundraiser, donations, donations_meta, slug }: Props)
                   <div className="flex flex-col ml-3">
                     <div className="font-medium leading-none">Delete my Fundraiser ?</div>
                     <p className="text-sm text-gray-600 leading-none mt-1">
-                      By deleting your account you will lose your all data
+                      By deleting your fundraiser you will lose your all data and funds
                     </p>
                   </div>
                 </div>
@@ -605,6 +751,176 @@ export default function ({ fundraiser, donations, donations_meta, slug }: Props)
           {/*MODAL ITEM*/}
         </>
       }
+      {open_withdraw &&
+        <div
+          className="w-screen top-0 left-0 right-0 bottom-0 h-screen bg-gray-500 bg-opacity-80 py-6 flex flex-col justify-center sm:py-12 absolute">
+          <div className="py-3 sm:w-1/2 w-full sm:mx-auto " >
+            <div onClick={() => {
+              setOpenWithDraw(false);
+              document.documentElement.style.overflow = 'auto'
+            }} className='rounded-full w-[1.5rem]  h-[1.5rem] my-3 cursor-pointer bg-gray-200 text-gray-800 ml-auto mr-2 flex justify-center items-center '>
+              <svg
+                width={24}
+                height={24}
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="w-5 h-5"
+              >
+                <line x1={18} y1={6} x2={6} y2={18} />
+                <line x1={6} y1={6} x2={18} y2={18} />
+              </svg>
+
+            </div>
+            <div className="bg-white mx-auto min-w-1xl flex w-[80%] lg:w-auto flex-col lg:max-h-[50rem] max-h-[30rem] overflow-y-scroll rounded-xl shadow-lg">
+              <div className="lg:px-12 px-5 py-5 flex flex-col ">
+                {with_draw_loading &&
+                  <svg
+                    role="status"
+                    className="inline h-12 w-12 animate-spin mx-auto text-gray-200 dark:text-gray-600 fill-blue-600"
+                    viewBox="0 0 100 101"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                      fill="currentColor"
+                    />
+                    <path
+                      d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                      fill="currentFill"
+                    />
+                  </svg>
+                }
+                {with_draw_loading && uploading_docs &&
+                  <p className='text-center font-semibold text-gray-600'>{upload_docs_text}</p>
+                }
+                {!with_draw_loading && !uploading_docs &&
+                  documents && documents.driving_license.data && documents.selfie.data && documents.passport.data && !fundraiser.attributes.user.data.approved &&
+                  <div className='flex-col items-center w-[100%]'>
+                    <h1 className='mx-auto text-2xl font-medium text-center text-gray-600'>We received your documents</h1>
+                    <h1 className='mx-auto text-xxl text-center  text-gray-600'>Wait for admin approval</h1>
+                  </div>
+                }
+                {!with_draw_loading && !uploading_docs &&
+                  documents && documents.driving_license.data && documents.selfie.data && documents.passport.data && fundraiser.attributes.user.data.approved &&
+                  <div className='flex-col items-center w-[100%]'>
+                    <h1 className='mx-auto text-2xl font-medium text-center text-gray-600'>We received your documents</h1>
+                    <h1 className='mx-auto text-xxl text-center  text-gray-600'>Wait for admin approval</h1>
+                  </div>
+                }
+                {!with_draw_loading && !uploading_docs &&
+                  (!documents || !documents.driving_license.data || !documents.selfie.data || !documents.passport.data) && !fundraiser.attributes.user.data.approved &&
+                  <div className='flex flex-col mt-5 items-start gap-4' >
+                    <h1 className=''>Your account has'nt verified yet.Upload the following documents for verification</h1>
+                    <div>
+                      <h3 className='lg:text-xl font-medium text-gray-600'>Upload your Driving License</h3>
+                      <label >
+                        <input type="file"
+                          //  onChange={(e) => { changeImage(e) }}
+                          id='driving_license' accept='image/*' className="text-sm cursor-pointer w-36 hidden" />
+                        <div className="flex flex-row gap-2 justify-between items-center mt-3 bg-transparent border-green-500 border-2 cursor-pointer hover:border-green-600 active:bg-green-500 active:text-white text-green-500  text-[1rem] font-medium px-4 py-2 rounded w-fit text-center">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width={24}
+                            height={24}
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth={2}
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className="feather feather-upload-cloud"
+                          >
+                            <polyline points="16 16 12 12 8 16" />
+                            <line x1={12} y1={12} x2={12} y2={21} />
+                            <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3" />
+                            <polyline points="16 16 12 12 8 16" />
+                          </svg>
+                          <p>
+                            Upload
+                          </p>
+                        </div>
+                      </label>
+                    </div>
+                    <hr className='w-[100%]' />
+                    <div >
+                      <h3 className='lg:text-xl font-medium text-gray-600'>Upload your Passport</h3>
+                      <label >
+                        <input type="file"
+                          //  onChange={(e) => { changeImage(e) }}
+                          id='passport' accept='image/*' className="text-sm cursor-pointer w-36 hidden" />
+                        <div className="flex flex-row gap-2 justify-between items-center mt-3 bg-transparent border-green-500 border-2 cursor-pointer hover:border-green-600 active:bg-green-500 active:text-white text-green-500  text-[1rem] font-medium px-4 py-2 rounded w-fit text-center">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width={24}
+                            height={24}
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth={2}
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className="feather feather-upload-cloud"
+                          >
+                            <polyline points="16 16 12 12 8 16" />
+                            <line x1={12} y1={12} x2={12} y2={21} />
+                            <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3" />
+                            <polyline points="16 16 12 12 8 16" />
+                          </svg>
+                          <p>
+                            Upload
+                          </p>
+                        </div>
+                      </label>
+                    </div>
+                    <hr className='w-[100%]' />
+                    <div >
+                      <h3 className='lg:text-xl font-medium text-gray-600'>Upload your Selfie</h3>
+                      <h4 className='text-sm'>Example</h4>
+                      <img className='w-[12rem]' src="/assets/selfie-example.png" alt="example" />
+                      <p>Hold a paper in hand with name compassion written on it, And take a selfie with then upload.</p>
+                      <label >
+                        <input type="file"
+                          //  onChange={(e) => { changeImage(e) }}
+                          id='selfie' accept='image/*' className="text-sm cursor-pointer w-36 hidden" />
+                        <div className="flex flex-row gap-2 justify-between items-center mt-3 bg-transparent border-green-500 border-2 cursor-pointer hover:border-green-600 active:bg-green-500 active:text-white text-green-500  text-[1rem] font-medium px-4 py-2 rounded w-fit text-center">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width={24}
+                            height={24}
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth={2}
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className="feather feather-upload-cloud"
+                          >
+                            <polyline points="16 16 12 12 8 16" />
+                            <line x1={12} y1={12} x2={12} y2={21} />
+                            <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3" />
+                            <polyline points="16 16 12 12 8 16" />
+                          </svg>
+                          <p>
+                            Upload
+                          </p>
+                        </div>
+                      </label>
+                    </div>
+                    <button onClick={uploadDocuments} className="mt-7 bg-green-500 hover:bg-green-600 shadow-xl text-white uppercase text-sm font-semibold px-14 py-3 rounded w-full">
+                      Submit
+                    </button>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      }
     </>
   )
 }
@@ -636,6 +952,17 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
     },
     populate: ["image", "user"]
   });
+  let usr_res = (await fetch(server_url + "/api/users/me", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    }
+  })
+  );
+  if (usr_res.status > 201) {
+    localStorage.removeItem(jwt_aut_token);
+    Cookies.remove(jwt_aut_token);
+    return { redirect: { destination: '/register', permanent: false } }
+  }
 
   const fundraiser = await (await fetch(server_url + "/api/fund-raises?" + fundraiser_query, {
     method: "GET",
@@ -643,12 +970,12 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
       Authorization: `Bearer ${token}`,
     }
   })).json();
-  if(fundraiser['data'].length <= 0){
-    return{
-      notFound:true
+  if (fundraiser['data'].length <= 0) {
+    return {
+      notFound: true
     }
   }
-  if (  !fundraiser['data'][0]['attributes']['user']) { return { redirect: redirect_obj } };
+  if (!fundraiser['data'][0]['attributes']['user']) { return { redirect: redirect_obj } };
 
   const dp = parseInt(donations_page ? donations_page.toString() : '1');
   const ds = parseInt(donations_size ? donations_size.toString() : '10');
@@ -665,19 +992,19 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
       page: !isNaN(dp) ? dp : 1
     }
   })
-
   const donations = await (await fetch(server_url + "/api/donations?" + donations_query, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${token}`,
     }
   })).json();
+
   return {
     props: {
       fundraiser: fundraiser['data'][0],
       slug,
       donations: donations['data'],
-      donations_meta: donations['meta']['pagination']
+      donations_meta: donations['meta']['pagination'],
     }
   }
 }

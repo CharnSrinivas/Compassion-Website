@@ -79,7 +79,6 @@ export default function fundraiser({ is_individual: _is_individual, is_auth, use
       address: '',
       category: '',
       fundType: '',
-      recvDetails: ''
     },
     validationSchema: Yup.object({
       title: Yup.string().min(8).max(70, "Title should be less than 70 characters").required(),
@@ -98,11 +97,7 @@ export default function fundraiser({ is_individual: _is_individual, is_auth, use
         Yup
           .string().min(3).required("Fund type is required.")
           .equals(fund_types, 'Invalid category'),
-      recvDetails: Yup
-        .string()
-        .min(3, "Invalid 'fund receive details'")
-        .required('Fund receive details is required.'),
-
+    
     }),
     onSubmit: async (e) => {
       setSubmitting(true);
@@ -120,7 +115,6 @@ export default function fundraiser({ is_individual: _is_individual, is_auth, use
             individual: selected_charity == null,
             fund_type: e.fundType,
             address: e.address,
-            recv_details:e.recvDetails
           }
         }, {
         headers: {
@@ -305,26 +299,6 @@ export default function fundraiser({ is_individual: _is_individual, is_auth, use
                 {formik.errors.address}
               </p>
             }
-
-            <label htmlFor="" className="block">
-              Fund receive details
-            </label>
-            <input
-              onBlur={formik.handleBlur}
-              onChange={formik.handleChange}
-              value={formik.values.recvDetails}
-              type="text"
-              name='recvDetails'
-              className="border w-full h-10 px-3 mb-5 rounded-md"
-              placeholder="bank details (or) wallet ID"
-            />
-            {
-              formik.errors.recvDetails &&
-              <p className="text-xs italic text-red-500">
-                {formik.errors.recvDetails}
-              </p>
-            }
-
             <label htmlFor="" className="block">
               Category
             </label>

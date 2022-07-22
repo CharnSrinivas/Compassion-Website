@@ -1,0 +1,23 @@
+ToDo:
+        ---- after approval
+        1) ask for bank details
+Did:
+    ---- withdraw
+        ---- KYC
+        1) driving license
+        2) passport
+        3) selfie
+    ---- remove fundwithdrawl info in fundraise creation
+    ---- remove approval for fundraiser and user registration
+    ---- coinbase integration
+    ---- UPI payment
+    ---- send email on new donation
+    ---- donations admin pannel
+    ---- user approval by admin
+    ---- payment integration
+    ---- thankyou page after registration
+    ---- multiple photos for fundraiser
+
+strapi credentials:
+    email: admin@gmail.com
+    pass: Admin@123

@@ -50,7 +50,7 @@ export default function addImage({ is_auth, token, charity }: Props) {
       },
     })
     if (res.status <= 201) {
-      router.push(`/create/charity/${charity.attributes.slug}/add-documents`); return;
+      router.push(`/manage-fundraisers/my-fundraisers`); return;
     }
   }
   return (

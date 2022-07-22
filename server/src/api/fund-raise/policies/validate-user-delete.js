@@ -1,6 +1,5 @@
 module.exports = async (policyContext, config, { strapi }) => {
     const user = (policyContext.state.user);
-    if(!user.approved){return false;}
     let u = policyContext.request.url.split('/');
     let id = parseInt(u[u.length-1]);
 

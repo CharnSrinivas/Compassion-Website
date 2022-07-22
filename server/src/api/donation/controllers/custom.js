@@ -56,9 +56,7 @@ module.exports = createCoreController('api::donation.donation', ({ strapi }) => 
                 description: item.description ? item.description : "No description",
                 quantity: 1,
             };
-            if (!item.fundraiser_details['attributes']['approved']) {
-                throw Error("Fundraiser is not approved!");
-            }
+
             if (item.fundraiser_details['attributes']['fund_raised'] + item.price > item.fundraiser_details['attributes']['fund_target']) {
                 throw Error("Your donation is exceeding fundraiser's target.");
             }
@@ -138,22 +136,19 @@ module.exports = createCoreController('api::donation.donation', ({ strapi }) => 
                 where: {
                     payment_id: event.data.object.id
                 },
-                populate: { charity: true, fund_raise: true, user: true }
+                populate: {  fund_raise: true, user: true }
             })
             if (!donation) {
                 donation = await strapi.query("api::charity-donation.charity-donation").findOne({
                     where: {
                         payment_id: event.data.object.id
                     },
-                    populate: { charity: true, fund_raise: true, user: true }
+                    populate: { charity: true, user: true }
                 })
             }
 
             if (donation.fund_raise) {
-                if (!donation.fund_raise.approved) {
-                    ctx.res.status = 400;
-                    return;
-                }
+                
                 let fund_raiser = await strapi.query("api::fund-raise.fund-raise").findOne({
                     where: {
                         id: donation.fund_raise.id
@@ -167,7 +162,6 @@ module.exports = createCoreController('api::donation.donation', ({ strapi }) => 
                         donations_count: parseInt(fund_raiser.donations_count) + 1
                     }
                 });
-                console.log(updated_fund_raiser);
                 await strapi.query("api::donation.donation").update({
                     where: {
                         payment_id: event.data.object.id
@@ -179,10 +173,7 @@ module.exports = createCoreController('api::donation.donation', ({ strapi }) => 
 
             }
             if (donation.charity) {
-                if (!donation.charity.approved) {
-                    ctx.res.status = 400;
-                    return;
-                }
+                
                 let charity = await strapi.query("api::charity.charity").findOne({
                     where: {
                         id: donation.charity.id
@@ -235,9 +226,7 @@ module.exports = createCoreController('api::donation.donation', ({ strapi }) => 
                     }
                 },
             });
-            if (!item.fundraiser_details['attributes']['approved']) {
-                throw Error("Fundraiser is not approved!");
-            }
+            
             if (item.fundraiser_details['attributes']['fund_raised'] + item.price > item.fundraiser_details['attributes']['fund_target']) {
                 throw Error("Your donation is exceeding fundraiser's target.");
             }
@@ -300,10 +289,7 @@ module.exports = createCoreController('api::donation.donation', ({ strapi }) => 
                 }
                 console.log(donation);
                 if (donation.fund_raise) {
-                    if (!donation.fund_raise.approved) {
-                        ctx.res.status = 400;
-                        return;
-                    }
+                    
                     let fund_raiser = await strapi.query("api::fund-raise.fund-raise").findOne({
                         where: {
                             id: donation.fund_raise.id
@@ -327,10 +313,7 @@ module.exports = createCoreController('api::donation.donation', ({ strapi }) => 
                     })
                 }
                 if (donation.charity) {
-                    if (!donation.charity.approved) {
-                        ctx.res.status = 400;
-                        return;
-                    }
+
                     let charity = await strapi.query("api::charity.charity").findOne({
                         where: {
                             id: donation.charity.id

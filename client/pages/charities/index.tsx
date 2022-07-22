@@ -103,11 +103,7 @@ export default function fundraisers({ charities }: Props) {
 export async function getServerSideProps(context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<Record<string, unknown>>> {
     const server_url = 'http://127.0.0.1:1337';
     const query = qs.stringify({
-        filters: {
-            approved: {
-                $eq: true
-            }
-        }, populate: ["image", "user"], pagination: {
+         populate: ["image", "user"], pagination: {
             pageSize: 10,
         },
         sort: ['direct_funds:desc'],

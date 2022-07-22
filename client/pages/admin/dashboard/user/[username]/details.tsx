@@ -83,6 +83,9 @@ export default function edit({ user, admin_token, username }: Props) {
                                 <a href={`/admin/dashboard/user/${username}/details`} className="flex-grow text-indigo-500 border-b-2 border-indigo-500 py-2 text-lg px-1">
                                     Details
                                 </a>
+                                <a href={`/admin/dashboard/user/${username}/documents`} className="flex-grow border-b-2 border-gray-300 py-2 text-lg px-1">
+                                    Documents
+                                </a>
                             </div>
 
                             <>

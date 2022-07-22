@@ -50,7 +50,7 @@ export default function addImage({ is_auth, token, fundraiser }: Props) {
     })
     setUploading(false);
     if (res.status <= 201) {
-      router.push(`/create/fundraiser/${fundraiser.attributes.slug}/add-documents`); return;
+      router.push(`/create/fundraiser/${fundraiser.attributes.slug}/story`); return;
     }
     // await fetch(server_url + "/api/upload/", {
     //   method: "POST", body: formData, headers: {

@@ -37,31 +37,12 @@
         "images"
       ]
     },
-    "documents": {
-      "type": "media",
-      "multiple": true,
-      "required": true,
-      "allowedTypes": [
-        "images",
-        "files",
-        "videos",
-        "audios"
-      ]
-    },
-    "register_no": {
-      "required": false,
-      "type": "integer"
-    },
     "address": {
       "type": "string",
       "required": true
     },
     "description": {
       "type": "text",
-      "required": true
-    },
-    "recv_details": {
-      "type": "string",
       "required": true
     },
     "charity_donations": {
@@ -243,6 +224,12 @@
     "approved": {
       "type": "boolean",
       "default": false
+    },
+    "user_document": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::user-document.user-document",
+      "mappedBy": "user"
     }
   }
 }

@@ -26,7 +26,6 @@ export default function fundraiser({ is_auth, user, token }: Props) {
       category: '',
       registerNumber: 0,
       description: '',
-      recvDetails: '',
       fundType: '',
     },
     validationSchema: Yup.object({
@@ -46,10 +45,6 @@ export default function fundraiser({ is_auth, user, token }: Props) {
           .optional(),
       description:
         Yup.string().required("Description is required"),
-      recvDetails: Yup
-        .string()
-        .min(3, "Invalid 'fund receive details'")
-        .required('Fund receive details is required.'),
       fundType:
         Yup
           .string().min(3).required("Fund type is required.")
@@ -66,7 +61,6 @@ export default function fundraiser({ is_auth, user, token }: Props) {
             user: user.id,
             register_no: e.registerNumber,
             description: e.description,
-            recv_details: e.recvDetails,
             slug: stringToSlug(e.name),
             fund_type: e.fundType,
 
@@ -222,24 +216,7 @@ export default function fundraiser({ is_auth, user, token }: Props) {
                 }
               </p>
             }
-            <label htmlFor="" className="block">
-              Fund receive details
-            </label>
-            <input
-              onBlur={formik.handleBlur}
-              onChange={formik.handleChange}
-              value={formik.values.recvDetails}
-              type="text"
-              name='recvDetails'
-              className="border w-full h-10 px-3 mb-5 rounded-md"
-              placeholder="bank details (or) wallet ID"
-            />
-            {
-              formik.errors.recvDetails &&
-              <p className="text-xs italic text-red-500">
-                {formik.errors.recvDetails}
-              </p>
-            }
+            
             <label htmlFor="" className="block">
               Register number (optional)
             </label>

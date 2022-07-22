@@ -25,7 +25,6 @@ export default function edit({ charity, token }: Props) {
             category: charity['attributes']['category'] ? charity['attributes']['category'] : null,
             registerNumber: charity['attributes']['register_number'] ? charity['attributes']['register_number'] : '',
             description: charity['attributes']['description'] ? charity['attributes']['description'] : '',
-            recvDetails: charity['attributes']['recv_details'] ? charity['attributes']['recv_details'] : '',
         },
         validationSchema: Yup.object({
             name:
@@ -44,10 +43,6 @@ export default function edit({ charity, token }: Props) {
                     .optional(),
             description:
                 Yup.string().required("Description is required"),
-            recvDetails: Yup
-                .string()
-                .min(3, "Invalid 'fund receive details'")
-                .required('Fund receive details is required.'),
 
         }),
         onSubmit: async (e) => {
@@ -64,7 +59,6 @@ export default function edit({ charity, token }: Props) {
                             address: e.address,
                             register_no: (  e.registerNumber && !isNaN(e.registerNumber)) ? e.registerNumber : null,
                             description: e.description,
-                            recv_details: e.recvDetails,
                             id:charity.id
                         }
                     }),
@@ -183,24 +177,7 @@ export default function edit({ charity, token }: Props) {
                             {formik.errors.address}
                         </p>
                     }
-                    <label htmlFor="" className="block font-medium">
-                        Fund receive details
-                    </label>
-                    <input
-                        onBlur={formik.handleBlur}
-                        onChange={formik.handleChange}
-                        value={formik.values.recvDetails}
-                        type="text"
-                        name='recvDetails'
-                        className="border w-full h-10 px-3 mb-5 rounded-md"
-                        placeholder="bank details (or) wallet ID"
-                    />
-                    {
-                        formik.errors.recvDetails &&
-                        <p className="text-xs italic text-red-500">
-                            {formik.errors.recvDetails}
-                        </p>
-                    }
+                   
                     <label htmlFor="" className="block font-medium">
                         Register number (optional)
                     </label>

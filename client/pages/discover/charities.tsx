@@ -98,16 +98,11 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
     const query = qs.stringify(
         {
             filters: {
-                $and: [
-                    { approved: { $eq: true } },
-                    {
-                        charity: {
-                            id: {
-                                $notNull: true
-                            }
-                        }
+                charity: {
+                    id: {
+                        $notNull: true
                     }
-                ]
+                }
             }
             , populate: ["image", "user", "charity"],
             sort: ['donations_count:desc'],

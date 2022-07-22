@@ -17,12 +17,7 @@ module.exports = {
             path: '/donations/success',
             handler: "custom.donationSuccess"
         },
-        // create-payment-intent
-        {
-            method: 'POST',
-            path: '/donations/gap-create-payment-intent',
-            handler: "custom.donationSuccess"
-        },
+        // create-coinbase-charge
         {
             method: 'POST',
             path: '/donations/create-charge',

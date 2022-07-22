@@ -26,8 +26,6 @@ export default function fundraiser({ is_auth, user, token, fundraiser }: Props) 
             address: fundraiser.attributes.address,
             category: fundraiser.attributes.tag,
             fundType: fundraiser.attributes.fund_type,
-            recvDetails: fundraiser.attributes.recv_details
-
         },
         validationSchema: Yup.object({
             title: Yup.string().min(8).max(70, "Title should be less than 70 characters").required(),
@@ -46,10 +44,6 @@ export default function fundraiser({ is_auth, user, token, fundraiser }: Props) 
                 Yup
                     .string().min(3).required("Fund type is required.")
                     .equals(fund_types, 'Invalid category'),
-            recvDetails: Yup
-                .string()
-                .min(3, "Invalid 'fund receive details'")
-                .required('Fund receive details is required.'),
         }),
         onSubmit: async (e) => {
             setSubmitting(true);

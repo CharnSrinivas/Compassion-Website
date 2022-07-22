@@ -1,7 +1,7 @@
 import Cookies from 'js-cookie'
 import Link from 'next/link'
 import { useRouter } from 'next/router';
-import QueryString from 'qs';
+import qs from 'qs';
 import React, { useEffect, useState } from 'react'
 import { jwt_aut_token, server_url } from '../config'
 
@@ -48,7 +48,7 @@ export default function Navbar() {
         localStorage.removeItem(jwt_aut_token);
         router.reload();
     }
-    
+
     const init = async () => {
         setOpenMenu(false);
         if (!window) return;
@@ -89,32 +89,29 @@ export default function Navbar() {
         if (user_res.status <= 201) {
             Cookies.set(jwt_aut_token, token!);
             let user = await user_res.json();
-            if ((!user['approved']) && window.location.pathname !== '/thankyou') {
-                window.location.href = ('/thankyou');
-            } else {
-                setUser(user);
-                const query = QueryString.stringify({
-                    filters: {
-                        user: {
-                            id: { $eq: user.id }
-                        }
-                    },
-                })
-                fetch(server_url + `/api/charities?` + query, {
-                    method: "GET",
-                    headers: {
-                        Authorization: `Bearer ${token}`,
+            setUser(user);
+            const query = qs.stringify({
+                filters: {
+                    user: {
+                        id: { $eq: user.id }
                     }
-                }).then(charity_res => {
-                    charity_res.json().then(charity_data => {
-                        if (charity_data.data && charity_data.data.length === 1) {
-                            setHasCharity(true);
-                        }
-                    })
+                },
+            })
+            fetch(server_url + `/api/charities?` + query, {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                }
+            }).then(charity_res => {
+                charity_res.json().then(charity_data => {
+                    if (charity_data.data && charity_data.data.length >= 1) {
+                        setHasCharity(true);
+                    }
                 })
-                setIsAuth(true)
-            }
-        } else {
+            })
+            setIsAuth(true)
+        }
+        else {
             localStorage.removeItem(jwt_aut_token);
             Cookies.remove(jwt_aut_token)
             setIsAuth(false);

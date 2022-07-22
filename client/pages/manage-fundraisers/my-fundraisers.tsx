@@ -37,7 +37,7 @@ export default function manage({ fundraisers }: Props) {
                     }
                     <div className=' w-[80%] flex justify-center'>
                         <div className="flex flex-wrap w-full ">
-                            {fundraisers &&
+                            {fundraisers && fundraisers.length > 0 &&
                                 fundraisers.map((fundraiser, index) => {
                                     return (
                                         <a key={index} href={`/manage-fundraisers/${fundraiser.attributes.slug}/overview`} className="xl:w-1/4 md:w-1/2 p-4 cursor-pointer " >
@@ -70,19 +70,6 @@ export default function manage({ fundraisers }: Props) {
                                                     {!fundraiser.attributes.description &&
                                                         <p className="leading-relaxed text-base">No story.  </p>
                                                     }
-                                                    <div className='flex flex-row items-baseline gap-3'>
-                                                        <p className='font-medium text-gray-600'>Approval:</p>
-                                                        {fundraiser.attributes.approved &&
-                                                            <span className="ml-0 mt-2 px-3 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100">
-                                                                Approved
-                                                            </span>
-                                                        }
-                                                        {!fundraiser.attributes.approved &&
-                                                            <span className="ml-0 mt-2 px-3 py-1 font-semibold leading-tight text-orange-700 bg-orange-100 rounded-full dark:text-white dark:bg-orange-600">
-                                                                Pending
-                                                            </span>
-                                                        }
-                                                    </div>
                                                     <div className='text-gray-900 font-medium mt-4'>
                                                         <strong>{fundraiser.attributes.fund_raised.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} raised</strong> out of {fundraiser.attributes.fund_target.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                                                     </div>
@@ -97,9 +84,27 @@ export default function manage({ fundraisers }: Props) {
                             }
                             {
                                 fundraisers.length <= 0 &&
-                                <h2 className='sm:text-3xl text-2xl font-medium title-font my-7  text-gray-900'>
-                                    No fundraisers found
-                                </h2>
+                                <div className='w-[80%] mx-auto my-5 px-4 flex-col  items-center'>
+                                    <h1 className='lg:text-4xl text-2xl text-center w-[100%] font-medium  my-7  text-gray-600'>
+                                        No fundraisers found
+                                    </h1>
+                                    <hr />
+                                    <div className='mt-5 flex-col items-center '>
+                                        <h4 className='text-center my-3 text-xl'>Start your fundraising journey by creating a new fundraiser now.</h4>
+                                        <a href='/create/fundraiser/details' className="px-4 mx-auto py-3 w-fit rounded text-white mt-4 lg:mt-8 bg-[#32a95c] items-center flex-row flex gap-2">
+                                            <svg
+                                                viewBox="0 0 490 490"
+                                                className='w-5 h-5'
+                                                fill='white'
+                                            >
+                                                <polygon
+                                                    points="222.031,490 267.969,490 267.969,267.969 490,267.969 490,222.031 267.969,222.031 267.969,0 222.031,0  222.031,222.031 0,222.031 0,267.969 222.031,267.969 "
+                                                />
+                                            </svg>
+                                            <p className='font-medium'> Start a new fundraiser</p>
+                                        </a>
+                                    </div>
+                                </div>
                             }
                         </div>
                     </div>
@@ -144,8 +149,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
     });
 
     let res = await (await fetch(server_url + "/api/fund-raises?" + query)).json()
-    
-    
+
+
     if (res['data']) {
         return {
             props: {

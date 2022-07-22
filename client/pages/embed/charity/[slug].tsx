@@ -112,7 +112,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
 
     })).json();
 
-    if(!charity['data'][0] || !charity['data'][0]['attributes']['approved']){
+    if(!charity['data'][0]){
         return{
             notFound:true
         }

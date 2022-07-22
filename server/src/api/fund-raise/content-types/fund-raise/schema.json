@@ -256,25 +256,10 @@
       "type": "string",
       "required": true
     },
-    "recv_details": {
-      "type": "string",
-      "required": true
-    },
     "approved": {
       "type": "boolean",
       "default": false,
       "required": false
-    },
-    "documents": {
-      "type": "media",
-      "multiple": true,
-      "required": false,
-      "allowedTypes": [
-        "images",
-        "files",
-        "videos",
-        "audios"
-      ]
     }
   }
 }

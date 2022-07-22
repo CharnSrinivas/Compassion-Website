@@ -145,7 +145,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
         method: "GET",
 
     })).json();
-    if (!fundraiser['data'][0] || !fundraiser['data'][0]['attributes']['approved']) {
+    if (!fundraiser['data'][0]) {
         return {
             notFound: true
         }

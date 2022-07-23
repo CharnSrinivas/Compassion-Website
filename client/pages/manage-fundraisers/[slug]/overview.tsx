@@ -78,7 +78,7 @@ export default function ({ fundraiser, donations, donations_meta, slug }: Props)
     const token = localStorage.getItem(jwt_aut_token);
 
     let documents_res = await fetch(server_url + '/api/user-documents?' + qs.stringify({
-      filter: {
+      filters: {
         user: {
           id: {
             $eq: fundraiser.attributes.user.data.id
@@ -99,8 +99,8 @@ export default function ({ fundraiser, donations, donations_meta, slug }: Props)
     // }
     let documents = (await documents_res.json()).data[0];
     if (!documents) return;
-    setDocuments(documents.attributes)
     setWithDrawLoading(false);
+    setDocuments(documents.attributes)
 
   }
   const uploadDocuments = async () => {

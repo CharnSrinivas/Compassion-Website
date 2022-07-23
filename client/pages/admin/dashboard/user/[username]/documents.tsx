@@ -10,7 +10,7 @@ interface Props {
     user: any | null;
     admin_token: string;
     username: string;
-    user_docs: any;
+    user_docs: any | undefined;
 }
 
 export default function edit({ user, admin_token, username, user_docs }: Props) {
@@ -70,56 +70,63 @@ export default function edit({ user, admin_token, username, user_docs }: Props) 
                                     Documents
                                 </a>
                             </div>
-                            <div className='flex flex-row flex-wrap gap-8 mb-8'>
-                                {
-                                    user_docs.driving_license &&
-                                    <a href={server_url + user_docs.driving_license.url} target={'_blank'} className='flex flex-col bg-white rounded-md shadow-lg h-auto w-[14rem]'>
-                                        {user_docs.driving_license.formats &&
-                                            <img className='h-28 w-full object-cover rounded-md' src={server_url + user_docs.driving_license.formats.thumbnail.url} alt={user_docs.driving_license.name} />
-                                        }
-                                        {!user_docs.driving_license.formats &&
-                                            <img className='h-28 w-full object-cover rounded-md' src={'/assets/ user_docs.image-placeholder.png'} alt={user_docs.driving_license.name} />
-                                        }
-                                        <div className='p-2'>
-                                            <p className='text-lg font-medium'>Driving License</p>
-                                            <p className='text-sm ' style={{ lineBreak: "anywhere" }}>{user_docs.driving_license.name}</p>
-                                            <p className='bg-gray-100 w-fit px-1 rounded-md text-sm'>{(user_docs.driving_license.ext as string)?.replace('.', '')?.toUpperCase()}</p>
-                                        </div>
-                                    </a>
-                                }
-                                {
-                                    user_docs.passport &&
-                                    <a href={server_url + user_docs.passport.url} target={'_blank'} className='flex flex-col bg-white rounded-md shadow-lg h-auto w-[14rem]'>
-                                        {user_docs.passport.formats &&
-                                            <img className='h-28 w-full object-cover rounded-md' src={server_url + user_docs.passport.formats.thumbnail.url} alt={user_docs.passport.name} />
-                                        }
-                                        {!user_docs.passport.formats &&
-                                            <img className='h-28 w-full object-cover rounded-md' src={'/assets/ user_docs.image-placeholder.png'} alt={user_docs.passport.name} />
-                                        }
-                                        <div className='p-2'>
-                                            <p className='text-lg font-medium'>Passport</p>
-                                            <p className='text-sm ' style={{ lineBreak: "anywhere" }}>{user_docs.passport.name}</p>
-                                            <p className='bg-gray-100 w-fit px-1 rounded-md text-sm'>{(user_docs.passport.ext as string)?.replace('.', '')?.toUpperCase()}</p>
-                                        </div>
-                                    </a>
-                                }  {
-                                    user_docs.selfie &&
-                                    <a href={server_url + user_docs.selfie.url} target={'_blank'} className='flex flex-col bg-white rounded-md shadow-lg h-auto w-[14rem]'>
-                                        {user_docs.selfie.formats &&
-                                            <img className='h-28 w-full object-cover rounded-md' src={server_url + user_docs.selfie.formats.thumbnail.url} alt={user_docs.selfie.name} />
-                                        }
-                                        {!user_docs.selfie.formats &&
-                                            <img className='h-28 w-full object-cover rounded-md' src={'/assets/ user_docs.image-placeholder.png'} alt={user_docs.selfie.name} />
-                                        }
-                                        <div className='p-2'>
-                                            <p className='text-lg font-medium'>Selfie</p>
-                                            <p className='text-sm ' style={{ lineBreak: "anywhere" }}>{user_docs.selfie.name}</p>
-                                            <p className='bg-gray-100 w-fit px-1 rounded-md text-sm'>{(user_docs.selfie.ext as string)?.replace('.', '')?.toUpperCase()}</p>
-                                        </div>
-                                    </a>
-                                }
+                            {user_docs &&
+                                <div className='flex flex-row flex-wrap gap-8 mb-8'>
+                                    {
+                                        user_docs.driving_license &&
+                                        <a href={server_url + user_docs.driving_license.url} target={'_blank'} className='flex flex-col bg-white rounded-md shadow-lg h-auto w-[14rem]'>
+                                            {user_docs.driving_license.formats &&
+                                                <img className='h-28 w-full object-cover rounded-md' src={server_url + user_docs.driving_license.formats.thumbnail.url} alt={user_docs.driving_license.name} />
+                                            }
+                                            {!user_docs.driving_license.formats &&
+                                                <img className='h-28 w-full object-cover rounded-md' src={'/assets/ user_docs.image-placeholder.png'} alt={user_docs.driving_license.name} />
+                                            }
+                                            <div className='p-2'>
+                                                <p className='text-lg font-medium'>Driving License</p>
+                                                <p className='text-sm ' style={{ lineBreak: "anywhere" }}>{user_docs.driving_license.name}</p>
+                                                <p className='bg-gray-100 w-fit px-1 rounded-md text-sm'>{(user_docs.driving_license.ext as string)?.replace('.', '')?.toUpperCase()}</p>
+                                            </div>
+                                        </a>
+                                    }
+                                    {
+                                        user_docs.passport &&
+                                        <a href={server_url + user_docs.passport.url} target={'_blank'} className='flex flex-col bg-white rounded-md shadow-lg h-auto w-[14rem]'>
+                                            {user_docs.passport.formats &&
+                                                <img className='h-28 w-full object-cover rounded-md' src={server_url + user_docs.passport.formats.thumbnail.url} alt={user_docs.passport.name} />
+                                            }
+                                            {!user_docs.passport.formats &&
+                                                <img className='h-28 w-full object-cover rounded-md' src={'/assets/ user_docs.image-placeholder.png'} alt={user_docs.passport.name} />
+                                            }
+                                            <div className='p-2'>
+                                                <p className='text-lg font-medium'>Passport</p>
+                                                <p className='text-sm ' style={{ lineBreak: "anywhere" }}>{user_docs.passport.name}</p>
+                                                <p className='bg-gray-100 w-fit px-1 rounded-md text-sm'>{(user_docs.passport.ext as string)?.replace('.', '')?.toUpperCase()}</p>
+                                            </div>
+                                        </a>
+                                    }  {
+                                        user_docs.selfie &&
+                                        <a href={server_url + user_docs.selfie.url} target={'_blank'} className='flex flex-col bg-white rounded-md shadow-lg h-auto w-[14rem]'>
+                                            {user_docs.selfie.formats &&
+                                                <img className='h-28 w-full object-cover rounded-md' src={server_url + user_docs.selfie.formats.thumbnail.url} alt={user_docs.selfie.name} />
+                                            }
+                                            {!user_docs.selfie.formats &&
+                                                <img className='h-28 w-full object-cover rounded-md' src={'/assets/ user_docs.image-placeholder.png'} alt={user_docs.selfie.name} />
+                                            }
+                                            <div className='p-2'>
+                                                <p className='text-lg font-medium'>Selfie</p>
+                                                <p className='text-sm ' style={{ lineBreak: "anywhere" }}>{user_docs.selfie.name}</p>
+                                                <p className='bg-gray-100 w-fit px-1 rounded-md text-sm'>{(user_docs.selfie.ext as string)?.replace('.', '')?.toUpperCase()}</p>
+                                            </div>
+                                        </a>
+                                    }
 
-                            </div>
+                                </div>
+                            }
+                            {!user_docs &&
+                                <h3 className='text-3xl text-center my-8'>
+                                    No documents uploaded
+                                </h3>
+                            }
                             {!user.approved &&
                                 <button onClick={toggleApproval} disabled={user.approved} className={`flex gap-1  items-center text-white  bg-green-500 hover:bg-green-600   border-0 py-2 px-4 focus:outline-none rounded`}>
                                     Approve
@@ -274,13 +281,22 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
             }
         }
     }
+    if (!users['results'][0]['user_document']) {
+        return {
+            props: {
+                user: users['results'][0],
+                admin_token,
+                username,
+            }
+        }
+    }
     let user_docs_res = await fetch(server_url + "/content-manager/collection-types/api::user-document.user-document/" + users['results'][0]['user_document']['id'], {
         method: "GET",
         headers: {
             Authorization: `Bearer ${admin_token}`,
         }
     });
-    let user_docs = await user_docs_res.json()
+    let user_docs = await user_docs_res.json();
     return {
         props: {
             user: users['results'][0],

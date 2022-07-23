@@ -7,7 +7,7 @@ Did:
         1) driving license
         2) passport
         3) selfie
-    ---- remove fundwithdrawl info in fundraise creation
+    ---- remove fundwithdrawl info in fundraiser creation
     ---- remove approval for fundraiser and user registration
     ---- coinbase integration
     ---- UPI payment

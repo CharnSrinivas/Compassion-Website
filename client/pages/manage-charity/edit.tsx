@@ -129,12 +129,7 @@ export default function edit({ charity, token }: Props) {
                         </a>
                         <div className='h-[3.5px]   rounded-full w-full bg-green-600'></div>
                     </div>
-                    <div>
-                        <a href='/manage-charity/edit' className='text-gray-700'>
-                            Description
-                        </a>
-                        <div className='h-[3.5px]  rounded-full w-full bg-gray-200'></div>
-                    </div>
+
                 </ul>
                 <div className='w-full h-[2px] bg-gray-200'></div>
                 <form onSubmit={formik.handleSubmit} className='flex flex-wrap  py-8'>

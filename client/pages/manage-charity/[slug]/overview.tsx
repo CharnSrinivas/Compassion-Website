@@ -56,13 +56,13 @@ export default function ({ fundraiser, fundraiser_meta,donations, donations_meta
           <div className='flex-col'>
             <div className='flex justify-between flex-wrap'>
               <div >
-                {fundraiser.attributes.image && fundraiser.attributes.image.data &&
+                {fundraiser.attributes.image && fundraiser.attributes.image.data[0] &&
                   <img
                     className="lg:w-[30rem] h-[25rem] object-cover object-center rounded-lg"
-                    src={server_url + fundraiser.attributes.image.data.attributes.url}
+                    src={server_url + fundraiser.attributes.image.data[0].attributes.url}
                     alt="content"
                   />
-                }{!fundraiser.attributes.image || !fundraiser.attributes.image.data &&
+                }{!fundraiser.attributes.image || !fundraiser.attributes.image.data[0] &&
                   <img
                     className="lg:w-[30rem] h-[25rem] object-cover object-center rounded-lg"
                     src={"/assets/image-placeholder.jpg"}
@@ -312,10 +312,8 @@ export default function ({ fundraiser, fundraiser_meta,donations, donations_meta
                         <h5 className='mt-15  text-gray-700 my-3 text-center' >Donations for this fundraiser will show up here</h5>
                       </div>
                     }
-
-                    {donations_meta['']}
                   </div>
-                  <div className="flex my-5 mx-auto justify-center">
+                  <div  className="flex my-5 mx-auto justify-center">
                     {donations_meta['page'] !== 1 &&
                       <a href={`${url}?dp=${donations_meta['page'] - 1}`} className="border border-teal-500 text-teal-500 block rounded-sm font-bold py-4 px-6 mr-2 flex items-center hover:bg-teal-500 hover:text-white">
                         <svg

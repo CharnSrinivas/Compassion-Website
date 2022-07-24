@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { LOADIPHLPAPI } from 'dns';
 import { GetServerSidePropsContext, GetServerSidePropsResult, Redirect } from 'next';
 import Head from 'next/head';
 import qs from 'qs';
@@ -199,6 +200,8 @@ export default function index({ donations_meta, pending_approval, donations, pag
                                     <tbody className="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
                                         {donations && donations.length > 0 &&
                                             donations.map((donation, index) => {
+                                                console.log(donation);
+
                                                 return (
                                                     <tr className="text-gray-700 dark:text-gray-400">
                                                         <td className="pl-4 py-3 text-sm">{(donations_meta.pageSize * donations_meta.page) - (donations_meta.pageSize - index - 1)}</td>
@@ -228,10 +231,18 @@ export default function index({ donations_meta, pending_approval, donations, pag
                                                                     />
                                                                 </div>
                                                                 <div>
-                                                                    <p className="font-semibold">{donation['fund_raise']['title']}</p>
-                                                                    <p className="text-xs text-gray-600 dark:text-gray-400">
-                                                                        {donation['fund_raise']['tag']}
-                                                                    </p>
+                                                                    {donation['fund_raise'] &&
+                                                                        <>
+                                                                            <p className="font-semibold">{donation['fund_raise']['title']}</p>
+                                                                            <p className="text-xs text-gray-600 dark:text-gray-400">
+                                                                                {donation['fund_raise']['tag']}
+                                                                            </p>
+                                                                        </>
+                                                                    }{!donation['fund_raise'] &&
+                                                                        <p className="text-xs text-gray-600 dark:text-gray-400">
+                                                                            No fundraiser found
+                                                                        </p>
+                                                                    }
                                                                 </div>
                                                             </a>
                                                         </td>
@@ -252,7 +263,7 @@ export default function index({ donations_meta, pending_approval, donations, pag
                                                             {donation['amount']}
                                                         </td>
                                                         <td className="px-4 py-3 text-sm">
-                                                        {donation['type'] ? (donation['type'] as string).toUpperCase() : '-'}
+                                                            {donation['type'] ? (donation['type'] as string).toUpperCase() : '-'}
                                                         </td>
                                                         <td className="px-4 py-3 text-xs">
                                                             {donation.success &&
@@ -264,7 +275,7 @@ export default function index({ donations_meta, pending_approval, donations, pag
                                                                 <span className="px-2 py-1 font-semibold leading-tight text-orange-700 bg-orange-100 rounded-full dark:text-white dark:bg-orange-600">
                                                                     Pending
                                                                 </span>
-                                                                }
+                                                            }
                                                         </td>
                                                         <td className="px-4 py-3 text-sm">{new Date(donation.createdAt).toDateString()}</td>
                                                     </tr>

@@ -2,10 +2,8 @@ import { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
 import qs from 'qs';
 import React, { useEffect, useState } from 'react'
 import { jwt_aut_token, server_url } from '../../../../config';
-import { PaymentRequestButtonElement} from '@stripe/react-stripe-js'
 import { loadStripe, } from '@stripe/stripe-js';
 import axios, { AxiosError } from 'axios';
-import { useRouter } from 'next/router';
 
 interface Props {
     fundraiser: any;
@@ -26,10 +24,10 @@ export default function donate({ fundraiser, slug, user, stripe_publishable_key 
     const [comment, setComment] = useState('');
     const [show_alert, setShowAlert] = useState(false);
     const [alert_text, setAlertText] = useState('');
-    const [paymentRequest, setPaymentRequest] = useState<any>(null);
+    const [open_popup, setOpenPopup] = useState(false);
     const [loading, setLoading] = useState(false);
     console.log(stripe_publishable_key);
-    
+
     const startCheckOut = async () => {
         if (loading) return;
         if (donation_amount <= 0) {
@@ -86,7 +84,7 @@ export default function donate({ fundraiser, slug, user, stripe_publishable_key 
     const startCoinBaseCharge = async () => {
         if (loading) return;
         if (donation_amount <= 0) {
-            setAlertText('Donation amount should be atleast 50 cents ($0.5)'); setShowAlert(true);
+            setAlertText('Donation amount should be at-least 50 cents ($0.5)'); setShowAlert(true);
             return;
         }
         try {
@@ -161,12 +159,12 @@ export default function donate({ fundraiser, slug, user, stripe_publishable_key 
                     <p className="w-1/3 text-center text-white">This may take a few seconds, please don't close this page.</p>
                 </div>
             }
-            <div className="m-h-screen min-w-screen bg-slate-200 py-6 flex flex-col justify-center overflow-hidden sm:py-12">
+            <div className=" min-w-screen bg-slate-200 py-6 flex flex-col justify-center overflow-hidden sm:py-12">
                 {!user && <div
                     className="p-4 mb-4 self-center lg:w-[45%] text-sm text-green-700 bg-green-100 rounded-lg"
                     role="alert"
                 >
-                    <span className="font-medium"> You are not registerd.</span> Your donation will be anonymous in Compassion.
+                    <span className="font-medium"> You are not registered.</span> Your donation will be anonymous in Compassion.
 
                 </div>
                 }
@@ -212,9 +210,9 @@ export default function donate({ fundraiser, slug, user, stripe_publishable_key 
                             />
                         }
                         <div>
-                            <h3 className='text-gray-600'>You're supporing <strong className='font-medium text-gray-800'>{fundraiser.attributes.title}</strong></h3>
+                            <h3 className='text-gray-600'>You're supporting <strong className='font-medium text-gray-800'>{fundraiser.attributes.title}</strong></h3>
                             {fundraiser.attributes.charity.data &&
-                                <h3 className='text-gray-600'>You're supporing <a href={`/charities/${slug}/`} className='font-medium text-gray-800'>{fundraiser.attributes.charity.data.attributes.name}</a></h3>
+                                <h3 className='text-gray-600'>You're supporting <a href={`/charities/${slug}/`} className='font-medium text-gray-800'>{fundraiser.attributes.charity.data.attributes.name}</a></h3>
                             }
                         </div>
                     </div>
@@ -280,22 +278,68 @@ export default function donate({ fundraiser, slug, user, stripe_publishable_key 
                             <h4 className='font-medium mt-2'>UPI</h4>
                             <h5 className='text-sm'>(via QRcode) </h5>
                         </a>
-                        {
+                        {/* {
                             paymentRequest &&
                             <div className='flex-col w-[13rem] items-center justify-center px-4 py-4  my-5'   >
                                 <PaymentRequestButtonElement className='w-[100%]' options={{ paymentRequest }} />
                                 <h4 className='font-medium mt-2 text-center'>Via Gpay</h4>
                             </div>
-                        }
+                        } */}
                         <div onClick={startCoinBaseCharge} className='flex w-[13rem] flex-col items-center bg-white text-gray-600 px-4 py-4 rounded-lg my-5 shadow-2xl hover:scale-[1.02] transition-all cursor-pointer' >
-                            <img src="/assets/crypto-wallet.png" className='w-16 h-16' alt="crypto-wallet" />
-                            <h4 className='font-medium mt-2'>Crypto</h4>
+                            <img src="/assets/coinbase-icon.svg" className='w-16 h-16' alt="coinbase-wallet" />
+                            <h4 className='font-medium mt-2'>Coinbase</h4>
                             <h5 className='text-sm'>(via CoinBase) </h5>
                         </div>
+                        <div
+                            onClick={() => {
+                                setOpenPopup(true);
+                                document.documentElement.scrollTop = 0;
+                                document.documentElement.style.overflow = 'hidden'
+                            }}
+                            className='flex w-[13rem] flex-col items-center bg-white text-gray-600 px-4 py-4 rounded-lg my-5 shadow-2xl hover:scale-[1.02] transition-all cursor-pointer' >
+                            <img src="/assets/crypto-wallet.png" className='w-16 h-16' alt="coinbase-wallet" />
+                            <h4 className='font-medium mt-2'>Crypto</h4>
+                            <h5 className='text-sm'>(via ) </h5>
+                        </div>
                     </div>
-                    {/* <button  className="px-4 w-fit py-2 rounded text-white mt-8 lg:mt-0 bg-[#32a95c]">
-                        Continue
-                    </button> */}
+                    {open_popup &&
+                        <div
+                            className="w-screen top-0 left-0 right-0 bottom-0 h-screen bg-gray-500 bg-opacity-80 py-6 flex flex-col justify-center sm:py-12 absolute">
+                            <div className="py-3 sm:w-1/2 w-full sm:mx-auto " >
+                                <div onClick={() => {
+                                    setOpenPopup(false);
+                                    document.documentElement.style.overflow = 'auto'
+                                }} className='rounded-full w-[1.5rem]  h-[1.5rem] my-3 cursor-pointer bg-gray-200 text-gray-800 ml-auto mr-2 flex justify-center items-center '>
+                                    <svg
+                                        width={24}
+                                        height={24}
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        strokeWidth={2}
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        className="w-5 h-5"
+                                    >
+                                        <line x1={18} y1={6} x2={6} y2={18} />
+                                        <line x1={6} y1={6} x2={18} y2={18} />
+                                    </svg>
+
+                                </div>
+                                <div className="bg-white mx-auto min-w-1xl flex w-[80%] lg:w-auto flex-col lg:max-h-[50rem] max-h-[30rem] overflow-y-scroll rounded-xl shadow-lg">
+                                    <a href={`/f/${slug}/donate/btc`} className="lg:px-12 cursor-pointer px-5 py-5 flex flex-row items-center gap-3">
+                                        <img src="/assets/btc.png" alt="bitcoin" className='w-10 h-10'/>
+                                        <p className='font-medium text-xl text-gray-600'>Bitcoin</p>
+                                    </a>
+                                    <hr className='w-[95%] mx-auto'/>
+                                    <a  href={`/f/${slug}/donate/trx`} className="lg:px-12 cursor-pointer px-5 py-5 flex flex-row items-center gap-3">
+                                        <img src="/assets/trx.png" alt="troncoin" className='w-10 h-10'/>
+                                        <p className='font-medium text-xl text-gray-600'>Tron Coin</p>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    }
                 </div>
             </div >
         </>
@@ -323,11 +367,9 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
         },
         populate: ["image", "user", 'charity']
     })
-
     const headers: any = token ? {
         Authorization: `Bearer ${token}`,
     } : {};
-
     const fundraiser_res = (await fetch(server_url + "/api/fund-raises?" + query, {
         method: "GET",
         headers: headers
@@ -341,12 +383,10 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
             notFound: true
         }
     }
-
     const user_res = await fetch(server_url + "/api/users/me", {
         method: "GET",
         headers: headers
     })
-
     if (user_res.status > 201) {
         return {
             props: {
@@ -355,7 +395,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
             }
         }
     }
-    
     const user = await user_res.json();
     return {
         props: {

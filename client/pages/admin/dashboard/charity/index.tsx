@@ -285,10 +285,15 @@ export default function index({ charity_donations_meta, pending_charity_approval
                                                                     />
                                                                 </div>
                                                                 <div>
-                                                                    <p className="font-semibold">{charity['name']}</p>
-                                                                    <p className="text-xs text-gray-600 dark:text-gray-400">
-                                                                        {/* {charity['user']['username']} */}
-                                                                    </p>
+                                                                    {charity['name'] &&
+                                                                        <>
+                                                                            <p className="font-semibold">{charity['name']}</p>
+                                                                        </>
+                                                                    }{!charity['name'] &&
+                                                                        <p className="text-xs text-gray-600 dark:text-gray-400">
+                                                                                No charity found
+                                                                        </p>
+                                                                    }
                                                                 </div>
                                                             </a>
                                                         </td>

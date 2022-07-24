@@ -4,7 +4,7 @@ const Stripe = require('stripe');
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 const nodemailer = require("nodemailer");
 const { Client, resources, Webhook } = require('coinbase-commerce-node')
-Client.init('12f15316-5684-4134-9426-fc2296550f17');
+Client.init(process.env.COINBASE_API_KEY);
 const { Charge } = resources;
 const server_url = process.env['NODE_ENV'] === "production" ? "https://toptechonly.com" : "http://localhost:3000"
 
@@ -206,6 +206,7 @@ module.exports = createCoreController('api::donation.donation', ({ strapi }) => 
 
 
     },
+    // Creating coinbase charge
     async createCharge(ctx) {
         try {
 
@@ -238,7 +239,7 @@ module.exports = createCoreController('api::donation.donation', ({ strapi }) => 
                     amount: item.price,
                     comment: item.comment,
                     user: item.user,
-                    type: 'crypto',
+                    type: 'coinbase',
                     fund_raise: item.fund_raise,
                     publishedAt: new Date().toISOString()
                 },

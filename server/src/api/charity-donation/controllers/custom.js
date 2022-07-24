@@ -2,6 +2,9 @@ const { createCoreController } = require('@strapi/strapi').factories;
 const Stripe = require('stripe');
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 const nodemailer = require("nodemailer");
+const { Client, resources, Webhook } = require('coinbase-commerce-node')
+Client.init(process.env.COINBASE_API_KEY);
+const { Charge } = resources;
 async function sendMail(subject, html, text) {
     try {
         let transporter = nodemailer.createTransport({
@@ -34,10 +37,7 @@ module.exports = createCoreController('api::donation.donation', ({ strapi }) => 
             if (!item.currency || !item.name || !item.price || item.price <= 0 || !item.charity || !item.charity_details['attributes']) {
                 throw Error("Invalid details!");
             }
-            if (!item.charity_details['attributes']['approved']) {
-                throw Error("Charity is not approved!");
-            }
-            const transformedItem = {
+                        const transformedItem = {
                 price_data: {
                     currency: item.currency,
                     product_data: {
@@ -107,9 +107,6 @@ module.exports = createCoreController('api::donation.donation', ({ strapi }) => 
                     currency: item.currency,
                 }, pricing_type: 'fixed_price',
             });
-            if (!item.charity_details['attributes']['approved']) {
-                throw Error("Charity is not approved!");
-            }
   
             let charity_donation = await strapi.query("api::charity-donation.charity-donation").create({
                 data: {
@@ -139,6 +136,7 @@ module.exports = createCoreController('api::donation.donation', ({ strapi }) => 
             ctx.send(charge);
         } catch (error) {
             console.log('---------------- error ----------------------');
+            console.log(error);
             console.log(error.message);
             console.log('---------------- error ----------------------');
             ctx.send({ error: error.message }, 400)

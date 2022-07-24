@@ -53,7 +53,9 @@
       "enum": [
         "stripe",
         "upi",
-        "crypto"
+        "coinbase",
+        "btc",
+        "trx"
       ]
     }
   }

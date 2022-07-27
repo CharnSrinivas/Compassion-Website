@@ -32,7 +32,6 @@ async function sendMail(subject, html, text) {
         // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
 
         // Preview only available when sending through an Ethereal account
-        console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
         // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
     } catch (error) {
         console.error(error.message);
@@ -69,6 +68,18 @@ module.exports = createCoreController('api::donation.donation', ({ strapi }) => 
                 success_url: redirect_url + '/my-donations/fundraiser-donations',
                 cancel_url: redirect_url + '/api/cancel',
             });
+            if (!item.user && item.new_user) {
+                let new_user = await strapi.query("plugin::users-permissions.user").create(
+                    {
+                        data: {
+                            username: item.new_user.username,
+                            email: item.new_user.email,
+                            password: item.new_user.password
+                        }
+                    }
+                );
+                item.user = new_user.id;
+            }
             let donation = await strapi.query("api::donation.donation").create({
                 data: {
                     payment_id: session.id,
@@ -96,7 +107,7 @@ module.exports = createCoreController('api::donation.donation', ({ strapi }) => 
             ctx.send({ id: session.id }, 200);
         } catch (err) {
             console.log('---------------- error ----------------------');
-            console.log(err.message);
+            console.log(err);
             console.log('---------------- error ----------------------');
             ctx.send({ error: err.message }, 400)
         }
@@ -136,7 +147,7 @@ module.exports = createCoreController('api::donation.donation', ({ strapi }) => 
                 where: {
                     payment_id: event.data.object.id
                 },
-                populate: {  fund_raise: true, user: true }
+                populate: { fund_raise: true, user: true }
             })
             if (!donation) {
                 donation = await strapi.query("api::charity-donation.charity-donation").findOne({
@@ -148,7 +159,7 @@ module.exports = createCoreController('api::donation.donation', ({ strapi }) => 
             }
 
             if (donation.fund_raise) {
-                
+
                 let fund_raiser = await strapi.query("api::fund-raise.fund-raise").findOne({
                     where: {
                         id: donation.fund_raise.id
@@ -173,7 +184,7 @@ module.exports = createCoreController('api::donation.donation', ({ strapi }) => 
 
             }
             if (donation.charity) {
-                
+
                 let charity = await strapi.query("api::charity.charity").findOne({
                     where: {
                         id: donation.charity.id
@@ -199,7 +210,6 @@ module.exports = createCoreController('api::donation.donation', ({ strapi }) => 
         } catch (err) {
             // ctx.res.status(400).send(`Webhook Error: ${err.message}`);
             console.error(err.message);
-
             return ctx.res.status = 400;
             // .send(`Webhook Error: ${err.message}`);
         }
@@ -231,6 +241,18 @@ module.exports = createCoreController('api::donation.donation', ({ strapi }) => 
             if (item.fundraiser_details['attributes']['fund_raised'] + item.price > item.fundraiser_details['attributes']['fund_target']) {
                 throw Error("Your donation is exceeding fundraiser's target.");
             }
+            if (!item.user && item.new_user) {
+                let new_user = await strapi.query("plugin::users-permissions.user").create(
+                    {
+                        data: {
+                            username: item.new_user.username,
+                            email: item.new_user.email,
+                            password: item.new_user.password
+                        }
+                    }
+                );
+                item.user = new_user.id;
+            }
             let donation = await strapi.query("api::donation.donation").create({
                 data: {
                     payment_id: charge.id,
@@ -259,7 +281,7 @@ module.exports = createCoreController('api::donation.donation', ({ strapi }) => 
             ctx.send(charge);
         } catch (error) {
             console.log('---------------- error ----------------------');
-            console.log(error.message);
+            console.log(error);
             console.log('---------------- error ----------------------');
             ctx.send({ error: error.message }, 400)
         }
@@ -290,7 +312,7 @@ module.exports = createCoreController('api::donation.donation', ({ strapi }) => 
                 }
                 console.log(donation);
                 if (donation.fund_raise) {
-                    
+
                     let fund_raiser = await strapi.query("api::fund-raise.fund-raise").findOne({
                         where: {
                             id: donation.fund_raise.id
@@ -338,7 +360,7 @@ module.exports = createCoreController('api::donation.donation', ({ strapi }) => 
                 }
                 ctx.res.status = 200;
             }
-            else if(event.type === 'charge:failed'){
+            else if (event.type === 'charge:failed') {
                 let donation = await strapi.query("api::donation.donation").delete({
                     where: {
                         payment_id: event.data.id

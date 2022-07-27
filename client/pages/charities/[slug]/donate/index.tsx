@@ -4,7 +4,8 @@ import React, { useState } from 'react'
 import { jwt_aut_token, server_url } from '../../../../config';
 import { loadStripe } from '@stripe/stripe-js'
 import axios from 'axios';
-
+import { generate } from 'generate-password'
+import Cookies from 'js-cookie';
 interface Props {
     charity: any;
     user: any;
@@ -92,21 +93,54 @@ export default function donate({ charity, slug, user, stripe_publishable_key }: 
             alert("Our payment system is borken! Try again after some time.");
             return;
         };
-        const item = {
-            currency: (charity.attributes.fund_type as string).toUpperCase(),
-            name: charity.attributes.name,
-            image: charity.attributes.image.data ? server_url + charity.attributes.image.data['attributes']['url'] : window.location.origin + "/assets/image-placeholder.jpg",
-            price: donation_amount,
-            user: user ? user['id'] : null,
-            comment: comment,
-            charity: charity.id,
-            charity_details: charity
-        }
 
         try {
+            var item: any = {
+                currency: (charity.attributes.fund_type as string).toUpperCase(),
+                name: charity.attributes.name,
+                image: charity.attributes.image.data ? server_url + charity.attributes.image.data['attributes']['url'] : window.location.origin + "/assets/image-placeholder.jpg",
+                price: donation_amount,
+                user: user ? user['id'] : null,
+                comment: comment,
+                charity: charity.id,
+                charity_details: charity
+            }
+
+            if (!user) {
+                let first_name = document.getElementById('first_name') as HTMLInputElement
+                let last_name = document.getElementById('last_name') as HTMLInputElement
+                let email = document.getElementById('email') as HTMLInputElement
+                let password = generate({ length: 12, numbers: true, uppercase: false, symbols: false });
+                item['new_user'] = {
+                    username: first_name.value + ' ' + last_name.value,
+                    email: email.value,
+                    password: password
+                }
+            }
             const checkoutSession = await axios.post(server_url + '/api/charity-donations/create-stripe-session', {
                 item: item
             });
+            if (item.new_user) {
+                fetch(server_url + '/api/auth/local', {
+                    mode: "cors",
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        identifier: item.new_user.email,
+                        password: item.new_user.password,
+                    })
+                }).then((res) => {
+                    res.json().then(res_json => {
+                        if (!res_json.error && res_json.jwt) {
+                            localStorage.setItem(jwt_aut_token, res_json.jwt);
+                            Cookies.set(jwt_aut_token, res_json.jwt);
+                        } else {
+                            setShowAlert(true);
+                            setAlertText(res_json.error.message)
+                        }
+                    })
+                })
+            }
             if (checkoutSession.data.error) {
                 setAlertText(checkoutSession.data.error);
                 setShowAlert(true);
@@ -128,7 +162,6 @@ export default function donate({ charity, slug, user, stripe_publishable_key }: 
     }
 
     const startCoinBaseCharge = async () => {
-        console.log('cmg');
 
         if (loading) return;
         if (donation_amount <= 0) {
@@ -139,7 +172,7 @@ export default function donate({ charity, slug, user, stripe_publishable_key }: 
             setLoading(true);
             console.log(charity.attributes);
 
-            const item = {
+            var item: any = {
                 currency: (charity.attributes.fund_type as string).toUpperCase(),
                 name: charity.attributes.name,
                 image: charity.attributes.image.data ? server_url + charity.attributes.image.data['attributes']['url'] : window.location.origin + "/assets/image-placeholder.jpg",
@@ -150,13 +183,41 @@ export default function donate({ charity, slug, user, stripe_publishable_key }: 
                 comment: comment,
                 charity_details: charity
             }
-            console.log(item);
-
+            if (!user) {
+                let first_name = document.getElementById('first_name') as HTMLInputElement
+                let last_name = document.getElementById('last_name') as HTMLInputElement
+                let email = document.getElementById('email') as HTMLInputElement
+                let password = generate({ length: 12, numbers: true, uppercase: false, symbols: false });
+                item['new_user'] = {
+                    username: first_name.value + ' ' + last_name.value,
+                    email: email.value,
+                    password: password
+                }
+            }
             const charge = await axios.post(server_url + '/api/charity-donations/create-charge', {
                 item: item
             });
-            console.log(charge);
-
+            if (item.new_user) {
+                fetch(server_url + '/api/auth/local', {
+                    mode: "cors",
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        identifier: item.new_user.email,
+                        password: item.new_user.password,
+                    })
+                }).then((res) => {
+                    res.json().then(res_json => {
+                        if (!res_json.error && res_json.jwt) {
+                            localStorage.setItem(jwt_aut_token, res_json.jwt);
+                            Cookies.set(jwt_aut_token, res_json.jwt);
+                        } else {
+                            setShowAlert(true);
+                            setAlertText(res_json.error.message)
+                        }
+                    })
+                })
+            }
             if (charge.data.error) {
                 console.error(charge.data.error);
                 alert("Our payment system is broken! Try again after some time.");
@@ -285,7 +346,7 @@ export default function donate({ charity, slug, user, stripe_publishable_key }: 
                             value={donation_amount}
                             className="appearance-none border-2 text-gray-800 py-2 block w-full pl-7 pr-12 text-2xl   border-gray-800 rounded-md"
                             onChange={e => {
-                                setDonationAmount(parseInt(e.target.value));
+                                setDonationAmount(parseFloat(e.target.value));
                             }}
                             placeholder={'0.0'}
                         />

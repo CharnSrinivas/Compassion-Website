@@ -4,6 +4,8 @@ import React, { useEffect, useState } from 'react'
 import { jwt_aut_token, server_url } from '../../../../config';
 import { loadStripe, } from '@stripe/stripe-js';
 import axios, { AxiosError } from 'axios';
+import { generate } from 'generate-password'
+import Cookies from 'js-cookie';
 
 interface Props {
     fundraiser: any;
@@ -26,22 +28,22 @@ export default function donate({ fundraiser, slug, user, stripe_publishable_key 
     const [alert_text, setAlertText] = useState('');
     const [open_popup, setOpenPopup] = useState(false);
     const [loading, setLoading] = useState(false);
-    console.log(stripe_publishable_key);
+
 
     const startCheckOut = async () => {
         if (loading) return;
         if (donation_amount <= 0) {
-            setAlertText('Donation amount should be atleast 50 cents ($0.5)'); setShowAlert(true);
+            setAlertText('Donation amount should be at-least 50 cents ($0.5)'); setShowAlert(true);
             return;
         }
         const stripe = await loadStripe(stripe_publishable_key);
         if (!stripe) {
-            alert("Our payment system is borken! Try again after some time.");
+            alert("Our payment system is broken! Try again after some time.");
             return;
         };
         try {
             setLoading(true);
-            const item = {
+            var item: any = {
                 currency: (fundraiser.attributes.fund_type as string).toUpperCase(),
                 name: fundraiser.attributes.title,
                 image: fundraiser.attributes.image.data ? server_url + fundraiser.attributes.image.data[0]['attributes']['url'] : window.location.origin + "/assets/image-placeholder.jpg",
@@ -51,12 +53,43 @@ export default function donate({ fundraiser, slug, user, stripe_publishable_key 
                 user: user ? user['id'] : null,
                 comment: comment,
                 fund_raise: fundraiser.id,
-                fundraiser_details: fundraiser
+                fundraiser_details: fundraiser,
             }
-
+            if (!user) {
+                let first_name = document.getElementById('first_name') as HTMLInputElement
+                let last_name = document.getElementById('last_name') as HTMLInputElement
+                let email = document.getElementById('email') as HTMLInputElement
+                let password = generate({ length: 12, numbers: true, uppercase: false, symbols: false });
+                item['new_user'] = {
+                    username: first_name.value + ' ' + last_name.value,
+                    email: email.value,
+                    password
+                }
+            }
             const checkoutSession = await axios.post(server_url + '/api/donations/create-stripe-session', {
                 item: item
             });
+            if (item.new_user) {
+                fetch(server_url + '/api/auth/local', {
+                    mode: "cors",
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        identifier: item.new_user.email,
+                        password: item.new_user.password,
+                    })
+                }).then((res) => {
+                    res.json().then(res_json => {
+                        if (!res_json.error && res_json.jwt) {
+                            localStorage.setItem(jwt_aut_token, res_json.jwt);
+                            Cookies.set(jwt_aut_token, res_json.jwt);
+                        } else {
+                            setShowAlert(true);
+                            setAlertText(res_json.error.message)
+                        }
+                    })
+                })
+            }
             if (checkoutSession.data.error) {
                 setAlertText(checkoutSession.data.error);
                 setShowAlert(true);
@@ -85,11 +118,11 @@ export default function donate({ fundraiser, slug, user, stripe_publishable_key 
         if (loading) return;
         if (donation_amount <= 0) {
             setAlertText('Donation amount should be at-least 50 cents ($0.5)'); setShowAlert(true);
-            return;
+            return
         }
         try {
             setLoading(true);
-            const item = {
+            var item: any = {
                 currency: (fundraiser.attributes.fund_type as string).toUpperCase(),
                 name: fundraiser.attributes.title,
                 image: fundraiser.attributes.image.data ? server_url + fundraiser.attributes.image.data[0]['attributes']['url'] : window.location.origin + "/assets/image-placeholder.jpg",
@@ -101,10 +134,41 @@ export default function donate({ fundraiser, slug, user, stripe_publishable_key 
                 fund_raise: fundraiser.id,
                 fundraiser_details: fundraiser
             }
-
+            if (!user) {
+                let first_name = document.getElementById('first_name') as HTMLInputElement
+                let last_name = document.getElementById('last_name') as HTMLInputElement
+                let email = document.getElementById('email') as HTMLInputElement
+                let password = generate({ length: 12, numbers: true, uppercase: false, symbols: false });
+                item['new_user'] = {
+                    username: first_name.value + ' ' + last_name.value,
+                    email: email.value,
+                    password: password
+                }
+            }
             const charge = await axios.post(server_url + '/api/donations/create-charge', {
                 item: item
             });
+            if (item.new_user) {
+                fetch(server_url + '/api/auth/local', {
+                    mode: "cors",
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        identifier: item.new_user.email,
+                        password: item.new_user.password,
+                    })
+                }).then((res) => {
+                    res.json().then(res_json => {
+                        if (!res_json.error && res_json.jwt) {
+                            localStorage.setItem(jwt_aut_token, res_json.jwt);
+                            Cookies.set(jwt_aut_token, res_json.jwt);
+                        } else {
+                            setShowAlert(true);
+                            setAlertText(res_json.error.message)
+                        }
+                    })
+                })
+            }
             if (charge.data.error) {
                 console.error(charge.data.error);
                 alert("Our payment system is borken! Try again after some time.");
@@ -159,15 +223,17 @@ export default function donate({ fundraiser, slug, user, stripe_publishable_key 
                     <p className="w-1/3 text-center text-white">This may take a few seconds, please don't close this page.</p>
                 </div>
             }
+            <style>@import url('https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/5.3.45/css/materialdesignicons.min.css')</style>
+
             <div className=" min-w-screen bg-slate-200 py-6 flex flex-col justify-center overflow-hidden sm:py-12">
-                {!user && <div
+                {/* {!user && <div
                     className="p-4 mb-4 self-center lg:w-[45%] text-sm text-green-700 bg-green-100 rounded-lg"
                     role="alert"
                 >
                     <span className="font-medium"> You are not registered.</span> Your donation will be anonymous in Compassion.
 
                 </div>
-                }
+                } */}
                 <div className="flex h-auto flex-col border p-8 px-10 lg:w-[45%] bg-white shadow-xl w-[95%]  mx-auto rounded-xl">
                     <div
                         style={{ transition: 'all 0.6s ease' }}
@@ -249,7 +315,7 @@ export default function donate({ fundraiser, slug, user, stripe_publishable_key 
                     <div className="w-full mx-auto mt-5">
                         <label
                             htmlFor="message"
-                            className="block mb-2 text-sm font-medium text-gray-900 "
+                            className="block mb-2 text-md font-medium text-gray-800 "
                         >
                             Word of support
                         </label>
@@ -264,7 +330,69 @@ export default function donate({ fundraiser, slug, user, stripe_publishable_key 
                             placeholder="Your message..."
                         />
                     </div>
-                    <p className='mb-8 text-gray-700 font-light mt-5'>We protect your donation with the Compassion Giving Guarantee</p>
+                    {!user &&
+                        <div className="w-full mx-auto mt-5">
+                            <label
+                                htmlFor="message"
+                                className="block mb-2 text-md font-medium text-gray-800 "
+                            >
+                                Donar Details
+                            </label>
+                            <div className="flex -mx-3">
+                                <div className="w-1/2 px-3 mb-5">
+                                    <label htmlFor="" className="text-xs font-semibold px-1">
+                                        First name
+                                    </label>
+                                    <div className="flex">
+                                        <div className="w-10 z-10 pl-1 text-center pointer-events-none flex items-center justify-center">
+                                            <i className="mdi mdi-account-outline text-gray-400 text-lg" />
+                                        </div>
+                                        <input
+                                            type="text"
+                                            id='first_name'
+                                            className="w-full -ml-10 pl-10 pr-3 py-2 rounded-lg border-2 border-gray-200 outline-none focus:border-indigo-500"
+                                            placeholder="John"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="w-1/2 px-3 mb-5">
+                                    <label htmlFor="" className="text-xs font-semibold px-1">
+                                        Last name
+                                    </label>
+                                    <div className="flex">
+                                        <div className="w-10 z-10 pl-1 text-center pointer-events-none flex items-center justify-center">
+                                            <i className="mdi mdi-account-outline text-gray-400 text-lg" />
+                                        </div>
+                                        <input
+                                            id='last_name'
+                                            type="text"
+                                            className="w-full -ml-10 pl-10 pr-3 py-2 rounded-lg border-2 border-gray-200 outline-none focus:border-indigo-500"
+                                            placeholder="Smith"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="flex -mx-3">
+                                <div className="w-full px-3 mb-5">
+                                    <label htmlFor="" className="text-xs font-semibold px-1">
+                                        Email
+                                    </label>
+                                    <div className="flex">
+                                        <div className="w-10 z-10 pl-1 text-center pointer-events-none flex items-center justify-center">
+                                            <i className="mdi mdi-email-outline text-gray-400 text-lg" />
+                                        </div>
+                                        <input
+                                            id='email'
+                                            type="email"
+                                            className="w-full -ml-10 pl-10 pr-3 py-2 rounded-lg border-2 border-gray-200 outline-none focus:border-indigo-500"
+                                            placeholder="johnsmith@example.com"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    <li className='mb-3 text-gray-700 font-light mt-2'>We protect your donation with the Compassion Giving Guarantee</li>
                     <div className='flex flex-wrap gap-8' >
                         <div onClick={startCheckOut} className='flex w-[13rem] flex-col items-center bg-white text-gray-600 px-4 py-4 rounded-lg my-5 shadow-2xl hover:scale-[1.02] transition-all cursor-pointer'   >
                             {/* <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg> */}
@@ -327,14 +455,20 @@ export default function donate({ fundraiser, slug, user, stripe_publishable_key 
 
                                 </div>
                                 <div className="bg-white mx-auto min-w-1xl flex w-[80%] lg:w-auto flex-col lg:max-h-[50rem] max-h-[30rem] overflow-y-scroll rounded-xl shadow-lg">
-                                    <a href={`/f/${slug}/donate/btc`} className="lg:px-12 cursor-pointer px-5 py-5 flex flex-row items-center gap-3">
-                                        <img src="/assets/btc.png" alt="bitcoin" className='w-10 h-10'/>
-                                        <p className='font-medium text-xl text-gray-600'>Bitcoin</p>
+                                    <a href={`/f/${slug}/donate/bitcoin`} className="lg:px-12 cursor-pointer px-5 py-5 flex flex-row items-center gap-3">
+                                        <img src="/assets/btc.png" alt="bitcoin" className='w-10 h-10' />
+                                        <div className='flex-col items-start'>
+                                            <p className='font-medium text-xl text-gray-600'>BTC</p>
+                                            <p className=' text-gray-600'>Bitcoin</p>
+                                        </div>
                                     </a>
-                                    <hr className='w-[95%] mx-auto'/>
-                                    <a  href={`/f/${slug}/donate/trx`} className="lg:px-12 cursor-pointer px-5 py-5 flex flex-row items-center gap-3">
-                                        <img src="/assets/trx.png" alt="troncoin" className='w-10 h-10'/>
-                                        <p className='font-medium text-xl text-gray-600'>Tron Coin</p>
+                                    <hr className='w-[95%] mx-auto' />
+                                    <a href={`/f/${slug}/donate/tron`} className="lg:px-12 cursor-pointer px-5 py-5 flex flex-row items-center gap-3">
+                                        <img src="/assets/trx.png" alt="troncoin" className='w-10 h-10' />
+                                        <div className='flex-col items-start'>
+                                            <p className='font-medium text-xl text-gray-600'>TRX</p>
+                                            <p className=' text-gray-600'>TronCoin</p>
+                                        </div>
                                     </a>
                                 </div>
                             </div>

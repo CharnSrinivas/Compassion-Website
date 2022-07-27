@@ -225,7 +225,7 @@ export default function UpiPayment({ charity, slug, user, strapi_publisable_key,
                             value={donation_amount}
                             className="appearance-none border-2 text-gray-800 py-2 block w-full pl-7 pr-12 text-2xl   border-gray-800 rounded-md"
                             onChange={e => {
-                                setDonationAmount(parseInt(e.target.value));
+                                setDonationAmount(parseFloat(e.target.value));
                             }}
                             placeholder={'0.0'}
                         />

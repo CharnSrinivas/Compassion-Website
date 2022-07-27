@@ -56,6 +56,18 @@ module.exports = createCoreController('api::donation.donation', ({ strapi }) => 
                 success_url: redirect_url + '/my-donations/fundraiser-donations',
                 cancel_url: redirect_url + '/api/cancel',
             });
+            if (!item.user && item.new_user) {
+                let new_user = await strapi.query("plugin::users-permissions.user").create(
+                    {
+                        data: {
+                            username: item.new_user.username,
+                            email: item.new_user.email,
+                            password: item.new_user.password
+                        }
+                    }
+                );
+                item.user = new_user.id;
+            }
             let charity_donation = await strapi.query("api::charity-donation.charity-donation").create({
                 data: {
                     payment_id: session.id,
@@ -107,7 +119,18 @@ module.exports = createCoreController('api::donation.donation', ({ strapi }) => 
                     currency: item.currency,
                 }, pricing_type: 'fixed_price',
             });
-  
+            if (!item.user && item.new_user) {
+                let new_user = await strapi.query("plugin::users-permissions.user").create(
+                    {
+                        data: {
+                            username: item.new_user.username,
+                            email: item.new_user.email,
+                            password: item.new_user.password
+                        }
+                    }
+                );
+                item.user = new_user.id;
+            }
             let charity_donation = await strapi.query("api::charity-donation.charity-donation").create({
                 data: {
                     payment_id: charge.id,

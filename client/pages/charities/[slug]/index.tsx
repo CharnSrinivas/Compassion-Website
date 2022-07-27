@@ -53,7 +53,7 @@ export default function fundraiser({ charity, user, slug, donations, donations_m
     }
     let _amount = window.prompt("enter the amount to donate ");
     if (!_amount) return;
-    let amount = parseInt(_amount);
+    let amount = parseFloat(_amount);
     if (isNaN(amount)) return;
     const token = localStorage.getItem(jwt_aut_token);
     axios.post(server_url + "/api/charity-donations", {
@@ -553,8 +553,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
   })).json();
 
 
-  const dp = parseInt(donations_page ? donations_page.toString() : '1');
-  const ds = parseInt(donations_size ? donations_size.toString() : '10');
+  const dp = parseFloat(donations_page ? donations_page.toString() : '1');
+  const ds = parseFloat(donations_size ? donations_size.toString() : '10');
 
   const donations_query = qs.stringify({
     filters: {

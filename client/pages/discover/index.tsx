@@ -28,7 +28,7 @@ export default function fundraisers({ fundraisers }: Props) {
                     </div>
                 </div>
                 <div className=' bg-primary bg-opacity-5 flex flex-col mx-auto py-5 items-center' style={{ minHeight: "60vh" }}>
-                    {fundraisers.length > 0 &&
+                    {fundraisers && fundraisers.length > 0 &&
                         <h1 className="sm:text-3xl text-2xl font-medium title-font mb-2  text-gray-900">
                             Top individual fundraisers
                         </h1>

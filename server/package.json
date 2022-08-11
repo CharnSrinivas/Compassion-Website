@@ -7,7 +7,9 @@
         "develop": "strapi develop",
         "start": "strapi start",
         "build": "strapi build",
-        "strapi": "strapi services:list"
+        "strapi": "strapi services:list",
+        "prod-build":"NODE_ENV=production strapi build",
+        "prod-start":"NODE_ENV=production  strapi start"
     },
     "dependencies": {
         "@strapi/plugin-i18n": "4.1.1",

@@ -1,4 +1,4 @@
-import type { NextPage } from 'next'
+import type { NextPage } from 'next';
 
 const tagLines = [
   'Donate in crypto: Global donations made possible with Compassion',
@@ -10,7 +10,6 @@ const tagLines = [
 ]
 
 const Home: NextPage = () => {
-
   return (
     <div >
       <section id='hero' className="text-gray-600 body-font min-h-screen w-full bg-center bg-cover relative" style={{

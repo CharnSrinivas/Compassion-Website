@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse, PageConfig } from "next";
-import { buffer } from 'micro'
 const server_url = 'http://127.0.0.1:1337';
 
 export const config:PageConfig = {

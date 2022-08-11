@@ -2,11 +2,17 @@ export default function Footer() {
     return (
         <footer id="footer" className="text-gray-600 body-font bg-gray-100">
             <div className="container px-5 py-10 mx-auto flex md:items-center lg:items-start md:flex-row md:flex-nowrap flex-wrap flex-col">
-                <div className="w-64 flex-shrink-0 md:mx-0 mx-auto text-center md:text-left">
+                <div className="w-64 flex flex-col items-center lg:items-start flex-shrink-0 md:mx-0 mx-auto text-center md:text-left">
                     <a className="flex title-font font-medium items-center md:justify-start justify-center text-gray-900">
                         <img src="/assets/logo.png" alt="logo" className="w-10 h-10 text-white " />
                         <span className="ml-3 text-xl">Compassion</span>
                     </a>
+                    <a href='/docs/disclaimer' className="text-gray-600 my-2 hover:text-gray-800" >Disclaimer</a>
+                    <a href='/docs/terms-and-conditions' className="text-gray-600 my-2 hover:text-gray-800" >Terms&Conditions</a>
+                    <a href='/docs/website-accessibility' className="text-gray-600 my-2 hover:text-gray-800" >Website accessibility</a>
+                    <a href='/docs/privacy-policy' className="text-gray-600 my-2 hover:text-gray-800" >Privacy Policy</a>
+                    <a href='/docs/refund-policy' className="text-gray-600 my-2 hover:text-gray-800" >Refund Policy</a>
+
                 </div>
                 <div className="flex-grow flex flex-wrap md:pl-20 -mb-10 md:mt-0 mt-10 md:text-left text-center">
                     <div className="lg:w-1/4 md:w-1/2 w-full px-4">
@@ -16,6 +22,9 @@ export default function Footer() {
                         <nav className="list-none mb-10">
                             <li title='start a  Charity' className='my-2'>
                                 <a href='/discover' className="text-gray-600 hover:text-gray-800" >Fundraiser</a>
+                            </li>
+                            <li title='start a  Charity' className='my-2'>
+                                <a href='/charities' className="text-gray-600 hover:text-gray-800" >Charities</a>
                             </li>
                         </nav>
                     </div>
@@ -61,7 +70,7 @@ export default function Footer() {
                             <li title='Team funding' className='my-2'>
                                 <a href='/info/team-funding' className="text-gray-600 hover:text-gray-800">Team funding</a>
                             </li>
-                            
+
                             <li title='The donate button' className='my-2'>
                                 <a href='/info/donate-button' className="text-gray-600 hover:text-gray-800">The donate button</a>
                             </li>

@@ -27,24 +27,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                 'raw-body': buf
             })
         })
-
-        // let event;
-        // try {
-        //     if (!sig) return;
-        //     event = stripe.webhooks.constructEvent(buf, sig ,endpointSecret);
-        // } catch (err) {
-        //     // ctx.res.status(400).send(`Webhook Error: ${err.message}`);
-        //     console.log('------------------ webhoook error -----------------')
-        //     console.error((err as any).message);
-        //     console.log('------------------ webhoook error -----------------')
-        //     return res.status(400).send(`Webhook Error: ${(err as any).message}`);
-        // }
-        // console.log('------------------ webhoook event -----------------')
-        // console.log(event);
-        // console.log('------------------ webhoook event -----------------')
-        console.log(checkout_res);
-
         res.status(checkout_res.status).send(checkout_res.body);
+
     }else{
         res.status(405);
         res.send("Method Not Allowed.")

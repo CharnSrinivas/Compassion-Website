@@ -343,6 +343,9 @@ export default function Navbar() {
                                         <li className="">
                                             <Link href={'/discover'}><a className="text-center block px-0 py-1  ml-2  hover:text-blue-500 mt-4 lg:mt-0">Fundraisers</a></Link>
                                         </li>
+                                        <li className="">
+                                            <Link href={'/charities'}><a className="text-center block px-0 py-1  ml-2  hover:text-blue-500 mt-4 lg:mt-0">Charities</a></Link>
+                                        </li>
                                     </ul>
                                 </div>
                             </div>

@@ -108,7 +108,7 @@ export default function register() {
   const dangerAlert = (text: string) => {
     return (
       <div
-        className="bg-red-100 rounded-lg py-2 px-3 mb-3 text-base text-red-500 inline-flex items-center w-full"
+        className="bg-red-100 rounded-lg py-2 px-3 mb-3 text-base text-red-500 inline-flex w-screen items-center"
         role="alert"
       >
         <svg
@@ -134,7 +134,7 @@ export default function register() {
   }
 
   return (
-    <div>
+    <>
       <style>
         {`.loader {
                 	border-top-color: #3498db;
@@ -162,14 +162,14 @@ export default function register() {
             `}
       </style>
       {loading &&
-        <div className="fixed top-0 left-0 right-0 bottom-0 w-full h-screen z-50 overflow-hidden bg-gray-700 opacity-75 flex flex-col items-center justify-center">
+        <div className="fixed top-0 left-0 right-0 bottom-0  h-screen z-50 overflow-hidden bg-gray-700 opacity-75 flex flex-col items-center justify-center">
           <div className="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4"></div>
           <h2 className="text-center text-white text-xl font-semibold">Loading...</h2>
           <p className="w-1/3 text-center text-white">This may take a few seconds, please don't close this page.</p>
         </div>
       }
 
-      <section className="text-gray-600 body-font relative">
+      <section className="w-screen h-screen  text-gray-600 body-font  relative">
         <div className="container px-5 py-24 mx-auto ">
           <div className="flex flex-col text-center w-full mb-12 ">
             <div
@@ -352,6 +352,6 @@ export default function register() {
           </div>
         </div>
       </section >
-    </div>
+    </>
   )
 }

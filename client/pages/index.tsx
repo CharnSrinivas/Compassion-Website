@@ -1,5 +1,5 @@
 import type { NextPage } from 'next';
-
+import Banner from '../components/Banner';
 const tagLines = [
   'Donate in crypto: Global donations made possible with Compassion',
   'Donate in crypto from around the world with compassion',
@@ -12,6 +12,7 @@ const tagLines = [
 const Home: NextPage = () => {
   return (
     <div >
+      <Banner/>
       <section id='hero' className="text-gray-600 body-font min-h-screen w-full bg-center bg-cover relative" style={{
         backgroundImage: "url('/assets/bg-2.jpg')"
       }}>

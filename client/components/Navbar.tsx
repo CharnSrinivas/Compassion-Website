@@ -120,15 +120,16 @@ export default function Navbar() {
     }
     return (
         <>
-            <nav id='navbar' className="flex items-center justify-between flex-wrap bg-white  lg:px-12 shadow border-solid border-t-2 border-blue-700 h-[5rem]">
-                <div className="flex justify-between lg:w-auto w-full lg:border-b-0 py-3 pl-3 pr-2 border-solid border-b-2 border-gray-300 pb-5 lg:pb-0">
+            <nav id='navbar' className="flex items-center justify-between  bg-white  lg:px-12 shadow border-solid border-t-2 border-blue-700 h-[5rem]">
+                <div className="flex justify-between xl:w-auto w-full lg:border-b-0 py-3 pl-3 pr-2 border-solid border-b-2 border-gray-300 pb-5 lg:pb-0">
                     <div className="flex items-center flex-shrink-0 text-gray-800 h-fit">
-                        <a href='/' className="flex flex-col title-font  items-center justify-center text-gray-900 " >
-                            <img src="/assets/logo.png" alt="logo" width={30} />
-                            <span className="ml-3 text-[1.2rem] text-primary font-medium">Compassion</span>
+                        <a href='/' className="flex flex-col title-font  items-center justify-center gap-1 text-gray-900 " >
+                            <img src="/assets/logo.png" alt="logo" width={45} />
+                            {/* <span className="ml-3 text-[1.2rem] text-primary font-medium">Compassion</span> */}
+                            <img src="/assets/logo_txt.png" alt="logo" width={85} />
                         </a>
                     </div>
-                    <div className="flex items-center lg:hidden ">
+                    <div className="flex items-center xl:hidden ">
                         <button
                             onClick={() => {
                                 setOpenMenu(!open_menu)
@@ -166,7 +167,7 @@ export default function Navbar() {
                     </div>
                 </div>
 
-                <div className={`menu flex-wrap w-full hidden lg:flex lg:items-center lg:w-auto px-2 lg:px-3 `} style={{ transition: 'all 0.5s ease ' }}>
+                <div className={`menu flex-wrap w-full hidden xl:flex lg:items-center lg:w-auto px-2 lg:px-3 `} style={{ transition: 'all 0.5s ease ' }}>
                     <div className="text-md  text-grey-700 lg:flex lg:items-baseline">
                         <a className="block mt-4 lg:inline-block lg:mt-0 group relative dropdown hover:text-gray-900 cursor-pointer tracking-wide mr-3">
                             <a className='px-4 py-2  ml-2  hover:text-blue-500 mt-4 lg:mt-0'>For Individuals</a>
@@ -327,8 +328,7 @@ export default function Navbar() {
                     </div>
                 </div>
 
-
-                <div className={`z-40 h-screen  ${open_menu ? 'grid' : 'hidden'}  place-items-center top-[5rem] absolute w-screen mx-auto rounded border`}>
+                <div className={`z-40 h-screen w-screen ${open_menu ? 'grid' : 'hidden'}  place-items-center top-[5rem] absolute w-screen mx-auto rounded border`}>
                     <div className="w-full h-full bg-white px-3 py-5 my-dropdown">
                         {!is_auth &&
                             <div style={{ transition: "all ease 0.6s" }} className="transition hover:bg-grey-50 ">

@@ -8,22 +8,51 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  client-build:
 
     runs-on: self-hosted
-
-    strategy:
-      matrix:
-        node-version: [16.x]
+    
+    defaults:
+       run:
+         working-directory: ./client/
+    #strategy:
+      #matrix:
+        #node-version: [16.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
     steps:
     - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: npm ci
-    - run: npm run build --if-present
-    - run: npm test
+    #- name: Use Node.js ${{ matrix.node-version }}
+    #  uses: actions/setup-node@v3
+    #  with:
+    #    node-version: ${{ matrix.node-version }}
+    #    cache: 'npm'
+    - run: pwd
+    #- run: cd client
+    - run: npm cache clean -f
+    - run: cat package.json
+    - run: npm i
+    - run: pwd
+    - run: cat package.json
+    - run: pwd
+    - run: NODE_ENV=production npm run build
+  server-build:
+    runs-on: self-hosted
+    defaults:
+       run:
+         working-directory: ./server/
+    steps:
+    - uses: actions/checkout@v3
+    #- name: Use Node.js ${{ matrix.node-version }}
+    #  uses: actions/setup-node@v3
+    #  with:
+    #    node-version: ${{ matrix.node-version }}
+    #    cache: 'npm'
+    - run: pwd
+    #- run: cd client
+    - run: npm cache clean -f
+    - run: cat package.json
+    - run: npm i
+    - run: pwd
+    - run: cat package.json
+    - run: pwd
+    - run: NODE_ENV=production npm run build

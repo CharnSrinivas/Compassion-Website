@@ -98,8 +98,10 @@ export default function ({ fundraiser, donations, donations_meta, slug }: Props)
     //   router.push('/register')
     // }
     let documents = (await documents_res.json()).data[0];
-    if (!documents) return;
+    console.log(documents);
+    
     setWithDrawLoading(false);
+    if (!documents) return;
     setDocuments(documents.attributes)
 
   }
@@ -148,6 +150,8 @@ export default function ({ fundraiser, donations, donations_meta, slug }: Props)
       })
       user_doc = await user_doc_res.json();
     }
+    console.log(user_doc);
+    
     const drivingLicenseData = new FormData();
     drivingLicenseData.append('files', driving_license?.files[0])
     drivingLicenseData.append('refId', user_doc.data[0].id)
@@ -189,6 +193,10 @@ export default function ({ fundraiser, donations, donations_meta, slug }: Props)
       onUploadProgress: (progressEvent) => {
         let progress = (progressEvent.loaded / progressEvent.total) * 100;
         setUploadingDocsText('Uploading Selfie ' + Math.floor(progress) + "%")
+        if(progress >= 100){
+          setUploadingDocsText("Uploading finished.")
+          setUploadingDocs(false);
+        }
       },
     });
 

@@ -28,13 +28,13 @@ jobs:
     #    cache: 'npm'
     - run: pwd
     #- run: cd client
-    - run: npm cache clean -f
     - run: cat package.json
     - run: npm i
     - run: pwd
     - run: cat package.json
     - run: pwd
     - run: NODE_ENV=production npm run build
+    - run: pm2 reload client
   server-build:
     runs-on: self-hosted
     defaults:
@@ -49,10 +49,11 @@ jobs:
     #    cache: 'npm'
     - run: pwd
     #- run: cd client
-    - run: npm cache clean -f
+
     - run: cat package.json
     - run: npm i
     - run: pwd
     - run: cat package.json
     - run: pwd
     - run: NODE_ENV=production npm run build
+    - run: pm2 reload server

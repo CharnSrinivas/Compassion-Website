@@ -41,11 +41,11 @@ export default function () {
                         <p className="ml-3 font-medium h-auto  text-white ">
                             <span className="md:hidden text-[0.8rem]">
                                 <b> Faster Capital </b>
-                                has accepted compassion crypto in it's portfolio
+                                has accepted compassion crypto in it's portfolio.
                             </span>
                             <span className="hidden md:inline ">
                                 Big news!
-                                <b> Faster Capital</b> has accepted compassion crypto in it's portfolio
+                                <b> Faster Capital</b> has accepted compassion crypto in it's portfolio.
                             </span>
                         </p>
                     </div>

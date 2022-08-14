@@ -33,8 +33,8 @@ jobs:
     - run: pwd
     - run: cat package.json
     - run: pwd
-    - run: NODE_ENV=production npm run build
-    - run: pm2 reload client
+    - run: npm run prod-build
+    - run: sudo pm2 reload client
   server-build:
     runs-on: self-hosted
     defaults:
@@ -55,5 +55,5 @@ jobs:
     - run: pwd
     - run: cat package.json
     - run: pwd
-    - run: NODE_ENV=production npm run build
-    - run: pm2 reload server
+    - run: npm run prod-build
+    - run: sudo pm2 reload server

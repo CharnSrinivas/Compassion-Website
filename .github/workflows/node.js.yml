@@ -30,11 +30,9 @@ jobs:
     #- run: cd client
     - run: cat package.json
     - run: npm i
-    - run: pwd
     - run: cat package.json
-    - run: pwd
     - run: npm run prod-build
-    - run: sudo pm2 reload client
+    - run: pm2 reload client
   server-build:
     runs-on: self-hosted
     defaults:
@@ -52,8 +50,5 @@ jobs:
 
     - run: cat package.json
     - run: npm i
-    - run: pwd
-    - run: cat package.json
-    - run: pwd
     - run: npm run prod-build
-    - run: sudo pm2 reload server
+    - run: pm2 reload server

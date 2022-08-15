@@ -3,7 +3,7 @@ if (process.env.NODE_ENV === 'production') {
 
   module.exports = ({ env }) => ({
     connection: {
-      client: 'mysql',
+      client: 'postgres',
       connection: {
         // host: "217.21.95.154",
         "host": '153.92.211.54',

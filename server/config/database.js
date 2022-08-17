@@ -6,7 +6,7 @@ if (process.env.NODE_ENV === 'production') {
       client: 'postgres',
       connection: {
         // host: "217.21.95.154",
-        "host": '153.92.211.54',
+        "host": '0.0.0.0',
         // port: 3306,
         port: 5432,
         // database: "u962252833_compassion_db",

@@ -31,7 +31,7 @@ export default function () {
                                 <b>“User,”</b> <b>“You,”</b> and “your” denotes the person who is accessing the website for taking or availing of any service from us. User shall include the company, partnership, sole trader, person, body corporate, or association taking services of this Website.
                             </p>
                             <p>
-                                ” <b>Website” </b>shall mean and include compassion.toptechonly.com and any successor Website of the Company or any of its affiliates.
+                                ” <b>Website” </b>shall mean and include compassioncrypto.io and any successor Website of the Company or any of its affiliates.
                             </p>
                             <p>
                                 <b>“Campaign” </b>is a fundraising project created using our Service, either to collect money for personal reasons or on behalf of an Organization.
@@ -395,7 +395,7 @@ export default function () {
                                 You understand and agree that we (A) do not guarantee the accuracy, completeness, validity, or timeliness of information listed by us or any third parties, and (B) shall not be responsible for any materials posted by us or any third party. You shall use your judgment, caution, and common sense in evaluating any prospective methods or offers and any information provided by us or any third party.
                             </p>
                             <p>
-                                Further, we shall not be liable for direct, indirect consequential, or any other form of loss or damage that may be suffered by a user using the compassiondonation.com Website, including loss of data or information or any kind of financial or physical loss or damage.
+                                Further, we shall not be liable for direct, indirect consequential, or any other form of loss or damage that may be suffered by a user using the compassioncrypto.io Website, including loss of data or information or any kind of financial or physical loss or damage.
                             </p>
                             <p>
                                 In no event shall Compassion Crypto Pty Ltd, nor its Owner, directors, employees, partners, agents, suppliers, or affiliates, be accountable for any indirect, incidental, special, eventful, or exemplary costs, including without limitation, loss of proceeds, figures, usage, goodwill, or other intangible losses, consequential from (i) your use or access of or failure to access or use the service; (ii) any conduct or content of any third party on the service; (iii) any content attained from the service; and (iv) unlawful access, use or alteration of your transmissions or content, whether or not based on guarantee, agreement, domestic wrong (including carelessness) or any other lawful concept, whether or not we've been aware of the possibility of such damage, and even if a cure set forth herein is originated to have futile of its important purpose.

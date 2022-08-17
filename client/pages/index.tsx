@@ -8,11 +8,27 @@ const tagLines = [
   'Help is just a fundraiser away!',
   'Compassion is the greatest form of love humans have to offer'
 ]
+const icon = <svg
+  className="StartToday_start-today-arrow-desktop__zyt4_ hide-for-small-only"
+  width={32}
+  height={32}
+  viewBox="0 0 32 32"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <path
+    fillRule="evenodd"
+    clipRule="evenodd"
+    d="M15.869 8.9218C15.6224 9.16845 15.6224 9.56834 15.869 9.81499L21.4224 15.3684H9.06592C8.70968 15.3684 8.4209 15.6512 8.4209 16C8.4209 16.3488 8.70968 16.6316 9.06592 16.6316H21.4224L15.869 22.185C15.6224 22.4316 15.6224 22.8315 15.869 23.0781C16.1157 23.3248 16.5156 23.3248 16.7622 23.0781L23.3938 16.4466C23.5094 16.331 23.5708 16.1817 23.5781 16.0303C23.5786 16.0202 23.5788 16.0101 23.5788 16C23.5788 15.9898 23.5785 15.9795 23.5781 15.9693C23.5708 15.8181 23.5093 15.6689 23.3938 15.5534L16.7622 8.9218C16.5156 8.67515 16.1157 8.67515 15.869 8.9218Z"
+    fill="#333333"
+  />
+  <circle cx={16} cy={16} r="15.5" stroke="#333333" />
+</svg>
 
 const Home: NextPage = () => {
   return (
     <div >
-      <Banner/>
+      <Banner />
       <section id='hero' className="text-gray-600 body-font min-h-screen w-full bg-center bg-cover relative" style={{
         backgroundImage: "url('/assets/bg-2.jpg')"
       }}>
@@ -87,17 +103,20 @@ const Home: NextPage = () => {
             <h2 className='my-3 font-semibold text-4xl text-gray-600'> Fundraise for...</h2>
           </div>
           <div className='lg:flex-row  flex items-center gap-3 flex-col'>
-            <a href='/create/fundraiser/details' className='bg-gray-100 rounded-lg p-5 ml-7 hover:shadow-lg' >
-              <img loading='lazy' src="/assets/start-yourself.png" alt="start yourself" />
+            <a href='/create/fundraiser/details' className='bg-gray-100 rounded-lg px-12 py-6 ml-7 hover:shadow-lg flex flex-col items-center' >
+              <img loading='lazy' className='w-[10rem]' src="/assets/start-yourself.png" alt="start yourself" />
               <h2 className='my-3 font-medium text-center'>Yourself</h2>
+              {icon}
             </a>
-            <a href='/create/fundraiser/details' className='bg-gray-100 rounded-lg p-5 ml-7 hover:shadow-lg' >
-              <img loading='lazy' src="/assets/start-friends-family.png" alt="start with friends and family" />
+            <a href='/create/fundraiser/details' className='bg-gray-100 rounded-lg px-12 py-6 ml-7 hover:shadow-lg flex flex-col items-center' >
+              <img loading='lazy' className='w-[10rem]' src="/assets/start-friends-family.png" alt="start with friends and family" />
               <h2 className='my-3 font-medium text-center'>Friends & Family</h2>
+              {icon}
             </a>
-            <a href='/create/fundraiser/details' className='bg-gray-100 rounded-lg p-5 ml-7 hover:shadow-lg' >
-              <img loading='lazy' src="/assets/start-charity.png" alt="start charity" />
-              <h2 className='my-3 font-medium text-center'>Yourself</h2>
+            <a href='/create/fundraiser/details' className='bg-gray-100 rounded-lg px-12 py-6 ml-7 hover:shadow-lg flex flex-col items-center' >
+              <img loading='lazy' className='w-[10rem]' src="/assets/start-charity.png" alt="start charity" />
+              <h2 className='my-3 font-medium text-center'>Charity</h2>
+              {icon}
             </a>
           </div>
         </div>

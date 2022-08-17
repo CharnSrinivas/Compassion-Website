@@ -51,7 +51,7 @@ export default function Disclaimer() {
                     <span className="c1">Compassion Crypto Pty Ltd.</span>
                     <span className="c4">
                         &nbsp;Will gather, use, and maintain your Personal Information on
-                        compassion.toptechonly.com. It will also explain your legal rights with
+                        compassioncrypto.io It will also explain your legal rights with
                         respect to that information.
                     </span>
                 </li>
@@ -768,7 +768,7 @@ export default function Disclaimer() {
                         </td>
                         <td className="c13" colSpan={1} rowSpan={1}>
                             <p className="c2">
-                                <span className="c4">&nbsp;compassion.toptechonly.com</span>
+                                <span className="c4">&nbsp;compassioncrypto.io</span>
                             </p>
                         </td>
                     </tr>
@@ -1331,7 +1331,7 @@ export default function Disclaimer() {
                 <span className="c4">
                     If anytime you want to unsubscribe from receiving future emails, you can
                     email us by using the contact form at our website
-                    compassion.toptechonly.com, and we'll immediately remove you from ALL
+                    compassioncrypto.io, and we'll immediately remove you from ALL
                     communication.
                 </span>
             </p>

@@ -112,24 +112,20 @@ export default function edit({ donation, admin_token, id }: Props) {
                             <h2 className="text-sm title-font text-gray-500 tracking-widest">
                                 DONATION
                             </h2>
-                            <a href={`/admin/dashboard/`} className='flex w-fit items-center text-gray-600 px-3 justify-evenly  border-2 border-gray-300 rounded-md my-4'
-                            >
+                            <a href={`/admin/dashboard/`} className='flex w-fit items-center text-gray-600 px-3 justify-evenly  border-2 border-gray-300 rounded-md my-4'>
                                 <svg
                                     className='w-5 h-5 '
                                     viewBox="0 0 48 48"
                                     fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                >
+                                    xmlns="http://www.w3.org/2000/svg" >
                                     <rect width={48} height={48} fill="white" fillOpacity="0.01" />
                                     <path
                                         d="M31 36L19 24L31 12"
                                         stroke="black"
                                         strokeWidth={4}
                                         strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                    />
+                                        strokeLinejoin="round" />
                                 </svg>
-
                                 <p>Back</p>
                             </a>
                             <h1 className="text-gray-900 text-3xl title-font font-medium mb-4">
@@ -143,9 +139,7 @@ export default function edit({ donation, admin_token, id }: Props) {
                                     Documents
                                 </a>
                             </div>
-
                             <div>
-
                                 <div className="flex border-t border-gray-200 py-2">
                                     <span className="text-gray-500">From</span>
                                     {donation['user'] &&
@@ -158,16 +152,13 @@ export default function edit({ donation, admin_token, id }: Props) {
                                     }{!donation['user'] &&
                                         <span className="ml-auto text-gray-900">Anonymous</span>
                                     }
-
                                 </div>
-
                                 <div className="flex border-t border-gray-200 py-2">
                                     <span className="text-gray-500">To</span>
                                     <a href={`/admin/dashboard/fundraiser/${donation['fund_raise']['slug']}`} className="ml-auto text-blue-800">
                                         {donation['fund_raise']['title']}
                                     </a>
                                 </div>
-
                                 <div className="flex border-t border-gray-200 py-2">
                                     <span className="text-gray-500">Amount Donated</span>
                                     <span className="ml-auto text-gray-900" style={{ lineBreak: "anywhere" }} >{donation['amount']} <strong className='uppercase text-gray-600'>{donation['fund_raise']['fund_type']}</strong></span>

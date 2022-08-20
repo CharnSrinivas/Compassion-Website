@@ -60,7 +60,7 @@ export default function addImage({ is_auth, token, charity }: Props) {
           <strong>Note:ㅤ</strong> Please upload your charity brand image wisely. You can't change image again.
         </p>
       </div>
-      <div className="border p-8 px-10 lg:w-[45%] w-[95%] bg-white shadow-xl md:min-w-1/2  mx-auto rounded-xl">
+      <div className="mt-[5rem] mb-10 border p-8 px-10 lg:w-[45%] w-[95%] bg-white shadow-xl md:min-w-1/2  mx-auto rounded-xl">
         {!uploading &&
           <>
             <div className="w-full py-3">

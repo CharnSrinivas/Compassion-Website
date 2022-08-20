@@ -73,7 +73,7 @@ export default function edit({ donation, admin_token, slug }: Props) {
     const [approving, setApprving] = useState(false);
     const toggleApproval = async () => {
         setApprving(true);
-        let res = await axios.put(server_url + '/content-manager/collection-types/api::fund-raise.fund-raise/' + donation.id, {
+        let res = await axios.put(server_url + '/content-manager/collection-types/api::charity-donation.charity-donation/' + donation.id, {
             approved: !donation.approved
         }, {
             headers: {

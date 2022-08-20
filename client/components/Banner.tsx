@@ -17,7 +17,7 @@ export default function () {
     }, [])
 
     return (
-        <div className={"bg-indigo-600 w-[100%] z-50 " + display} id='banner'>
+        <div className={"bg-indigo-600 bg-opacity-40 w-[100%] backdrop-blur-lg  z-50 " + display} id='banner'>
             <div className="max-w-[100%] mx-auto py-3 px-3 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between flex-wrap">
                     <div className="w-0 flex-1 flex items-center">

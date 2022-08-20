@@ -1,5 +1,6 @@
 import type { NextPage } from 'next';
 import Banner from '../components/Banner';
+
 const tagLines = [
   'Donate in crypto: Global donations made possible with Compassion',
   'Donate in crypto from around the world with compassion',
@@ -8,6 +9,7 @@ const tagLines = [
   'Help is just a fundraiser away!',
   'Compassion is the greatest form of love humans have to offer'
 ]
+
 const icon = <svg
   className="StartToday_start-today-arrow-desktop__zyt4_ hide-for-small-only"
   width={32}

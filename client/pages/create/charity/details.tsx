@@ -79,9 +79,9 @@ export default function fundraiser({ is_auth, user, token }: Props) {
   });
 
   return (
-    <div className="h-screen min-w-screen bg-slate-200 py-6 flex flex-col justify-center overflow-hidden sm:py-12 relative">
+    <div className="min-w-screen bg-slate-200 py-6 flex flex-col justify-center overflow-hidden sm:py-12 relative">
       {!submitting &&
-        <div className="border p-8 px-10 lg:w-[45%] w-[95%] bg-white shadow-xl md:min-w-1/2  mx-auto rounded-xl">
+        <div className="border p-8 px-10 lg:w-[45%] w-[95%] bg-white shadow-xl md:min-w-1/2  mx-auto rounded-xl h-auto">
           <div className="w-full py-3">
             <div className="flex">
               <div className="w-1/3">

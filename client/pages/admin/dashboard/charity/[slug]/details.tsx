@@ -123,7 +123,7 @@ export default function edit({ charity, admin_token, slug }: Props) {
                             </div>
                             <div className='flex flex-wrap gap-4 mt-8'>
 
-                                {!charity.success &&
+                                {!charity.approved &&
                                     <button onClick={toggleApproval} disabled={charity.success} className={`flex gap-1  items-center text-white  bg-green-500 hover:bg-green-600   border-0 py-2 px-4 focus:outline-none rounded`}>
                                         Approve
                                         {approving &&
@@ -167,7 +167,7 @@ export default function edit({ charity, admin_token, slug }: Props) {
                                     </button>
                                 }
 
-                                {charity.success &&
+                                {charity.approved &&
                                     <button onClick={toggleApproval} className={`flex gap-1  items-center text-white  bg-red-400 hover:bg-red-500' : 'bg-green-500 hover:bg-red-600 border-0 py-2 px-4 focus:outline-none rounded`}>
                                         Disapprove
                                         {approving &&

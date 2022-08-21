@@ -1,6 +1,8 @@
 ToDo:
   ---- after approval
   1) ask for bank details
+  2) update option on fundraiser
+  3) Improve user experience
 
 Did:
   ---- Added legal documents
@@ -23,5 +25,4 @@ Did:
 strapi credentials:
     email: admin@gmail.com;
     pass: Admin@123
-
   faster captial has accepted compassion crypto in it's portfolio

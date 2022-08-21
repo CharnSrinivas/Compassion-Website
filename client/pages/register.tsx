@@ -108,7 +108,7 @@ export default function register() {
   const dangerAlert = (text: string) => {
     return (
       <div
-        className="bg-red-100 rounded-lg py-2 px-3 mb-3 text-base text-red-500 inline-flex w-screen items-center"
+        className="bg-red-100 w-full rounded-lg py-2 px-3 mb-3 text-base text-red-500 inline-flex items-center"
         role="alert"
       >
         <svg

@@ -14,7 +14,7 @@ export default function addImage({ is_auth, token, fundraiser }: Props) {
   const router = useRouter();
   const [uploading, setUploading] = useState(false);
   const [uploadPercentage, setUploadPercentage] = useState(0);
-
+  const [upload_text, setUploadText] = useState('');
   const changeImage = (e: ChangeEvent<HTMLInputElement>) => {
     const display_img = document.getElementById('img-display') as HTMLImageElement;
     const file = e.target.files;
@@ -29,29 +29,43 @@ export default function addImage({ is_auth, token, fundraiser }: Props) {
   const uploadImage = async () => {
     const img = (document.getElementById('img-upload') as HTMLInputElement).files;
     if (!img) return;
-    const formData = new FormData();
-    formData.append('files', img[0])
-    formData.append('refId', fundraiser.id)
-    formData.append('ref', fundraiser_ref)
-    formData.append('field', 'image');
-    setUploading(true);
-    let res = await axios.post(server_url + "/api/upload", formData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      onUploadProgress: (progressEvent) => {
-        let progress = (progressEvent.loaded / progressEvent.total) * 100;
-        setUploadPercentage(progress)
-        if (progress >= 100) {
-          setUploading(false)
-          setUploadPercentage(100);
-        }
-      },
-    })
-    setUploading(false);
-    if (res.status <= 201) {
+
+    try {
+      for (let i = 0; i < img.length; i++) {
+        // const element = img[i];
+        const formData = new FormData();
+        formData.append('files', img[i])
+        formData.append('refId', fundraiser.id)
+        formData.append('ref', fundraiser_ref)
+        formData.append('field', 'image');
+        setUploading(true);
+        setUploadText(`Uploading image (${i + 1}/${img.length})`)
+        let res = await axios.post(server_url + "/api/upload", formData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          onUploadProgress: (progressEvent) => {
+            let progress = (progressEvent.loaded / progressEvent.total) * 100;
+            setUploadPercentage(progress)
+            if (progress >= 100) {
+              setUploading(false)
+              setUploadPercentage(100);
+            }
+          },
+        })
+      }
+      setUploading(false);
       router.push(`/create/fundraiser/${fundraiser.attributes.slug}/story`); return;
+
+    } catch (err) {
+      setUploading(false);
+      // if (res.status <= 201) {
+      //   router.push(`/create/fundraiser/${fundraiser.attributes.slug}/story`); return;
+      // }
+      console.error(err);
+      
     }
+
     // await fetch(server_url + "/api/upload/", {
     //   method: "POST", body: formData, headers: {
     //     Authorization: `Bearer ${token}`
@@ -61,6 +75,7 @@ export default function addImage({ is_auth, token, fundraiser }: Props) {
     //     router.push(`/create/${fundraiser.attributes.slug}/story`)
     //   }
     // })
+
   }
   return (
     <>
@@ -136,9 +151,18 @@ export default function addImage({ is_auth, token, fundraiser }: Props) {
                 </div>
               </div>
             </div>
+            {
+              <div className='w-full py-2 bg-[#e7f0f7]'>
+                <p className='w-fit mx-auto text-center text-gray-900'>
+                  <strong>Note: </strong>You can add multiple images about your fundraiser
+                </p>
+              </div>
+
+            }
             <div className="font-medium m-auto text-4xl text-green-900 my-7 text-center">
-              Upload image here
+              Upload images here
             </div>
+
             <img
               id='img-display'
               className="lg:w-full w-full lg:h-[32rem] h-[28rem] object-cover object-center rounded-lg"
@@ -146,7 +170,7 @@ export default function addImage({ is_auth, token, fundraiser }: Props) {
               src="/assets/image-placeholder.jpg" alt=""
             />
             <label >
-              <input type="file" onChange={(e) => { changeImage(e) }} id='img-upload' accept='image/*' className="text-sm cursor-pointer w-36 hidden" />
+              <input type="file" onChange={(e) => { changeImage(e) }} multiple id='img-upload' accept='image/*' className="text-sm cursor-pointer w-36 hidden" />
               <div className="mt-7 bg-transparent border-green-500 border-2 cursor-pointer hover:border-green-600 active:bg-green-500 active:text-white text-green-500  text-[1rem] font-medium px-14 py-3 rounded w-full text-center">
                 Upload
               </div>
@@ -158,7 +182,7 @@ export default function addImage({ is_auth, token, fundraiser }: Props) {
         }
         {uploading &&
           <>
-            <p className='font-medium text-green-900 text-xl'>Uploading...</p>
+            <p className='font-medium text-green-900 text-xl'>{upload_text}</p>
             <div
               className="bg-gray-200 rounded h-6 mt-5"
               role="progressbar"
@@ -166,7 +190,6 @@ export default function addImage({ is_auth, token, fundraiser }: Props) {
               <div
                 className="bg-green-400 rounded h-6 text-center text-white text-sm transition"
                 style={{ width: `${uploadPercentage}%`, transition: "width 2s" }}
-                x-text={`${uploadPercentage}%`}
               >
               </div>
             </div>

@@ -136,7 +136,8 @@ export default function register() {
   return (
     <>
       <style>
-        {`.loader {
+        {`
+        .loader {
                 	border-top-color: #3498db;
                 	-webkit-animation: spinner 1.5s linear infinite;
                 	animation: spinner 1.5s linear infinite;

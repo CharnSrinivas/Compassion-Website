@@ -260,6 +260,12 @@
       "type": "boolean",
       "default": false,
       "required": false
+    },
+    "fundraiser_updates": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::fundraiser-update.fundraiser-update",
+      "mappedBy": "fundraiser"
     }
   }
 }

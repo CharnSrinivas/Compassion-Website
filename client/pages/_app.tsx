@@ -6,11 +6,11 @@ import { GetServerSidePropsContext, GetServerSidePropsResult } from 'next'
 function MyApp({ Component, pageProps }: AppProps) {
 
   return (<>
-    <body >
-      <Navbar />
-      <Component  {...pageProps} />
-      <Footer />
-    </body>
+    <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+
+    <Navbar />
+    <Component  {...pageProps} />
+    <Footer />
   </>)
 }
 
@@ -19,7 +19,7 @@ export default MyApp;
 export async function getServerSideProps(context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<Record<string, unknown>>> {
   return {
     props: {
-      approved:true
+      approved: true
     }
   }
 }

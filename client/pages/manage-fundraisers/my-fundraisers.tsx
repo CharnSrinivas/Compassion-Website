@@ -41,7 +41,7 @@ export default function manage({ fundraisers }: Props) {
                                 fundraisers.map((fundraiser, index) => {
                                     return (
                                         <a key={index} href={`/manage-fundraisers/${fundraiser.attributes.slug}/overview`} className="xl:w-1/4 md:w-1/2 p-4 cursor-pointer " >
-                                            <div className="bg-gray-50 drop-shadow-md rounded-lg p-0  min-h-[26rem]  hover:shadow-lg">
+                                            <div className="bg-gray-50 drop-shadow-md rounded-lg p-0  min-h-[20rem]  hover:shadow-lg">
                                                 {fundraiser.attributes.image && fundraiser.attributes.image.data &&
                                                     <img
                                                         className="h-40 rounded w-full object-cover object-center mb-6"
@@ -62,14 +62,7 @@ export default function manage({ fundraisers }: Props) {
                                                     <h2 className="text-lg text-gray-900 font-medium title-font mb-4">
                                                         {fundraiser.attributes.title}
                                                     </h2>
-                                                    {fundraiser.attributes.description &&
-                                                        <p className="leading-relaxed text-base">
-                                                            {(fundraiser.attributes.description as string).slice(0, 60) + "..."}
-                                                        </p>
-                                                    }
-                                                    {!fundraiser.attributes.description &&
-                                                        <p className="leading-relaxed text-base">No story.  </p>
-                                                    }
+                                                   
                                                     <div className='text-gray-900 font-medium mt-4'>
                                                         <strong>{fundraiser.attributes.fund_raised.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} raised</strong> out of {fundraiser.attributes.fund_target.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                                                     </div>

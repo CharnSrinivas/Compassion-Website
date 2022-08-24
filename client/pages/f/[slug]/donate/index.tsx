@@ -302,7 +302,7 @@ export default function donate({ fundraiser, slug, user, stripe_publishable_key 
                             name="price"
                             id="price"
                             value={donation_amount}
-                            className="appearance-none text-gray-800 py-2 focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-7 pr-12 text-2xl  border-gray-800 rounded-md"
+                            className={`appearance-none text-gray-800 py-2 focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-7 pr-12 text-2xl   border-gray-800 rounded-md`}
                             onChange={e => {
                                 setDonationAmount(parseInt(e.target.value));
                             }}

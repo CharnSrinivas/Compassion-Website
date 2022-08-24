@@ -8,6 +8,10 @@ import { jwt_aut_token, server_url } from '../../../config';
 import { isMobile } from '../../../utils';
 import { Carousel } from 'react-responsive-carousel'
 import 'react-responsive-carousel/lib/styles/carousel.min.css'
+import 'react-quill/dist/quill.bubble.css'
+import dynamic from 'next/dynamic'
+import Script from 'next/script'
+const ReactQuill = dynamic(() => import('react-quill'), { ssr: false })
 interface Props {
   fundraiser: any; user: any | null;
   donations: any[], donations_meta: any; slug: string, dp: number, ds: number
@@ -17,9 +21,14 @@ export default function fundraiser({ fundraiser, user, slug, donations, donation
   const [url, setUrl] = useState('');
   const [pathname, setPathName] = useState('');
   const [open_share, setOpenShare] = useState(false);
-  const [read_more, setReadMore] = useState(false);
   const router = useRouter();
+  const [openTab, setOpenTab] = React.useState(1);
+  const [loading_updates, setLoadingUpdates] = useState(false);
+  const [updates, setUpdates] = useState<any[]>([])
   const [show_embedded, setShowEmbedded] = useState(false);
+  const [total_updates, setTotalUpdates] = useState(0);
+  const updatesPageSize = 2;
+  const [updates_page, setUpdatesPage] = useState(1)
   useEffect(() => {
     setUrl(window.location.origin);
     setPathName(window.location.pathname)
@@ -43,26 +52,28 @@ export default function fundraiser({ fundraiser, user, slug, donations, donation
       window.open(`https://telegram.me/share/url?url=${url}/f/${slug}`, "_blank")
     }
   }
-  const donate = () => {
-    if (!user) {
-      router.push("/register")
-    }
-    let _amount = window.prompt("enter the amount to donate ")
-    if (!_amount) return;
-    let amount = parseInt(_amount);
-    if (isNaN(amount)) return;
-    const token = localStorage.getItem(jwt_aut_token);
-    axios.post(server_url + "/api/donations", {
-      data: {
-        amount,
-        user: user.id,
-        fund_raise: fundraiser.id, comment: "test comment"
+  const loadUpdates = async (page: number) => {
+    setLoadingUpdates(true);
+    const query = qs.stringify({
+      filters: {
+        fundraiser: { id: { $eq: fundraiser.id } }
       },
-    }, {
-      headers: {
-        Authorization: `Bearer ${token}`,
+      populate: ['image'],
+      sort: ['createdAt:desc'],
+      pagination: {
+        pageSize: updatesPageSize,
+        page: page
       }
     })
+    let res = await axios.get(server_url + `/api/fundraiser-updates?${query}`);
+    let _updates = updates;
+    _updates.push(...(res.data.data as []))
+    setUpdates(_updates)
+    setTotalUpdates(res.data.meta.pagination.total)
+    if (res.status <= 201) {
+      // router.push(`/manage-fundraisers/my-fundraisers`);
+    }
+    setLoadingUpdates(false);
   }
   return (
     <>
@@ -77,28 +88,26 @@ export default function fundraiser({ fundraiser, user, slug, donations, donation
       </Head>
       <div>
         <section className="text-gray-600 body-font">
-          <div className="container w-auto gap-5 px-3 py-20 mx-auto">
-            <div className="lg:w-4/5 lg:justify-center mx-auto flex flex-wrap ">
-              <div className='lg:w-1/2'>
+          <div className="container w-auto gap-2 px-3 py-20 mx-auto">
+            <div className="lg:w-[85%] lg:justify-center mx-auto flex flex-wrap ">
+              <div className='lg:w-[65%]'>
                 {fundraiser.attributes.image && fundraiser.attributes.image.data &&
 
                   <Carousel
                     // showIndicators={false}
-                    showArrows
+                    showArrows={true}
                     showStatus
-                    showIndicators
                     showThumbs={false}
                     swipeable={true}
                     useKeyboardArrows
                     axis='horizontal'
-                  // autoPlay={true}
+                    autoPlay={true}
                   >
                     {fundraiser.attributes.image.data.map((image: any) => {
-
                       return (
                         <div className='w-fit'>
                           <img
-                            className="lg:w-full w-full lg:h-[32rem] h-[28rem] object-cover object-center rounded-lg"
+                            className="lg:w-full w-full lg:h-[32rem] h-[28rem] object-scale-down object-center rounded-lg"
                             src={server_url + image['attributes']['url']} />
                         </div>
                       )
@@ -141,53 +150,104 @@ export default function fundraiser({ fundraiser, user, slug, donations, donation
                   <h2 className='text-gray-700 my-3'>Individual fundraiser.  </h2>
                 }
                 <hr className='my-3' />
-                <div className="leading-relaxed " style={{ transition: 'ease-in 0.6s all' }} >
-                  {fundraiser.attributes.description && fundraiser.attributes.description.length > 500 &&
-                    <>
-                      {!read_more && ((fundraiser.attributes.description as string).slice(0, 500) + "...").split(`\n`).map((txt, index) => {
-                        if (!txt) { return null }
-                        return (<>
-                          <p key={index + Math.random()} className="leading-relaxed text-base">
-                            {txt}
-                          </p>
-                          <div key={index + Math.random()}>&nbsp;</div>
-                        </>)
-                      })}
-                      {read_more &&
-                        (fundraiser.attributes.description as string).split(`\n`).map((txt, index) => {
-                          if (!txt) { return null }
-                          return (<>
-                            <p key={index + Math.random()} className="leading-relaxed text-base">
-                              {txt}
-                            </p>
-                            <div key={index + Math.random()}>&nbsp;</div>
-                          </>)
-                        })
-                      }
-                    </>
-                  }
-                  {fundraiser.attributes.description && fundraiser.attributes.description.length <= 500 &&
-                    (<>
-                      <p className="leading-relaxed text-base">
-                        {fundraiser.attributes.description}
-                      </p>
-                      <div >&nbsp;</div>
-                    </>)
-                  }
-                  {fundraiser.attributes.description && <>
+                {/* TABS */}
+                <>
+                  <div className="flex flex-wrap">
+                    <div className="w-full">
+                      <ul
+                        className="flex mb-0 list-none flex-wrap pt-3 pb-4 flex-row"
+                        role="tablist"
+                      >
+                        <li className="-mb-px mr-2 last:mr-0 flex-auto text-center">
+                          <a
+                            className={
+                              "text-sm font-bold uppercase cursor-pointer px-5 py-3 rounded block leading-normal " +
+                              (openTab === 1
+                                ? "text-[#32a95c] border-b-2 border-b-[#32a95c]"
+                                : "text-gray-600 bg-white")
+                            }
+                            onClick={e => {
+                              e.preventDefault();
+                              setOpenTab(1);
+                            }}
+                          >
+                            About
+                          </a>
+                        </li>
+                        <li className="-mb-px mr-2 last:mr-0 flex-auto text-center">
+                          <a
+                            className={
+                              "text-sm font-bold uppercase cursor-pointer px-5 py-3 rounded block leading-normal " +
+                              (openTab === 2
+                                ? "text-[#32a95c] border-b-2 border-b-[#32a95c]"
+                                : "text-gray-600 bg-white")
+                            }
+                            onClick={e => {
+                              e.preventDefault();
+                              setOpenTab(2);
+                              loadUpdates(updates_page)
+                            }}
+                            role="tablist"
+                          >
+                            Updates
+                          </a>
+                        </li>
+                      </ul>
+                      <div className="relative flex flex-col min-w-0 break-words w-full mb-6 rounded">
+                        <div className="px-2 py-5 flex-auto">
+                          <div className="tab-content tab-space">
+                            <div className={(openTab === 1 ? "block" : "hidden") + " "}>
+                              <ReactQuill className='' theme="bubble" readOnly={true} value={fundraiser.attributes.description} />
+                            </div>
+                            {/* Updates */}
+                            <div className={(openTab === 2 ? "block" : "hidden") + " flex flex-col items-center"}>
+                              {updates.map((update, index) => {
+                                return (
+                                  <div className="relative flex flex-col min-w-0 break-words bg-white w-full mb-4 shadow-md border-2 rounded-lg" key={index}>
+                                    <div className='ml-auto bg-[#0fd3cd] font-medium px-3 mb-2 py-2 text-white'>#{total_updates - index}</div>
+                                    {update.attributes.image.data &&
+                                      <img 
+                                      className="lg:w-full w-full  lg:max-h-[28rem] max-h-[25rem] object-scale-down object-center rounded-sm"
+                                      src={server_url +update.attributes.image.data.attributes.url}
+                                      />
+                                      }
+                                    <ReactQuill className='p-6' theme="bubble" readOnly={true} value={update.attributes.description} />
+                                  </div>)
+                              })}
+                              <button type='button' onClick={() => {
+                                setUpdatesPage(updates_page + 1)
+                                loadUpdates(updates_page + 1);
+                              }} className={`flex flex-row items-center gap-3 text-green-400 ${(updatesPageSize * updates_page >= total_updates) ? "hidden" : ''}`}>
+                                <p>
+                                  Read More updates
+                                </p>
+                                <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} fill={'currentColor'}>
+                                  <path d="m18.707 12.707-1.414-1.414L13 15.586V6h-2v9.586l-4.293-4.293-1.414 1.414L12 19.414z" />
+                                </svg>
 
-                    {!read_more &&
-                      <p onClick={() => { setReadMore(true) }} className=' text-blue-900 underline cursor-pointer'>Read more</p>
-                    }
-                    {read_more &&
-                      <p onClick={() => { setReadMore(false) }} className=' text-blue-900 underline cursor-pointer' >Read less</p>
-                    }
-                  </>
-                  }
-                </div>
+                              </button>
+                            </div>
+
+                            {loading_updates &&
+                              <div className='mx-auto flex flex-col items-center'>
+                                <svg className="inline mr-2 w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-green-500" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                  <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor" />
+                                  <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill" />
+                                </svg>
+                                <p className='mt-2 text-sm'>Loading updates....</p>
+                              </div>
+                            }
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </>
                 <hr className='my-3' />
               </div>
-              <div className="lg:w-1/3 w-1/2   lg:pl-10 m-auto sm:mt-5   lg:mt-0 relative">
+
+              {/* Right box */}
+              <div className="lg:w-1/3 w-[85%]   lg:pl-10 m-auto sm:mt-5   lg:mt-0 relative">
                 <div className='rounded-lg drop-shadow-xl bg-white max-w-sm flex-col p-5 justify-start relative'>
                   <div className="flex items-baseline gap-1">
                     <div className='flex items-baseline gap-1'>
@@ -238,12 +298,12 @@ export default function fundraiser({ fundraiser, user, slug, donations, donation
                   </button>
                 </div>
               </div>
+
             </div>
           </div>
+          {/* Donations */}
           <div className='w-[90%] lg:w-[80%] mx-auto '>
-
             <h2 className='subtitle-font font-medium text-xl sm:text-2xl my-3 text-gray-900' > Donations</h2>
-
             <div className="flex flex-col mt-6">
               <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                 <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
@@ -328,8 +388,8 @@ export default function fundraiser({ fundraiser, user, slug, donations, donation
                       </table>}
                     {donations.length <= 0 &&
                       <div className=' bg-white py-7'>
-                        <h3 className='mt-15 font-medium text-xl text-gray-900 my-3 text-center'>Your fundraiser has no donations yet :(</h3>
-                        <h5 className='mt-15  text-gray-700 my-3 text-center' >Your donations will show up here. Start by sharing your fundriaiser with friends and family </h5>
+                        <h3 className='mt-15 font-medium text-xl text-gray-900 my-3 text-center'>Your fundraiser has no donations yet</h3>
+                        <h5 className='mt-15  text-gray-700 my-3 text-center' >Your donations will show up here. Start by sharing your fundraiser with friends and family </h5>
                       </div>
                     }
 
@@ -423,6 +483,7 @@ export default function fundraiser({ fundraiser, user, slug, donations, donation
                 </div>
               </div>
             </div>
+
           </div>
 
         </section >
@@ -566,7 +627,9 @@ export default function fundraiser({ fundraiser, user, slug, donations, donation
             </div>
           </>
         }
+
       </div >
+      <Script src="https://unpkg.com/boxicons@2.1.2/dist/boxicons.js"></Script>
     </>
   )
 }

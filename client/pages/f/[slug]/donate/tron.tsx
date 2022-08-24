@@ -359,7 +359,7 @@ export default function donate({ fundraiser, slug, user, strapi_publisable_key, 
                             Upload your payment screenshot
                         </p>
                         <input
-                            // onChange={(e) => { changeImage(e) }} 
+                            accept='image/*'
                             id="img-upload" type="file" className="hidden" />
                     </label>
 

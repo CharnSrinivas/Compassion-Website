@@ -26,6 +26,7 @@ export default function ({ fundraiser, donations, donations_meta, slug }: Props)
   const router = useRouter();
 
 
+
   useEffect(() => {
     setUrl(window.location.origin);
   }, [])
@@ -98,12 +99,12 @@ export default function ({ fundraiser, donations, donations_meta, slug }: Props)
     //   router.push('/register')
     // }
     let documents = (await documents_res.json()).data[0];
-    console.log(documents);
-    
+
     setWithDrawLoading(false);
     if (!documents) return;
     setDocuments(documents.attributes)
-
+    documents = documents.attributes;
+    console.log(fundraiser.attributes.user.data.attributes.approved);
   }
   const uploadDocuments = async () => {
     setWithDrawLoading(true);
@@ -151,7 +152,7 @@ export default function ({ fundraiser, donations, donations_meta, slug }: Props)
       user_doc = await user_doc_res.json();
     }
     console.log(user_doc);
-    
+
     const drivingLicenseData = new FormData();
     drivingLicenseData.append('files', driving_license?.files[0])
     drivingLicenseData.append('refId', user_doc.data[0].id)
@@ -193,7 +194,7 @@ export default function ({ fundraiser, donations, donations_meta, slug }: Props)
       onUploadProgress: (progressEvent) => {
         let progress = (progressEvent.loaded / progressEvent.total) * 100;
         setUploadingDocsText('Uploading Selfie ' + Math.floor(progress) + "%")
-        if(progress >= 100){
+        if (progress >= 100) {
           setUploadingDocsText("Uploading finished.")
           setUploadingDocs(false);
         }
@@ -213,6 +214,7 @@ export default function ({ fundraiser, donations, donations_meta, slug }: Props)
             <div className="h-1 w-20 bg-primary rounded " />
           </div>
           <div className='flex-col'>
+
             <div className='flex justify-between flex-wrap'>
               <div >
                 {fundraiser.attributes.image && fundraiser.attributes.image.data &&
@@ -238,7 +240,7 @@ export default function ({ fundraiser, donations, donations_meta, slug }: Props)
                     setOpenShare(true);
                     document.documentElement.scrollTop = 0
                   }}
-                    className='rounded-full bg-[#32a95c] p-3  stroke-white'
+                    className='rounded-full hover:scale-105 transition-all  bg-[#32a95c] p-3  stroke-white'
                   >
 
                     <svg
@@ -254,10 +256,10 @@ export default function ({ fundraiser, donations, donations_meta, slug }: Props)
                     </svg>
 
                   </button>
-                  <p className='mt-1 text-center text-gray-600'>share</p>
+                  <p className='mt-1 text-sm text-center text-gray-600'>share</p>
                 </div>
                 <div className='flex-col items-center'>
-                  <div onClick={onWithDrawClick} className='rounded-full text-[#32a95c] mx-auto p-3  border-[#32a95c] border-2 w-fit cursor-pointer'>
+                  <div onClick={onWithDrawClick} className='rounded-full hover:scale-105 transition-all  text-[#32a95c] mx-auto p-3  border-[#32a95c] border-2 w-fit cursor-pointer'>
                     <svg
                       width={24}
                       height={24}
@@ -274,62 +276,39 @@ export default function ({ fundraiser, donations, donations_meta, slug }: Props)
                       <line x1={12} y1={15} x2={12} y2={3} />
                     </svg>
                   </div>
-                  <p className='mt-1 text-center text-gray-600'>Withdraw</p>
+                  <p className='mt-1 text-sm text-center text-gray-600'>Withdraw</p>
                 </div>
                 <div className='flex-col items-center '>
-                  <a href={`/manage-fundraisers/${fundraiser.attributes.slug}/edit/details`} >
-                    <div className='rounded-full stroke-[#32a95c]  p-3  border-[#32a95c]   border-2 '>
+                  <a href={`/manage-fundraisers/${fundraiser.attributes.slug}/add-update`} className={'w-fit mx-auto'} target={'_blank'} >
+                    <div className='rounded-full w-fit mx-auto hover:scale-105 transition-all  stroke-[#32a95c] text-[#32a95c]  p-3  border-[#32a95c]   border-2 '>
                       <svg
+                        viewBox="0 0 24 24"
                         fill="none"
-
+                        stroke="currentColor"
+                        strokeWidth={2}
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        strokeWidth={25}
                         className="w-6 h-6"
-                        viewBox="0 0 512.019 512.019"
                       >
-                        <g>
-                          <g>
-                            <polygon points="350.316,80.852 0,431.166 0,512.009 80.841,512.009 431.157,161.693 		" />
-                          </g>
-                        </g>
-                        <g>
-                          <g>
-                            <rect
-                              x="406.542"
-                              y="10.214"
-                              transform="matrix(0.7071 -0.7071 0.7071 0.7071 82.5924 334.1501)"
-                              width="76.218"
-                              height="114.327"
-                            />
-                          </g>
-                        </g>
+                        <polyline points="23 4 23 10 17 10" />
+                        <polyline points="1 20 1 14 7 14" />
+                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
                       </svg>
-                    </div>
-                  </a>
-                  <p className='mt-1 text-center text-gray-600'>Edit</p>
-                </div>
-                <div className='flex-col items-center '>
-                  <a href={`/f/${fundraiser.attributes.slug}`} target={'_blank'} >
-                    <div className='rounded-full stroke-[#32a95c]  p-3  border-[#32a95c]   border-2 '>
-                      <svg
-                        fill="none"
-                        className="w-6 h-6"
-                        strokeWidth={2}
-                        viewBox="0 0 48 48"
-                      >
-                        <path d="M24,40C12.33,40,2.8,28.13.16,24.49a0.83,0.83,0,0,1,0-1C2.8,19.87,12.33,8,24,8S45.19,19.86,47.84,23.5a0.84,0.84,0,0,1,0,1h0C45.19,28.14,35.66,40,24,40ZM1,24c2.67,3.65,11.87,15,23,15S44.3,27.64,47,24C44.31,20.36,35.1,9,24,9S3.71,20.35,1,24Z" />
-                        <path d="M24,31a7,7,0,1,1,7-7A7,7,0,0,1,24,31Zm0-13a6,6,0,1,0,6,6A6,6,0,0,0,24,18Z" />
-                      </svg>
+
 
                     </div>
                   </a>
-                  <p className='mt-1 text-center text-gray-600'>View</p>
+                  <p className='mt-1 text-sm text-center text-gray-600'>Add Updates</p>
                 </div>
 
               </div>
             </div>
+            <div className='flex flex-row items-center gap-3 mb-3'>
+              <a href={`/f/${fundraiser.attributes.slug}`} target={'_blank'} className='text-[#32a95c] underline'>View</a>
+              <a href={`/manage-fundraisers/${fundraiser.attributes.slug}/edit/details`} target={'_blank'} className='text-[#32a95c] underline'>Edit</a>
+            </div>
             <hr />
+
             <div className='my-10 '>
               <div className="grid grid-cols-1 gap-5 mt-6 sm:grid-cols-2 lg:grid-cols-4 ">
                 <div className="p-4 transition-shadow border rounded-lg shadow-sm hover:shadow-lg bg-white">
@@ -445,6 +424,8 @@ export default function ({ fundraiser, donations, donations_meta, slug }: Props)
 
               </div>
             </div>
+
+
             <hr />
             <h2 className='subtitle-font font-medium text-xl sm:text-2xl my-3 text-gray-900' > Donations</h2>
             <div className="flex flex-col mt-6">
@@ -576,6 +557,7 @@ export default function ({ fundraiser, donations, donations_meta, slug }: Props)
                 </div>
               </div>
             </div>
+
           </div>
           <>
             <div className="flex flex-col p-8 bg-white shadow-md hover:shodow-lg rounded-2xl mt-8">
@@ -613,6 +595,7 @@ export default function ({ fundraiser, donations, donations_meta, slug }: Props)
           </>
         </div>
       </section>
+
       {
         loading &&
         <div className="w-12 h-12 rounded-full animate-spin
@@ -783,6 +766,7 @@ export default function ({ fundraiser, donations, donations_meta, slug }: Props)
               </svg>
 
             </div>
+
             <div className="bg-white mx-auto min-w-1xl flex w-[80%] lg:w-auto flex-col lg:max-h-[50rem] max-h-[30rem] overflow-y-scroll rounded-xl shadow-lg">
               <div className="lg:px-12 px-5 py-5 flex flex-col ">
                 {with_draw_loading &&
@@ -807,21 +791,20 @@ export default function ({ fundraiser, donations, donations_meta, slug }: Props)
                   <p className='text-center font-semibold text-gray-600'>{upload_docs_text}</p>
                 }
                 {!with_draw_loading && !uploading_docs &&
-                  documents && documents.driving_license.data && documents.selfie.data && documents.passport.data && !fundraiser.attributes.user.data.approved &&
+                  documents && documents.driving_license.data && documents.selfie.data && documents.passport.data && !fundraiser.attributes.user.data.attributes.approved &&
                   <div className='flex-col items-center w-[100%]'>
                     <h1 className='mx-auto text-2xl font-medium text-center text-gray-600'>We received your documents</h1>
                     <h1 className='mx-auto text-xxl text-center  text-gray-600'>Wait for admin approval</h1>
                   </div>
                 }
                 {!with_draw_loading && !uploading_docs &&
-                  documents && documents.driving_license.data && documents.selfie.data && documents.passport.data && fundraiser.attributes.user.data.approved &&
+                  documents && documents.driving_license.data && documents.selfie.data && documents.passport.data && fundraiser.attributes.user.data.attributes.approved &&
                   <div className='flex-col items-center w-[100%]'>
-                    <h1 className='mx-auto text-2xl font-medium text-center text-gray-600'>We received your documents</h1>
-                    <h1 className='mx-auto text-xxl text-center  text-gray-600'>Wait for admin approval</h1>
+                    <h1 className='mx-auto text-2xl font-medium text-center text-gray-600'>You are approved </h1>
                   </div>
                 }
                 {!with_draw_loading && !uploading_docs &&
-                  (!documents || !documents.driving_license.data || !documents.selfie.data || !documents.passport.data) && !fundraiser.attributes.user.data.approved &&
+                  (!documents || !documents.driving_license.data || !documents.selfie.data || !documents.passport.data) && !fundraiser.attributes.user.data.attributes.approved &&
                   <div className='flex flex-col mt-5 items-start gap-4' >
                     <h1 className=''>Your account has'nt verified yet.Upload the following documents for verification</h1>
                     <div>

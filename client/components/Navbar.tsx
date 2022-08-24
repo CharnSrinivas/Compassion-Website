@@ -41,6 +41,8 @@ export default function Navbar() {
         setOpenMenu(false)
         init();
         (document.querySelectorAll('body') as any)[0].style.overflow = 'scroll';
+        console.log(document.querySelectorAll('body') as any);
+        
     }, []);
     const singOut = () => {
         let sure = confirm("Are you sure?");
@@ -56,8 +58,8 @@ export default function Navbar() {
         const accordionHeader = document.querySelectorAll(".accordion-header");
         document.querySelector('.my-dropdown')?.querySelectorAll('a').forEach(link => {
             link.onclick = () => {
-                setOpenMenu(false);
                 (document.querySelectorAll('body') as any)[0].style.overflow = 'scroll';
+                setOpenMenu(false);
             }
         })
         accordionHeader.forEach((header) => {

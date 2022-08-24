@@ -1,8 +1,8 @@
 ToDo:
-  ---- after approval
-  1) ask for bank details
-  2) update option on fundraiser
+  1) ---- after approval
+    -ask for bank details
   3) Improve user experience
+  4) Fb and gmail authentication
 
 Did:
   ---- Added legal documents
@@ -11,6 +11,7 @@ Did:
   1) driving license
   2) passport
   3) selfie
+  ---- update option on fundraiser
   ---- remove fund-withdrawal info in fundraiser creation
   ---- remove approval for fundraiser and user registration
   ---- coinbase integration
@@ -23,6 +24,5 @@ Did:
   ---- multiple photos for fundraiser
 
 strapi credentials:
-    email: admin@gmail.com;
+    email: admin@gmail.com
     pass: Admin@123
-  faster captial has accepted compassion crypto in it's portfolio

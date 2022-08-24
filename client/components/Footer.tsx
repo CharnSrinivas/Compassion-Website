@@ -82,14 +82,20 @@ export default function Footer() {
                 <div className="container mx-auto py-4 px-5 flex flex-wrap flex-col sm:flex-row">
                     <p className="text-gray-500 text-sm text-center sm:text-left">
                         © 2020 Compassion
-                        {/* <a
-                href="https://twitter.com/knyttneve"
-                rel="noopener noreferrer"
-                className="text-gray-600 ml-1"
-                target="_blank"
-              >
-                @knyttneve
-              </a> */}
+                        <div className="flex flex-row items-center">
+
+                        <p>
+                            Mail Us at 
+                        </p>
+                        <a
+                            href="mailto:info@compassioncrypto.io"
+                            rel="noopener noreferrer"
+                            className="text-blue-600 ml-1"
+                            target="_blank"
+                        >
+                            info@compassioncrypto.io
+                        </a>
+                        </div>
                     </p>
                     <span className="inline-flex sm:ml-auto sm:mt-0 mt-2 justify-center sm:justify-start">
                         <a className="text-gray-500">

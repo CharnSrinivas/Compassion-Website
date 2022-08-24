@@ -331,7 +331,7 @@ export default function fundraiser({ is_individual: _is_individual, is_auth, use
                   setIsIndividual(true);
                   setOpenPopUp(false);
                   setSelectedCharity(null);
-                }} className='border-2 border-gray-600 border-opacity-40 p-3 rounded-lg flex flex-col w-full md:w-1/2' htmlFor="an-individual">
+                }} className='border-2 border-gray-600 border-opacity-40 p-3 rounded-lg flex flex-row items-center w-full md:w-1/2' htmlFor="an-individual">
                   <input type="radio" id='an-individual' defaultChecked={is_individual} checked={is_individual} />
                   <h3 className='my-1 text-gray-700 font-medium '>An Individual</h3>
                   <p className='my-1 text-gray-600 text-sm'>I am solo organizer</p>
@@ -339,7 +339,7 @@ export default function fundraiser({ is_individual: _is_individual, is_auth, use
                 <label onClick={() => {
                   setIsIndividual(false);
                   setOpenPopUp(true);
-                }} className='border-2 border-gray-600 border-opacity-40 p-3 rounded-lg flex flex-col w-full md:w-1/2' htmlFor="an-charity">
+                }} className='border-2 border-gray-600 border-opacity-40 p-3 rounded-lg flex flex-row items-center w-full md:w-1/2' htmlFor="an-charity">
                   <input type="radio" id='an-charity' checked={!is_individual} defaultChecked={is_individual} />
                   <h3 className='my-1 text-gray-700 font-medium '>An Charity</h3>
                   <p className='my-1 text-gray-600 text-sm'>Fundraiser for a charity</p>

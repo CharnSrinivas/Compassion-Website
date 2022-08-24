@@ -103,6 +103,13 @@
       "relation": "oneToOne",
       "target": "api::user-document.user-document",
       "mappedBy": "user"
+    },
+    "profile": {
+      "allowedTypes": [
+        "images"
+      ],
+      "type": "media",
+      "multiple": false
     }
   }
 }

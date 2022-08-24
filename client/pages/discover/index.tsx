@@ -37,9 +37,10 @@ export default function fundraisers({ fundraisers }: Props) {
                         <div className="flex flex-wrap w-full ">
                             {fundraisers && fundraisers.length > 0 &&
                                 fundraisers.map((item, index) => {
+                                    
                                     return (
                                         <a key={index} href={`/f/${item.attributes.slug}`} className="xl:w-1/4 md:w-1/2 p-4 cursor-pointer" >
-                                            <div className="bg-gray-50 drop-shadow-md p-6 rounded-lg min-h-[28rem] hover:shadow-lg">
+                                            <div className="bg-gray-50 drop-shadow-md  rounded-lg min-h-[18rem] hover:shadow-lg">
 
                                                 {item.attributes.image && item.attributes.image.data &&
                                                     <img
@@ -54,21 +55,14 @@ export default function fundraisers({ fundraisers }: Props) {
                                                         alt={item.attributes.name}
                                                     />
                                                 }
-                                                <div className='p-6'>
+                                                <div className='p-3'>
+                                                    <p className='text-xs'>by {item.attributes.user.data.attributes.username}</p>
                                                     <h3 className="tracking-widest text-indigo-500 text-xs font-medium title-font">
                                                         {item.attributes.tag}
                                                     </h3>
                                                     <h2 className="text-lg text-gray-900 font-medium title-font mb-4">
                                                         {item.attributes.title}
-                                                    </h2>
-                                                    {item.attributes.description &&
-                                                        <p className="leading-relaxed text-base">
-                                                            {(item.attributes.description as string).slice(0, 60) + "..."}
-                                                        </p>
-                                                    }
-                                                    {!item.attributes.description &&
-                                                        <p className="leading-relaxed text-base">No story.  </p>
-                                                    }
+                                                    </h2>   
                                                     <div className='text-gray-900 font-medium mt-4'>
                                                         <strong>{item.attributes.fund_raised.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} raised</strong> out of {item.attributes.fund_target.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                                                     </div>

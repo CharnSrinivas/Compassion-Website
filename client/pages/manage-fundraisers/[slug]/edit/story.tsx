@@ -7,7 +7,6 @@ import axios from 'axios';
 import 'react-quill/dist/quill.snow.css'
 
 import dynamic from 'next/dynamic'
-import { loadGetInitialProps } from 'next/dist/shared/lib/utils';
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false })
 
 interface Props {

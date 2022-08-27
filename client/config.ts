@@ -1,7 +1,7 @@
 export const server_url =
 // "https://toptechonly.com/_api"
  process.env['NODE_ENV'] === "production" ?
-  "http://compassioncrypto.io/_api" : "http://0.0.0.0:1337"
+  "https://compassioncrypto.io/_api" : "http://0.0.0.0:1337"
 // "http://192.168.42.240:1337";
 
 export const jwt_aut_token = 'jwt-auth-token';

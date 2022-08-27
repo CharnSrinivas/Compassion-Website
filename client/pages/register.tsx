@@ -170,7 +170,7 @@ export default function register() {
         </div>
       }
 
-      <section className="w-screen h-screen  text-gray-600 body-font  relative">
+      <section className="w-screen text-gray-600 body-font  relative">
         <div className="container px-5 py-24 mx-auto ">
           <div className="flex flex-col text-center w-full mb-12 ">
             <div

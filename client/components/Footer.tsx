@@ -79,13 +79,14 @@ export default function Footer() {
                 </div>
             </div>
             <div className="bg-gray-200">
-                <div className="container mx-auto py-4 px-5 flex flex-wrap flex-col sm:flex-row">
+                <div className="container mx-auto py-4 px-5 flex  lg:flex-row flex-col items-center gap-2 ">
                     <p className="text-gray-500 text-sm text-center sm:text-left">
                         © 2020 Compassion
-                        <div className="flex flex-row items-center">
+                    </p>
+                    <div className="flex flex-row items-center">
 
                         <p>
-                            Mail Us at 
+                            Mail Us at
                         </p>
                         <a
                             href="mailto:info@compassioncrypto.io"
@@ -95,8 +96,7 @@ export default function Footer() {
                         >
                             info@compassioncrypto.io
                         </a>
-                        </div>
-                    </p>
+                    </div>
                     <span className="inline-flex sm:ml-auto sm:mt-0 mt-2 justify-center sm:justify-start">
                         <a className="text-gray-500">
                             <svg

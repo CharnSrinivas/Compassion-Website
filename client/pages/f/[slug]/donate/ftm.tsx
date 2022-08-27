@@ -27,7 +27,7 @@ export default function donate({ fundraiser, slug, user, strapi_publisable_key, 
     const [uploadPercentage, setUploadPercentage] = useState(0);
     const [donation_in_usd, setDonationInUSD] = useState(0);
     const [donation_in_coin, setDonationInCoin] = useState(0);
-    const btc_address = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+    const ftm_address = '0x8859d7c74Ba80764A4c0c336471A41D2aA7cB870'
     const router = useRouter();
     const coin_price = (crypto_data.data.market_data.current_price.usd);
     const currency_rate = parseFloat(currency_data.rates[(fundraiser.attributes.fund_type as string).toUpperCase()] ? currency_data.rates[(fundraiser.attributes.fund_type as string).toUpperCase()] : '-1');
@@ -96,7 +96,7 @@ export default function donate({ fundraiser, slug, user, strapi_publisable_key, 
                     comment,
                     amount: donation_amount,
                     fund_raise: fundraiser['id'],
-                    type: 'btc',
+                    type: 'ftm',
                     user: user ? user : new_user
                 }
             });
@@ -220,7 +220,7 @@ export default function donate({ fundraiser, slug, user, strapi_publisable_key, 
                         <h2 className='lg:text-xl'>Total</h2>
                         <div className='flex flex-col items-end '>
                             <div className='flex flex-row items-center gap-2'>
-                                <img className='w-8 h-8' src="/assets/btc.png" alt="bitcoin" />
+                                <img className='w-8 h-8' src="/assets/ftm.png" alt="fantom" />
                                 <p className='font-medium text-xl lg:text-2xl'>{donation_in_coin.toFixed(4)}</p>
                             </div>
                             <p className='font-normal text-gray-600'>(US$ <b>{donation_in_usd.toFixed(3)}</b>)</p>
@@ -310,10 +310,10 @@ export default function donate({ fundraiser, slug, user, strapi_publisable_key, 
                     <img className='lg:w-[22rem] mx-auto' src="/assets/qr-placeholder.png" alt="UPI Qrcode" />
                     <div className='flex flex-col  shadow-md px-5 py-5 items-start'>
                         <div className='flex flex-row justify-between  items-start w-[100%]'>
-                            <p className='font-medium text-gray-400'>BTC deposit Address</p>
+                            <p className='font-medium text-gray-400'>FTM deposit Address</p>
                             <svg
                                 onClick={() => {
-                                    navigator.clipboard.writeText(btc_address).then(() => {
+                                    navigator.clipboard.writeText(ftm_address).then(() => {
                                         alert("Wallet address is copied to clipboard")
                                     })
                                 }}
@@ -332,7 +332,7 @@ export default function donate({ fundraiser, slug, user, strapi_publisable_key, 
                                 <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
                             </svg>
                         </div>
-                        <p className='overflow-scroll lg:overflow-auto w-full font-medium text-gray-600 '>{btc_address}</p>
+                        <p className='overflow-scroll lg:overflow-auto w-full font-medium text-gray-600 '>{ftm_address}</p>
                     </div>
                     <label
                         htmlFor="img-upload"
@@ -448,7 +448,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
         //         'X-CMC_PRO_API_KEY': 'b54bcf4d-1bca-4e8e-9a24-22ff2c3d462c',
         //     },
         // });
-        let crypto_data = await new CoinGeckoApi().coins.fetch('bitcoin', {});
+        let crypto_data = await new CoinGeckoApi().coins.fetch('fantom', {});
         let currency_data = await axios.get('https://api.currencyfreaks.com/latest?apikey=' + process.env.CURRENCYFREAKS_API_KEY)
         if (user_res.status > 201) {
             return {

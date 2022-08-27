@@ -50,16 +50,11 @@ export default function addImage({ is_auth, token, charity }: Props) {
       },
     })
     if (res.status <= 201) {
-      router.push(`/manage-fundraisers/my-fundraisers`); return;
+      router.push(`/manage-charity`);
     }
   }
   return (
     <>
-      <div className='absolute top-[5rem] w-screen px-7 py-5 bg-[#e7f0f7]'>
-        <p className='w-fit mx-auto text-center text-gray-900'>
-          <strong>Note:ㅤ</strong> Please upload your charity brand image wisely. You can't change image again.
-        </p>
-      </div>
       <div className="mt-[5rem] mb-10 border p-8 px-10 lg:w-[45%] w-[95%] bg-white shadow-xl md:min-w-1/2  mx-auto rounded-xl">
         {!uploading &&
           <>

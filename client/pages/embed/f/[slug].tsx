@@ -35,7 +35,6 @@ export default function fundraiser({ fundraiser, slug }: Props) {
                 <meta property="og:url" content={url} />
                 <meta property="og:type" content="website" />
                 <meta property="og:title" content={"Compassion| " + fundraiser.attributes.title} />
-                <meta property="og:description" content={fundraiser.attributes.description} />
                 {fundraiser.attributes.image && fundraiser.attributes.image.data &&
                     <meta property="og:image" content={server_url + fundraiser.attributes.image.data[0].attributes.url} />}
             </Head>

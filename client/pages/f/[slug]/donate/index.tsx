@@ -393,14 +393,14 @@ export default function donate({ fundraiser, slug, user, stripe_publishable_key 
                         </div>
                     }
                     <li className='mb-3 text-gray-700 font-light mt-2'>We protect your donation with the Compassion Giving Guarantee</li>
-                    <div className='flex flex-wrap gap-8' >
-                        <div onClick={startCheckOut} className='flex w-[13rem] flex-col items-center bg-white text-gray-600 px-4 py-4 rounded-lg my-5 shadow-2xl hover:scale-[1.02] transition-all cursor-pointer'   >
+                    <div className='flex flex-wrap gap-3 lg:gap-8' >
+                        <div onClick={startCheckOut} className='flex mx-auto  w-[80%] lg:w-[13rem] flex-col items-center bg-white text-gray-600 px-4 py-4 rounded-lg my-5 shadow-2xl hover:scale-[1.02] transition-all cursor-pointer'   >
                             {/* <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg> */}
                             <img src="/assets/credit-card.png" className='w-16 h-16' alt="credit-card" />
                             <h4 className='font-medium mt-2'>Credit/Debit card</h4>
                             <h5 className='text-sm'>(Processed via Stripe) </h5>
                         </div>
-                        <a href={`/f/${slug}/donate/upi-payment`} className='flex flex-col w-[13rem] items-center bg-white text-gray-600 px-4 py-4 rounded-lg my-5 shadow-2xl hover:scale-[1.02] transition-all cursor-pointer'   >
+                        <a href={`/f/${slug}/donate/upi-payment`} className='flex mx-auto  flex-col w-[80%] lg:w-[13rem] items-center bg-white text-gray-600 px-4 py-4 rounded-lg my-5 shadow-2xl hover:scale-[1.02] transition-all cursor-pointer'   >
                             {/* <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg> */}
                             <img src="/assets/upi-payment.png" className='w-16 h-16' alt="upi-payment" />
                             <h4 className='font-medium mt-2'>UPI</h4>
@@ -408,12 +408,12 @@ export default function donate({ fundraiser, slug, user, stripe_publishable_key 
                         </a>
                         {/* {
                             paymentRequest &&
-                            <div className='flex-col w-[13rem] items-center justify-center px-4 py-4  my-5'   >
+                            <div className='flex mx-auto -col w-[80%] lg:w-[13rem] items-center justify-center px-4 py-4  my-5'   >
                                 <PaymentRequestButtonElement className='w-[100%]' options={{ paymentRequest }} />
                                 <h4 className='font-medium mt-2 text-center'>Via Gpay</h4>
                             </div>
                         } */}
-                        <div onClick={startCoinBaseCharge} className='flex w-[13rem] flex-col items-center bg-white text-gray-600 px-4 py-4 rounded-lg my-5 shadow-2xl hover:scale-[1.02] transition-all cursor-pointer' >
+                        <div onClick={startCoinBaseCharge} className='flex mx-auto  w-[80%] lg:w-[13rem] flex-col items-center bg-white text-gray-600 px-4 py-4 rounded-lg my-5 shadow-2xl hover:scale-[1.02] transition-all cursor-pointer' >
                             <img src="/assets/coinbase-icon.svg" className='w-16 h-16' alt="coinbase-wallet" />
                             <h4 className='font-medium mt-2'>Coinbase</h4>
                             <h5 className='text-sm'>(via CoinBase) </h5>
@@ -424,20 +424,21 @@ export default function donate({ fundraiser, slug, user, stripe_publishable_key 
                                 document.documentElement.scrollTop = 0;
                                 document.documentElement.style.overflow = 'hidden'
                             }}
-                            className='flex w-[13rem] flex-col items-center bg-white text-gray-600 px-4 py-4 rounded-lg my-5 shadow-2xl hover:scale-[1.02] transition-all cursor-pointer' >
+                            className='flex mx-auto  w-[80%] lg:w-[13rem] flex-col items-center bg-white text-gray-600 px-4 py-4 rounded-lg my-5 shadow-2xl hover:scale-[1.02] transition-all cursor-pointer' >
                             <img src="/assets/crypto-wallet.png" className='w-16 h-16' alt="coinbase-wallet" />
                             <h4 className='font-medium mt-2'>Crypto</h4>
                             <h5 className='text-sm'>(via ) </h5>
                         </div>
                     </div>
+
                     {open_popup &&
                         <div
                             className="w-screen top-0 left-0 right-0 bottom-0 h-screen bg-gray-500 bg-opacity-80 py-6 flex flex-col justify-center sm:py-12 absolute">
-                            <div className="py-3 sm:w-1/2 w-full sm:mx-auto " >
+                            <div className="py-3 sm:w-1/2 w-full sm:mx-auto relative" >
                                 <div onClick={() => {
                                     setOpenPopup(false);
                                     document.documentElement.style.overflow = 'auto'
-                                }} className='rounded-full w-[1.5rem]  h-[1.5rem] my-3 cursor-pointer bg-gray-200 text-gray-800 ml-auto mr-2 flex justify-center items-center '>
+                                }} className='rounded-full w-[1.5rem]  absolute top-[-2px] right-[15px] lg:top-[-2rem] lg:right-[-2rem] h-[1.5rem]  cursor-pointer bg-gray-200 text-gray-800  flex justify-center items-center '>
                                     <svg
                                         width={24}
                                         height={24}
@@ -455,7 +456,7 @@ export default function donate({ fundraiser, slug, user, stripe_publishable_key 
 
                                 </div>
                                 <div className="bg-white mx-auto min-w-1xl flex w-[80%] lg:w-auto flex-col lg:max-h-[50rem] max-h-[30rem] overflow-y-scroll rounded-xl shadow-lg">
-                                    <a href={`/f/${slug}/donate/bitcoin`} className="lg:px-12 cursor-pointer px-5 py-5 flex flex-row items-center gap-3">
+                                    <a href={`/f/${slug}/donate/btc`} className="lg:px-12 cursor-pointer px-5 py-5 flex flex-row items-center gap-3">
                                         <img src="/assets/btc.png" alt="bitcoin" className='w-10 h-10' />
                                         <div className='flex-col items-start'>
                                             <p className='font-medium text-xl text-gray-600'>BTC</p>
@@ -463,11 +464,66 @@ export default function donate({ fundraiser, slug, user, stripe_publishable_key 
                                         </div>
                                     </a>
                                     <hr className='w-[95%] mx-auto' />
-                                    <a href={`/f/${slug}/donate/tron`} className="lg:px-12 cursor-pointer px-5 py-5 flex flex-row items-center gap-3">
+                                    <a href={`/f/${slug}/donate/btc-bep-20`} className="lg:px-12 cursor-pointer px-5 py-5 flex flex-row items-center gap-3">
+                                        <img src="/assets/btc.png" alt="bitcoin" className='w-10 h-10' />
+                                        <div className='flex-col items-start'>
+                                            <p className='font-medium text-xl text-gray-600'>BTC(BEP-20)</p>
+                                            <p className=' text-gray-600'>Bitcoin (BEP-20)</p>
+                                        </div>
+                                    </a>
+                                    {/* <a href={`/f/${slug}/donate/tron`} className="lg:px-12 cursor-pointer px-5 py-5 flex flex-row items-center gap-3">
                                         <img src="/assets/trx.png" alt="troncoin" className='w-10 h-10' />
                                         <div className='flex-col items-start'>
                                             <p className='font-medium text-xl text-gray-600'>TRX</p>
                                             <p className=' text-gray-600'>TronCoin</p>
+                                        </div>
+                                    </a> */}
+                                    <hr className='w-[95%] mx-auto' />
+                                    <a href={`/f/${slug}/donate/bnb`} className="lg:px-12 cursor-pointer px-5 py-5 flex flex-row items-center gap-3">
+                                        <img src="/assets/bnb.png" alt="binance" className='w-10 h-10' />
+                                        <div className='flex-col items-start'>
+                                            <p className='font-medium text-xl text-gray-600'>BNB</p>
+                                            <p className=' text-gray-600'>Binance</p>
+                                        </div>
+                                    </a>
+                                    <hr className='w-[95%] mx-auto' />
+                                    <a href={`/f/${slug}/donate/ada`} className="lg:px-12 cursor-pointer px-5 py-5 flex flex-row items-center gap-3">
+                                        <img src="/assets/ada.png" alt="binance" className='w-10 h-10' />
+                                        <div className='flex-col items-start'>
+                                            <p className='font-medium text-xl text-gray-600'>ADA</p>
+                                            <p className=' text-gray-600'>Cardano(ADA)</p>
+                                        </div>
+                                    </a>
+                                    <hr className='w-[95%] mx-auto' />
+                                    <a href={`/f/${slug}/donate/avax`} className="lg:px-12 cursor-pointer px-5 py-5 flex flex-row items-center gap-3">
+                                        <img src="/assets/avax.png" alt="binance" className='w-10 h-10' />
+                                        <div className='flex-col items-start'>
+                                            <p className='font-medium text-xl text-gray-600'>AVAX</p>
+                                            <p className=' text-gray-600'>Avalanche(AVAX)</p>
+                                        </div>
+                                    </a>
+                                    <hr className='w-[95%] mx-auto' />
+                                    <a href={`/f/${slug}/donate/eth`} className="lg:px-12 cursor-pointer px-5 py-5 flex flex-row items-center gap-3">
+                                        <img src="/assets/eth.png" alt="binance" className='w-10 h-10' />
+                                        <div className='flex-col items-start'>
+                                            <p className='font-medium text-xl text-gray-600'>ETH</p>
+                                            <p className=' text-gray-600'>Ethereum</p>
+                                        </div>
+                                    </a>
+                                    <hr className='w-[95%] mx-auto' />
+                                    <a href={`/f/${slug}/donate/ftm`} className="lg:px-12 cursor-pointer px-5 py-5 flex flex-row items-center gap-3">
+                                        <img src="/assets/ftm.png" alt="binance" className='w-10 h-10' />
+                                        <div className='flex-col items-start'>
+                                            <p className='font-medium text-xl text-gray-600'>FTM</p>
+                                            <p className=' text-gray-600'>Fantom</p>
+                                        </div>
+                                    </a>
+                                    <hr className='w-[95%] mx-auto' />
+                                    <a href={`/f/${slug}/donate/polygon-matic`} className="lg:px-12 cursor-pointer px-5 py-5 flex flex-row items-center gap-3">
+                                        <img src="/assets/matic.png" alt="binance" className='w-10 h-10' />
+                                        <div className='flex-col items-start'>
+                                            <p className='font-medium text-xl text-gray-600'>MATIC</p>
+                                            <p className=' text-gray-600'>Polygon Matic</p>
                                         </div>
                                     </a>
                                 </div>

@@ -46,6 +46,7 @@ export default function fundraiser({ is_auth, user, token, fundraiser }: Props) 
                     .equals(fund_types, 'Invalid category'),
         }),
         onSubmit: async (e) => {
+            if(submitting)return;
             setSubmitting(true);
             const slug = stringToSlug(e.title);
             let res = await axios.put(server_url + "/api/fund-raises/" + fundraiser.id, {
@@ -69,71 +70,51 @@ export default function fundraiser({ is_auth, user, token, fundraiser }: Props) 
         <div>
             <>
                 <div className="h-screen min-w-screen bg-slate-200 py-6 flex flex-col justify-center overflow-hidden sm:py-12 relative">
-                    {!submitting &&
-                        <div className="border p-8 px-10 lg:w-[45%] bg-white shadow-xl md:min-w-1/2  mx-auto rounded-xl">
-                            <div className="font-medium m-auto text-4xl text-green-900 my-7 text-center">
-                                Edit your fundraiser
-                            </div>
-                            <form onSubmit={formik.handleSubmit}>
-                                <label htmlFor="" className="block">
-                                    Title
-                                </label>
-                                <input
-                                    onBlur={formik.handleBlur}
-                                    onChange={formik.handleChange}
-                                    value={formik.values.title}
-                                    type="text"
-                                    name='title'
-                                    className="border w-full h-10 px-3 mb-5 rounded-md"
-                                    placeholder="Title..."
-                                />
-                                {
-                                    formik.errors.title &&
-                                    <p className="text-xs italic text-red-500">
-                                        {formik.errors.title}
-                                    </p>
-                                }
-                                <label htmlFor="" className="block">
-                                    Address
-                                </label>
-                                <input
-                                    onBlur={formik.handleBlur}
-                                    onChange={formik.handleChange}
-                                    value={formik.values.address}
-                                    type="text"
-                                    name='address'
-                                    className="border w-full h-10 px-3 mb-5 rounded-md"
-                                    placeholder="1000"
-                                />
-                                {
-                                    formik.errors.address &&
-                                    <p className="text-xs italic text-red-500">
-                                        {formik.errors.address}
-                                    </p>
-                                }
+                    <div className="border p-8 px-10 lg:w-[45%] bg-white shadow-xl md:min-w-1/2  mx-auto rounded-xl">
+                        <div className="font-medium m-auto text-4xl text-green-900 my-7 text-center">
+                            Edit your fundraiser
+                        </div>
+                        <form onSubmit={formik.handleSubmit}>
+                            <label htmlFor="" className="block">
+                                Title
+                            </label>
+                            <input
+                                onBlur={formik.handleBlur}
+                                onChange={formik.handleChange}
+                                value={formik.values.title}
+                                type="text"
+                                name='title'
+                                className="border w-full h-10 px-3 mb-5 rounded-md"
+                                placeholder="Title..."
+                            />
+                            {
+                                formik.errors.title &&
+                                <p className="text-xs italic text-red-500">
+                                    {formik.errors.title}
+                                </p>
+                            }
+                            <label htmlFor="" className="block">
+                                Address
+                            </label>
+                            <input
+                                onBlur={formik.handleBlur}
+                                onChange={formik.handleChange}
+                                value={formik.values.address}
+                                type="text"
+                                name='address'
+                                className="border w-full h-10 px-3 mb-5 rounded-md"
+                                placeholder="1000"
+                            />
+                            {
+                                formik.errors.address &&
+                                <p className="text-xs italic text-red-500">
+                                    {formik.errors.address}
+                                </p>
+                            }
 
-                                <div className='w-full flex items-center gap-2'>
-                                    <div className='w-full'>
+                            <div className='w-full flex items-center gap-2'>
+                                <div className='w-full'>
 
-                                        <label htmlFor="" className="block">
-                                            Target funds
-                                        </label>
-                                        <input
-                                            onBlur={formik.handleBlur}
-                                            onChange={formik.handleChange}
-                                            value={formik.values.targetFunds}
-                                            type="Number"
-                                            name='targetFunds'
-                                            className="border w-full h-10 px-3 mb-5 rounded-md"
-                                            placeholder="1000"
-                                        />
-                                        {
-                                            formik.errors.targetFunds &&
-                                            <p className="text-xs italic text-red-500">
-                                                {formik.errors.targetFunds}
-                                            </p>
-                                        }
-                                    </div>
                                     <label htmlFor="" className="block">
                                         Target funds
                                     </label>
@@ -141,7 +122,7 @@ export default function fundraiser({ is_auth, user, token, fundraiser }: Props) 
                                         onBlur={formik.handleBlur}
                                         onChange={formik.handleChange}
                                         value={formik.values.targetFunds}
-                                        type="text"
+                                        type="Number"
                                         name='targetFunds'
                                         className="border w-full h-10 px-3 mb-5 rounded-md"
                                         placeholder="1000"
@@ -152,90 +133,127 @@ export default function fundraiser({ is_auth, user, token, fundraiser }: Props) 
                                             {formik.errors.targetFunds}
                                         </p>
                                     }
-                                    <div>
-                                        <label htmlFor="" className="block">
-                                            Category
-                                        </label>
-                                        <select
-                                            onBlur={formik.handleBlur}
-                                            onChange={formik.handleChange}
-                                            value={formik.values.fundType}
-                                            name='fundType'
-                                            id='fundType'
-                                            defaultValue={fundraiser.attributes.fund_type}
-                                            className="border w-full h-10 px-3 mb-5 rounded-md bg-white"
-                                            // className="form-select appearance-none block w-full px-3  text-base font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
-                                            aria-label="Default select example">
-                                            <option selected>Choose a fund type</option>
-                                            {fund_types.map((tag, index) => {
-                                                return (
-                                                    <option key={index} value={tag}>{tag[0].toUpperCase() + tag.slice(1)}</option>
-                                                )
-                                            })}
-                                        </select>
-                                        {
-                                            formik.errors.fundType &&
-                                            <p className="text-xs italic text-red-500">
-                                                {
-                                                    formik.errors.fundType
-                                                }
-                                            </p>
-                                        }
-                                    </div>
-
                                 </div>
-
                                 <label htmlFor="" className="block">
-                                    Category
+                                    Target funds
                                 </label>
-                                <select
+                                <input
                                     onBlur={formik.handleBlur}
                                     onChange={formik.handleChange}
-                                    value={formik.values.category}
-                                    name='category'
-                                    className="form-select appearance-none block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" aria-label="Default select example">
-                                    <option selected>Choose a category</option>
-                                    {fundraiser_tags.map((tag, index) => {
-                                        return (
-                                            <option value={tag}>{tag[0].toUpperCase() + tag.slice(1)}</option>
-                                        )
-                                    })}
-                                </select>
+                                    value={formik.values.targetFunds}
+                                    type="text"
+                                    name='targetFunds'
+                                    className="border w-full h-10 px-3 mb-5 rounded-md"
+                                    placeholder="1000"
+                                />
                                 {
-                                    formik.errors.category &&
+                                    formik.errors.targetFunds &&
                                     <p className="text-xs italic text-red-500">
-                                        {formik.errors.category}
+                                        {formik.errors.targetFunds}
                                     </p>
                                 }
-                                {!fundraiser['attributes']['individual'] &&
+                                <div>
+                                    <label htmlFor="" className="block">
+                                        Category
+                                    </label>
+                                    <select
+                                        onBlur={formik.handleBlur}
+                                        onChange={formik.handleChange}
+                                        value={formik.values.fundType}
+                                        name='fundType'
+                                        id='fundType'
+                                        defaultValue={fundraiser.attributes.fund_type}
+                                        className="border w-full h-10 px-3 mb-5 rounded-md bg-white"
+                                        // className="form-select appearance-none block w-full px-3  text-base font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+                                        aria-label="Default select example">
+                                        <option selected>Choose a fund type</option>
+                                        {fund_types.map((tag, index) => {
+                                            return (
+                                                <option key={index} value={tag}>{tag[0].toUpperCase() + tag.slice(1)}</option>
+                                            )
+                                        })}
+                                    </select>
+                                    {
+                                        formik.errors.fundType &&
+                                        <p className="text-xs italic text-red-500">
+                                            {
+                                                formik.errors.fundType
+                                            }
+                                        </p>
+                                    }
+                                </div>
 
-                                    <h2 className=' mt-8 mb-2 font-medium '>Selected Charity</h2>
-                                }
-                                {
-                                    !fundraiser['attributes']['individual'] && fundraiser['attributes']['charity'] && fundraiser['attributes']['charity']['data'] &&
-                                    <div className='flex flex-row items-center gap-5 border-2 border-gray-600 border-opacity-40 rounded-lg p-3 m1 '>
-                                        <div className=' cursor-pointer p-2 m-2 flex flex-row gap-3 items-center'
-                                        >
-                                            <img className='w-[5rem] h-[4rem] object-cover' src={server_url + fundraiser['attributes']['charity']['data']['attributes']['image']['data']['attributes']['url']} alt={fundraiser['attributes']['charity']['data']['attributes']['name']} />
-                                            <div className='flex flex-col items-start gap-1'>
-                                                <h4 className='font-light text-gray-600 text-xl'>{fundraiser['attributes']['charity']['data']['attributes']['name']}</h4>
-                                                <h4 className='text-gray-500 text-sm'>{fundraiser['attributes']['charity']['data']['attributes']['address']}</h4>
+                            </div>
 
-                                            </div>
+                            <label htmlFor="" className="block">
+                                Category
+                            </label>
+                            <select
+                                onBlur={formik.handleBlur}
+                                onChange={formik.handleChange}
+                                value={formik.values.category}
+                                name='category'
+                                className="form-select appearance-none block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" aria-label="Default select example">
+                                <option selected>Choose a category</option>
+                                {fundraiser_tags.map((tag, index) => {
+                                    return (
+                                        <option value={tag}>{tag[0].toUpperCase() + tag.slice(1)}</option>
+                                    )
+                                })}
+                            </select>
+                            {
+                                formik.errors.category &&
+                                <p className="text-xs italic text-red-500">
+                                    {formik.errors.category}
+                                </p>
+                            }
+                            {!fundraiser['attributes']['individual'] &&
+
+                                <h2 className=' mt-8 mb-2 font-medium '>Selected Charity</h2>
+                            }
+                            {
+                                !fundraiser['attributes']['individual'] && fundraiser['attributes']['charity'] && fundraiser['attributes']['charity']['data'] &&
+                                <div className='flex flex-row items-center gap-5 border-2 border-gray-600 border-opacity-40 rounded-lg p-3 m1 '>
+                                    <div className=' cursor-pointer p-2 m-2 flex flex-row gap-3 items-center'
+                                    >
+                                        <img className='w-[5rem] h-[4rem] object-cover' src={server_url + fundraiser['attributes']['charity']['data']['attributes']['image']['data']['attributes']['url']} alt={fundraiser['attributes']['charity']['data']['attributes']['name']} />
+                                        <div className='flex flex-col items-start gap-1'>
+                                            <h4 className='font-light text-gray-600 text-xl'>{fundraiser['attributes']['charity']['data']['attributes']['name']}</h4>
+                                            <h4 className='text-gray-500 text-sm'>{fundraiser['attributes']['charity']['data']['attributes']['address']}</h4>
+
                                         </div>
                                     </div>
+                                </div>
+                            }
+                            <button type='submit' className={`${submitting ? 'disabled ' : ""} mt-7 ${submitting ? "bg-gray-400" : "bg-green-500 hover:bg-green-600"}  flex flex-row items-center justify-center  shadow-xl text-white   text-[1rem] font-medium px-14 py-3 rounded w-full `}>
+                                <p>
+                                    Save
+                                </p>
+                                {submitting &&
+                                    <svg
+                                        className="animate-spin  h-4 ml-2 w-4 text-white"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <circle
+                                            className="opacity-25"
+                                            cx={12}
+                                            cy={12}
+                                            r={10}
+                                            stroke="currentColor"
+                                            strokeWidth={4}
+                                        />
+                                        <path
+                                            className="opacity-75"
+                                            fill="currentColor"
+                                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                        />
+                                    </svg>
                                 }
-                                <button type='submit' className="mt-7 bg-green-500 hover:bg-green-600 shadow-xl text-white  text-sm font-semibold px-14 py-3 rounded w-full">
-                                    Save & Next
-                                </button>
-                            </form>
-                        </div>
-                    }
-                    {
-                        submitting &&
-                        <div className="w-12 h-12 rounded-full animate-spin
-            border-x-2 border-solid border-blue-500 border-t-transparent absolute" style={{ position: "absolute", top: "50%", left: "0%" }}></div>
-                    }
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </>
         </div>

@@ -113,7 +113,7 @@ export default function fundraiser({ is_auth, user, token, fundraiser }: Props) 
                                     <label className="block">
                                         <span className="sr-only">Choose image</span>
                                         <input
-                                            type="file" accept='images/*'
+                                            type="file" accept='image/*'
                                             onChange={onImageChange}
                                             className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-3 ml-2 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
                                         />

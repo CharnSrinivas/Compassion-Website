@@ -7,7 +7,6 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (<>
     <meta name="viewport" content="initial-scale=1.0, width=device-width" />
-
     <Navbar />
     <Component  {...pageProps} />
     <Footer />

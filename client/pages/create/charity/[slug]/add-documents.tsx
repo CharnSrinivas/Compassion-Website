@@ -58,75 +58,12 @@ export default function addImage({ is_auth, token, fundraiser }: Props) {
 
   }
   return (
-    <div className="border p-8 px-10 lg:w-[45%] w-[95%] bg-white shadow-xl md:min-w-1/2  mx-auto rounded-xl">
+    <div className='py-20'>
+    <div className="border  py-8 px-10 lg:w-[45%] w-[95%] bg-white shadow-xl md:min-w-1/2  mx-auto rounded-xl">
       {!uploading &&
         <>
-          <div className="w-full py-3">
-            <div className="flex">
-              <div className="w-1/3">
-                <div className="relative mb-2">
-                  <div className="w-10 h-10 mx-auto bg-green-500 rounded-full text-lg text-white flex items-center">
-                    <span className="text-center text-white w-full">
-                      <p>1</p>
-                    </span>
-                  </div>
-                </div>
-                <div className="text-xs text-center md:text-base">Details</div>
-              </div>
-              <div className="w-1/3">
-                <div className="relative mb-2">
-                  <div
-                    className="absolute flex align-center items-center align-middle content-center"
-                    style={{
-                      width: "calc(100% - 2.5rem - 1rem)",
-                      top: "50%",
-                      transform: "translate(-50%, -50%)"
-                    }}
-                  >
-                    <div className="w-full bg-gray-200 rounded items-center align-middle align-center flex-1">
-                      <div
-                        className="w-0 bg-green-300 py-1 rounded"
-                        style={{ width: "100%" }}
-                      />
-                    </div>
-                  </div>
-                  <div className="w-10 h-10 mx-auto bg-green-500 rounded-full text-lg text-white flex items-center">
-                    <span className="text-center text-white w-full">
-                      <p>2</p>
-                    </span>
-                  </div>
-                </div>
-                <div className="text-xs text-center md:text-base">Image & Document</div>
-              </div>
-              <div className="w-1/3">
-                <div className="relative mb-2">
-                  <div
-                    className="absolute flex align-center items-center align-middle content-center"
-                    style={{
-                      width: "calc(100% - 2.5rem - 1rem)",
-                      top: "50%",
-                      transform: "translate(-50%, -50%)"
-                    }}
-                  >
-                    <div className="w-full bg-gray-200 rounded items-center align-middle align-center flex-1">
-                      <div
-                        className="w-0 bg-green-300 py-1 rounded"
-                        style={{ width: "100%" }}
-                      />
-                    </div>
-                  </div>
-                  <div className="w-10 h-10 mx-auto bg-white border-2 border-gray-200 rounded-full text-lg text-white flex items-center">
-                    <span className="text-center text-gray-600 w-full">
-                      <p>3</p>
-                    </span>
-                  </div>
-                </div>
-                <div className="text-xs text-center md:text-base">Story</div>
-              </div>
-            </div>
-          </div>
           <div className="font-medium m-auto text-4xl text-green-900 my-7 text-center">
-            Upload related documents here
+            Upload charity related documents here
           </div>
 
           <label >
@@ -172,6 +109,7 @@ export default function addImage({ is_auth, token, fundraiser }: Props) {
         </div>
 
       }
+    </div>
     </div>
   )
 }

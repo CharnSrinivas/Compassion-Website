@@ -23,7 +23,7 @@
     "user": {
       "type": "relation",
       "relation": "oneToOne",
-      "target": "plugin::users-permissions.user",
+      "target": "api::charity.charity",
       "inversedBy": "user_document"
     },
     "driving_license": {

@@ -6,7 +6,10 @@ import qs from 'qs';
 import React, { useEffect, useState } from 'react'
 import { jwt_aut_token, server_url } from '../../../config';
 import { isMobile } from '../../../utils';
-
+import 'react-quill/dist/quill.bubble.css'
+import dynamic from 'next/dynamic'
+import Script from 'next/script'
+const ReactQuill = dynamic(() => import('react-quill'), { ssr: false })
 interface Props {
   charity: any; user: any | null;
   donations: any[], donations_meta: any; slug: string;
@@ -104,48 +107,12 @@ export default function fundraiser({ charity, user, slug, donations, donations_m
                 </h1>
                 <hr className='my-3' />
                 <div className="leading-relaxed " style={{ transition: 'ease-in 0.6s all' }} >
-                  {charity.attributes.description && charity.attributes.description.length > 500 &&
+                  {charity.attributes.description &&
                     <>
-                      {!read_more && ((charity.attributes.description as string).slice(0, 500) + "...").split(`\n`).map((txt, index) => {
-                        if (!txt) { return null }
-                        return (<>
-                          <p key={index + Math.random()} className="leading-relaxed text-base">
-                            {txt}
-                          </p>
-                          <div key={index + Math.random()}>&nbsp;</div>
-                        </>)
-                      })}
-                      {read_more &&
-                        (charity.attributes.description as string).split(`\n`).map((txt, index) => {
-                          if (!txt) { return null }
-                          return (<>
-                            <p key={index + Math.random()} className="leading-relaxed text-base">
-                              {txt}
-                            </p>
-                            <div key={index + Math.random()}>&nbsp;</div>
-                          </>)
-                        })
-                      }
+                      <ReactQuill className='p-6' theme="bubble" readOnly={true} value={charity.attributes.description} />
                     </>
                   }
-                  {charity.attributes.description && charity.attributes.description.length <= 500 &&
-                    (<>
-                      <p className="leading-relaxed text-base">
-                        {charity.attributes.description}
-                      </p>
-                      <div >&nbsp;</div>
-                    </>)
-                  }
-                  {charity.attributes.description && <>
 
-                    {!read_more &&
-                      <p onClick={() => { setReadMore(true) }} className=' text-blue-900 underline cursor-pointer'>Read more</p>
-                    }
-                    {read_more &&
-                      <p onClick={() => { setReadMore(false) }} className=' text-blue-900 underline cursor-pointer' >Read less</p>
-                    }
-                  </>
-                  }
                 </div>
                 <hr className='my-3' />
               </div>

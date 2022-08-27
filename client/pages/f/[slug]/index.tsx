@@ -53,7 +53,6 @@ export default function fundraiser({ fundraiser, user, slug, donations, donation
     }
   }
   const loadUpdates = async (page: number) => {
-    setLoadingUpdates(true);
     const query = qs.stringify({
       filters: {
         fundraiser: { id: { $eq: fundraiser.id } }
@@ -65,15 +64,19 @@ export default function fundraiser({ fundraiser, user, slug, donations, donation
         page: page
       }
     })
-    let res = await axios.get(server_url + `/api/fundraiser-updates?${query}`);
-    let _updates = updates;
-    _updates.push(...(res.data.data as []))
-    setUpdates(_updates)
-    setTotalUpdates(res.data.meta.pagination.total)
-    if (res.status <= 201) {
-      // router.push(`/manage-fundraisers/my-fundraisers`);
+    try {
+      if (total_updates !== 0&& (updates_page > total_updates)) return;
+      setLoadingUpdates(true);
+      let res = await axios.get(server_url + `/api/fundraiser-updates?${query}`);
+      let _updates = updates;
+      _updates.push(...(res.data.data as []))
+      setUpdates(_updates);
+      setTotalUpdates(res.data.meta.pagination.total)
+      setLoadingUpdates(false);
+      setUpdatesPage(updates_page + 1)
+    } catch (err) {
+      setLoadingUpdates(false);
     }
-    setLoadingUpdates(false);
   }
   return (
     <>
@@ -206,17 +209,19 @@ export default function fundraiser({ fundraiser, user, slug, donations, donation
                                   <div className="relative flex flex-col min-w-0 break-words bg-white w-full mb-4 shadow-md border-2 rounded-lg" key={index}>
                                     <div className='ml-auto bg-[#0fd3cd] font-medium px-3 mb-2 py-2 text-white'>#{total_updates - index}</div>
                                     {update.attributes.image.data &&
-                                      <img 
-                                      className="lg:w-full w-full  lg:max-h-[28rem] max-h-[25rem] object-scale-down object-center rounded-sm"
-                                      src={server_url +update.attributes.image.data.attributes.url}
+                                      <img
+                                        className="lg:w-full w-full  lg:max-h-[28rem] max-h-[25rem] object-scale-down object-center rounded-sm"
+                                        src={server_url + update.attributes.image.data.attributes.url}
                                       />
-                                      }
+                                    }
                                     <ReactQuill className='p-6' theme="bubble" readOnly={true} value={update.attributes.description} />
                                   </div>)
                               })}
                               <button type='button' onClick={() => {
-                                setUpdatesPage(updates_page + 1)
-                                loadUpdates(updates_page + 1);
+                                // Load the updates if list is empty
+                                if (updates.length <= 0) {
+                                  loadUpdates(updates_page + 1);
+                                }
                               }} className={`flex flex-row items-center gap-3 text-green-400 ${(updatesPageSize * updates_page >= total_updates) ? "hidden" : ''}`}>
                                 <p>
                                   Read More updates

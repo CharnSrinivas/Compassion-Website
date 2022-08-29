@@ -272,6 +272,9 @@ export default function Navbar() {
                             </div>
                         </a>
                     }
+                    <Link href={'/contact-us'}>
+                        <a className="block px-4 py-2  ml-2  hover:text-blue-500 mt-4 lg:mt-0">Contact Us</a>
+                    </Link>
                 </div>
                 <div className="relative my-3 ml-4 lg:my-0 lg:mx-auto text-gray-600 lg:block ">
                     <input
@@ -453,6 +456,8 @@ export default function Navbar() {
                     }
 
                     <Link href={'/start/charity-fundraising'}><a className="text-center self-start w-fit ml-12 block px-0 py-1  hover:text-blue-500 mt-4 lg:mt-0">For charities</a></Link>
+                    
+                    <Link href={'/contact-us'}><a className="text-center self-start w-fit ml-12 block px-0 py-1  hover:text-blue-500 mt-4 lg:mt-0">Contact Us</a></Link>
                 </div>
             </div>
 

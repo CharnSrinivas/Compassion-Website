@@ -11,12 +11,12 @@ export default function contact_us() {
         <>
             {/* component */}
             <div className="bg-white">
-                <div className="flex justify-center h-screen">
+                <div className="flex justify-center lg:h-screen">
                     <div
                         className="hidden bg-cover lg:block lg:w-2/3"
                         style={{
                             backgroundImage:
-                                "url(https://images.unsplash.com/photo-1616763355603-9755a640a287?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80)"
+                                "url(assets/bg-3.jpg)"
                         }}
                     >
                         <div className="flex items-center h-full px-20 bg-opacity-40 " style={{ background: " linear-gradient(90deg, rgb(0, 0 ,0 , 45%) 50%, rgb(0, 0,0,45%) 50%)" }}>
@@ -52,7 +52,7 @@ export default function contact_us() {
                                             />
                                         </svg>
                                         <div className="ml-4 text-md tracking-wide">
-                                            Acme Inc, Street, State, Postal Code
+                                            Footscray, Vic Australia
                                         </div>
                                     </div>
                                     <div className="flex items-center mt-4 text-white ">
@@ -73,7 +73,7 @@ export default function contact_us() {
                                             />
                                         </svg>
                                         <div className="ml-4 text-md tracking-wide">
-                                            +44 1234567890
+                                            +61 406297869                                                                                                       
                                         </div>
                                     </div>
                                     <div className="flex items-center mt-2 text-white">
@@ -94,7 +94,7 @@ export default function contact_us() {
                                             />
                                         </svg>
                                         <div className="ml-4 text-md tracking-wide">
-                                            info@acme.org
+                                            info@compassioncrypto.io
                                         </div>
                                     </div>
                                 </div>
@@ -102,9 +102,8 @@ export default function contact_us() {
 
                         </div>
                     </div>
-                    <div className="flex items-center w-full max-w-md px-6 mx-auto lg:w-2/6 "
-                    >
-                        <div className="flex-1">
+                    <div className="flex items-center w-full max-w-md px-6 mx-auto lg:w-2/6 ">
+                        <div className="flex-1 my-8 lg:my-auto">
                             <div className="text-center">
                                 <h2 className="text-3xl font-bold text-center text-gray-700 ">
                                     Compassion Crypto Pty LTd
@@ -114,7 +113,7 @@ export default function contact_us() {
                                 </p>
                             </div>
                             <div className="mt-8">
-                                <form>
+                                <form className='flex flex-col  gap-4'>
                                     <div>
                                         <label
                                             htmlFor="name"
@@ -150,7 +149,7 @@ export default function contact_us() {
                                             htmlFor="message"
                                             className="block mb-2 text-sm text-gray "
                                         >
-                                            Email Address
+                                            Message
                                         </label>
                                         <textarea
                                             className="appearance-none resize-y block w-full bg-gray-50 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-200 h-48 text-sm"
@@ -192,7 +191,7 @@ export default function contact_us() {
                                         />
                                     </svg>
                                     <div className="ml-4 text-md tracking-wide">
-                                        Acme Inc, Street, State, Postal Code
+                                        Footscray, Vic Australia
                                     </div>
                                 </div>
                                 <div className="flex items-center mt-4 text-gray-600 ">
@@ -213,7 +212,7 @@ export default function contact_us() {
                                         />
                                     </svg>
                                     <div className="ml-4 text-md tracking-wide">
-                                        +44 1234567890
+                                        +61 406297869                                                                                                       
                                     </div>
                                 </div>
                                 <div className="flex items-center mt-2 text-gray-600 ">
@@ -234,7 +233,7 @@ export default function contact_us() {
                                         />
                                     </svg>
                                     <div className="ml-4 text-md tracking-wide">
-                                        info@acme.org
+                                        info@compassioncrypto.io
                                     </div>
                                 </div>
                             </div>

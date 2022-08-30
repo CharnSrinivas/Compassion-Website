@@ -1,5 +1,4 @@
 export const server_url =
-// "https://toptechonly.com/_api"
  process.env['NODE_ENV'] === "production" ?
   "https://compassioncrypto.io/_api" : "http://0.0.0.0:1337"
 // "http://192.168.42.240:1337";

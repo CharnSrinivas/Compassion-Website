@@ -25,7 +25,7 @@ export default function () {
                                 “Agreement” denotes this Terms and Conditions and the Privacy Policy and other documents provided to you by the Website.
                             </p>
                             <p>
-                                <b>“We,”</b> <b>“us,”</b> and <b>“our” </b> are references to COMPASSION.TOPTECHONLY.COM.
+                                <b>“We,”</b> <b>“us,”</b> and <b>“our” </b> are references to COMPASSIONCRYPTO.COM.
                             </p>
                             <p>
                                 <b>“User,”</b> <b>“You,”</b> and “your” denotes the person who is accessing the website for taking or availing of any service from us. User shall include the company, partnership, sole trader, person, body corporate, or association taking services of this Website.

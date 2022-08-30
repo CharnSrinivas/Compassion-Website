@@ -8,7 +8,7 @@ export default function Footer() {
                         <span className="ml-3 text-xl">Compassion</span>
                     </a>
                     <a href='/docs/disclaimer' className="text-gray-600 my-2 hover:text-gray-800" >Disclaimer</a>
-                    <a href='/docs/terms-and-conditions' className="text-gray-600 my-2 hover:text-gray-800" >Terms&Conditions</a>
+                    <a href='/docs/terms-and-conditions' className="text-gray-600 my-2 hover:text-gray-800" >Terms & Conditions</a>
                     <a href='/docs/website-accessibility' className="text-gray-600 my-2 hover:text-gray-800" >Website accessibility</a>
                     <a href='/docs/privacy-policy' className="text-gray-600 my-2 hover:text-gray-800" >Privacy Policy</a>
                     <a href='/docs/refund-policy' className="text-gray-600 my-2 hover:text-gray-800" >Refund Policy</a>

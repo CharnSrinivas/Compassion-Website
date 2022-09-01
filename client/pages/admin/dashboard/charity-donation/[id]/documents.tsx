@@ -38,7 +38,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
         }, populate: "*"
     });
 
-    let donation = await (await fetch(server_url + "/content-manager/collection-types/api::donation.donation?" + query, {
+    let donation = await (await fetch(server_url + "/content-manager/collection-types/api::charity-donation.charity-donation?" + query, {
         method: "GET",
         headers: {
             Authorization: `Bearer ${admin_token}`,
@@ -119,10 +119,10 @@ export default function edit({ donation, admin_token, slug }: Props) {
                                 {donation.title}
                             </h1>
                             <div className="flex mb-4">
-                                <a href={`/admin/dashboard/donation/${slug}/details`} className="flex-grow border-b-2  py-2 text-lg px-1  border-gray-300">
+                                <a href={`/admin/dashboard/charity-donation/${slug}/details`} className="flex-grow border-b-2  py-2 text-lg px-1  border-gray-300">
                                     Details
                                 </a>
-                                <a href={`/admin/dashboard/donation/${slug}/documents`} className="flex-grow text-indigo-500 border-indigo-500  border-b-2 py-2 text-lg px-1">
+                                <a href={`/admin/dashboard/charity-donation/${slug}/documents`} className="flex-grow text-indigo-500 border-indigo-500  border-b-2 py-2 text-lg px-1">
                                     Documents
                                 </a>
                             </div>

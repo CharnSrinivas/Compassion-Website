@@ -1,14 +1,13 @@
 import { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
 import qs from 'qs';
 import React, { ChangeEvent, useState } from 'react'
-import { jwt_aut_token, server_url, donations_ref } from '../../../../config';
+import { jwt_aut_token, server_url, donations_ref, charity_donation_ref } from '../../../../config';
 import { useRouter } from 'next/router';
 import { generate } from 'generate-password'
 import axios from 'axios';
 import CoinGeckoApi from 'coingecko-api'
-import { parse } from 'querystring';
 interface Props {
-    fundraiser: any;
+    charity: any;
     user: any;
     slug: string;
     strapi_publisable_key: string;
@@ -17,7 +16,7 @@ interface Props {
     currency_data: any
 }
 
-export default function donate({ fundraiser, slug, user, strapi_publisable_key, token, crypto_data, currency_data }: Props) {
+export default function donate({charity, slug, user, strapi_publisable_key, token, crypto_data, currency_data }: Props) {
 
     const [donation_amount, setDonationAmount] = useState(0);
     const [comment, setComment] = useState('');
@@ -27,10 +26,11 @@ export default function donate({ fundraiser, slug, user, strapi_publisable_key, 
     const [uploadPercentage, setUploadPercentage] = useState(0);
     const [donation_in_usd, setDonationInUSD] = useState(0);
     const [donation_in_coin, setDonationInCoin] = useState(0);
-    const matic_address = '0xccB8Aae891ef4D158b0Fc897E21d067904afb35C'
+    const bnb_address = '0x8859d7c74Ba80764A4c0c336471A41D2aA7cB870'
     const router = useRouter();
     const coin_price = (crypto_data.data.market_data.current_price.usd);
-    const currency_rate = parseFloat(currency_data.rates[(fundraiser.attributes.fund_type as string).toUpperCase()] ? currency_data.rates[(fundraiser.attributes.fund_type as string).toUpperCase()] : '-1');
+    const currency_rate = parseFloat(currency_data.rates[(charity.attributes.fund_type as string).toUpperCase()] ? currency_data.rates[(charity.attributes.fund_type as string).toUpperCase()] : '-1');
+    console.log(crypto_data);
 
     const onDonationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         let value = parseFloat(e.target.value)
@@ -41,6 +41,8 @@ export default function donate({ fundraiser, slug, user, strapi_publisable_key, 
             return;
         }
         setDonationAmount(value);
+        console.log(e.target.value);
+
         let in_usd = (value / currency_rate)
         setDonationInUSD(in_usd);
         setDonationInCoin(in_usd / coin_price)
@@ -78,29 +80,30 @@ export default function donate({ fundraiser, slug, user, strapi_publisable_key, 
                     })
                 })
                 let register_json = await register_res.json()
+                console.log(register_json);
                 if (register_json.error) {
                     setAlertText(register_json.error.message);
                     setShowAlert(true);
                     return
                 }
                 if (!register_json.error && register_json.jwt) {
-                    new_user = register_json.user.id
+                    new_user = register_json.user
                     localStorage.setItem(jwt_aut_token, register_json.jwt);
                 }
             }
-            let donation = await axios.post(server_url + "/api/donations", {
+            let donation = await axios.post(server_url + "/api/charity-donations", {
                 data: {
                     comment,
                     amount: donation_amount,
-                    fund_raise: fundraiser['id'],
-                    type: 'polygon_matic',
+                    charity: charity['id'],
+                    type: 'bnb',
                     user: user ? user : new_user
                 }
             });
             const formData = new FormData();
             formData.append('files', img[0]);
             formData.append('refId', donation.data.data.id);
-            formData.append('ref', donations_ref);
+            formData.append('ref', charity_donation_ref);
             formData.append('field', 'images');
             setUploading(true);
             let res = await axios.post(server_url + "/api/upload", formData, {
@@ -119,9 +122,9 @@ export default function donate({ fundraiser, slug, user, strapi_publisable_key, 
             setUploading(false);
             if (res.status <= 201) {
                 if (user) {
-                    router.push(`/my-donations/fundraiser-donations`); return;
+                    router.push(`/my-donations/charity-donations`); return;
                 } else {
-                    window.location.href = '/f/' + fundraiser.attributes.slug
+                    window.location.href = '/charities/' + charity.attributes.slug
                 }
             }
         } catch (error) {
@@ -147,7 +150,7 @@ export default function donate({ fundraiser, slug, user, strapi_publisable_key, 
                         <p>{alert_text}</p>
                     </div>
 
-                    <a href={`/f/${slug}`} className='text-gray-800 flex items-center border-2 border-gray-400 rounded-md w-fit px-2 py-1' >
+                    <a href={`/charities/${slug}`} className='text-gray-800 flex items-center border-2 border-gray-400 rounded-md w-fit px-2 py-1' >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             width={24}
@@ -162,41 +165,39 @@ export default function donate({ fundraiser, slug, user, strapi_publisable_key, 
                         >
                             <polyline points="15 18 9 12 15 6" />
                         </svg>
-                        <p>Back to fundraiser</p>
+                        <p>Back to charity</p>
                     </a>
                     <div className='flex my-5 flex-wrap gap-5 items-center'>
-                        {fundraiser.attributes.image && fundraiser.attributes.image.data &&
+                        {charity.attributes.image && charity.attributes.image.data &&
                             <div className='w-fit'>
                                 <img
                                     className=" lg:w-[12rem] w-[8rem] object-cover object-center rounded-sm"
-                                    src={server_url + fundraiser.attributes.image.data[0]['attributes']['url']} />
+                                    src={server_url + charity.attributes.image.data['attributes']['url']} />
                             </div>
-                        }{!fundraiser.attributes.image &&
+                        }{!charity.attributes.image &&
                             <img
                                 className=" lg:w-[12rem] w-[8rem] object-cover object-center rounded-sm"
                                 src={"/assets/image-placeholder.jpg"}
-                                alt={fundraiser.attributes.name}
+                                alt={charity.attributes.name}
                             />
                         }
                         <div>
-                            <h3 className='text-gray-600'>You're supporing <strong className='font-medium text-gray-800'>{fundraiser.attributes.title}</strong></h3>
-                            {fundraiser.attributes.charity.data &&
-                                <h3 className='text-gray-600'>You're supporing <a href={`/charities/${slug}/`} className='font-medium text-gray-800'>{fundraiser.attributes.charity.data.attributes.name}</a></h3>
-                            }
+                            <h3 className='text-gray-600'>You're supporting <strong className='font-medium text-gray-800'>{charity.attributes.name}</strong></h3>
+                            {/* {charity.attributes.user.data &&
+                                <h3 className='text-gray-600'>You're supporting <a href={`/charities/${slug}/`} className='font-medium text-gray-800'>{charity.attributes.user.data.attributes.name}</a></h3>
+                            } */}
                         </div>
                     </div>
-                    <div className="flex items-baseline gap-1">
+                    <div className="flex items-baseline gap-1 mb-2">
                         <div className='flex items-baseline gap-1'>
-                            <p className='text-gray-900 text-2xl title-font font-medium'>{fundraiser.attributes.fund_raised}</p>
-                            <p className='text-gray-600 font-medium ' >{(fundraiser.attributes.fund_type as string).toUpperCase()}</p>
+                            <p className='text-gray-900 text-2xl title-font font-medium'>{charity.attributes.direct_funds}</p>
+                            <p className='text-gray-600 font-medium ' >{(charity.attributes.fund_type as string).toUpperCase()}</p>
                         </div>
-                        <p>raised</p>
-                        <p className='font-light text-sm text-gray-500'>&nbsp;of&nbsp; {fundraiser.attributes.fund_target}</p>
+                        <p>direct funds received</p>
+                        <p className='font-light text-sm text-gray-500'>&nbsp;of&nbsp; {charity.attributes.fund_target}</p>
                     </div>
-                    <div className="w-full bg-green-400 bg-opacity-20 h-1 mt-1 mb-3" >
-                        <div className="bg-green-500 h-1 w-max-[100%]" style={{ width: `${Math.floor((fundraiser.attributes.fund_raised / fundraiser.attributes.fund_target) * 100)}%` }}></div>
-                    </div>
-                    <label htmlFor="price" className="block text-xl font-medium text-gray-700">
+    <hr />
+                    <label htmlFor="price" className="block text-xl  text-gray-600 mt-4">
                         Enter donation amount
                     </label>
                     <div className="mt-1 relative rounded-md flex flex-row items-center shadow-sm">
@@ -204,20 +205,21 @@ export default function donate({ fundraiser, slug, user, strapi_publisable_key, 
                             type="number"
                             name="price"
                             id="price"
+                            autoFocus
                             value={donation_amount}
                             className="appearance-none text-gray-800 py-2 focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-7 pr-12 text-2xl  border-gray-800 rounded-md"
                             onChange={onDonationChange}
                             placeholder={'0.0'}
                         />
                         <div className="absolute inset-y-0 right-0  flex justify-center items-center px-5">
-                            <p className="text-gray-600 font-medium">{(fundraiser.attributes.fund_type as string)?.toUpperCase()}</p>
+                            <p className="text-gray-600 font-medium">{(charity.attributes.fund_type as string)?.toUpperCase()}</p>
                         </div>
                     </div>
                     <div className="w-full mx-auto mt-5 bg-[#eaf3f9] border-2 border-[#579cce]  flex-row flex justify-between flex-wrap items-center items-start p-4">
                         <h2 className='lg:text-xl'>Total</h2>
                         <div className='flex flex-col items-end '>
                             <div className='flex flex-row items-center gap-2'>
-                                <img className='w-8 h-8' src="/assets/matic.png" alt="bitcoin" />
+                                <img className='w-8 h-8' src="/assets/bnb.png" alt="Binance coin" />
                                 <p className='font-medium text-xl lg:text-2xl'>{donation_in_coin.toFixed(4)}</p>
                             </div>
                             <p className='font-normal text-gray-600'>(US$ <b>{donation_in_usd.toFixed(3)}</b>)</p>
@@ -307,10 +309,10 @@ export default function donate({ fundraiser, slug, user, strapi_publisable_key, 
                     <img className='lg:w-[22rem] mx-auto' src="/assets/qr-placeholder.png" alt="UPI Qrcode" />
                     <div className='flex flex-col  shadow-md px-5 py-5 items-start'>
                         <div className='flex flex-row justify-between  items-start w-[100%]'>
-                            <p className='font-medium text-gray-400'>MATIC deposit Address</p>
+                            <p className='font-medium text-gray-400'>BNB deposit Address</p>
                             <svg
                                 onClick={() => {
-                                    navigator.clipboard.writeText(matic_address).then(() => {
+                                    navigator.clipboard.writeText(bnb_address).then(() => {
                                         alert("Wallet address is copied to clipboard")
                                     })
                                 }}
@@ -329,7 +331,7 @@ export default function donate({ fundraiser, slug, user, strapi_publisable_key, 
                                 <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
                             </svg>
                         </div>
-                        <p className='overflow-scroll lg:overflow-auto w-full font-medium text-gray-600 '>{matic_address}</p>
+                        <p className='overflow-scroll lg:overflow-auto w-full font-medium text-gray-600 '>{bnb_address}</p>
                     </div>
                     <label
                         htmlFor="img-upload"
@@ -405,7 +407,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
         if (!slug) {
             return {
                 props: {
-                    fundraiser: undefined
+                    charity: undefined
                 }
             }
         }
@@ -415,22 +417,22 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
                     $eq: slug
                 }
             },
-            populate: ["image", "user", 'charity']
+            populate: ["image", "user", 'user']
         })
 
         const headers: any = token ? {
             Authorization: `Bearer ${token}`,
         } : {};
 
-        const fundraiser_res = (await fetch(server_url + "/api/fund-raises?" + query, {
+        const charity_res = (await fetch(server_url + "/api/charities?" + query, {
             method: "GET",
             headers: headers
         }));
-        if (fundraiser_res.status > 201) {
+        if (charity_res.status > 201) {
             return { notFound: true };
         }
-        const fundraiser = await fundraiser_res.json();
-        if (!fundraiser.data || fundraiser.data.length <= 0) {
+        const charity = await charity_res.json();
+        if (!charity.data || charity.data.length <= 0) {
             return {
                 notFound: true
             }
@@ -440,17 +442,13 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
             method: "GET",
             headers: headers
         })
-        // let crypto_data = await axios.get('https://pro-api.coinmarketcap.com/v1/fiat/map', {
-        //     headers: {
-        //         'X-CMC_PRO_API_KEY': 'b54bcf4d-1bca-4e8e-9a24-22ff2c3d462c',
-        //     },
-        // });
-        let crypto_data = await new CoinGeckoApi().coins.fetch('matic-network', {});
+
+        let crypto_data = await new CoinGeckoApi().coins.fetch('binancecoin', {});
         let currency_data = await axios.get('https://api.currencyfreaks.com/latest?apikey=' + process.env.CURRENCYFREAKS_API_KEY)
         if (user_res.status > 201) {
             return {
                 props: {
-                    fundraiser: fundraiser['data'][0], user: null, slug,
+                    charity: charity['data'][0], user: null, slug,
                     strapi_publisable_key: process.env.STRIPE_PUBLISHABLE_KEY ? process.env.STRIPE_PUBLISHABLE_KEY : '',
                     token: token ? token : null,
                     crypto_data: crypto_data,
@@ -461,7 +459,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
         const user = await user_res.json();
         return {
             props: {
-                fundraiser: fundraiser['data'][0],
+                charity: charity['data'][0],
                 user,
                 slug,
                 strapi_publisable_key: process.env.STRIPE_PUBLISHABLE_KEY ? process.env.STRIPE_PUBLISHABLE_KEY : '',

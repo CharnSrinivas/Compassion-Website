@@ -7,6 +7,7 @@ export const jwt_aut_token = 'jwt-auth-token';
 export const jwt_admin_auth_token = 'jwt-admin-auth-token';
 export const fundraiser_ref = 'api::fund-raise.fund-raise';
 export const donations_ref='api::donation.donation'
+export const charity_donation_ref ='api::charity-donation.charity-donation'
 export const charity_ref = 'api::charity.charity';
 export const user_documents_ref = 'api::user-document.user-document';
 export const fundraiser_update_ref = 'api::fundraiser-update.fundraiser-update'

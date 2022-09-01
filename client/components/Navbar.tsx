@@ -116,6 +116,7 @@ export default function Navbar() {
             setIsAuth(false);
         }
     }
+    
     return (
         <nav id='navbar' className="flex items-center justify-between  bg-white  lg:px-12 shadow border-solid border-t-2 border-blue-700 h-[5rem]">
 

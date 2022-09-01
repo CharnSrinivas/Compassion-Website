@@ -96,7 +96,7 @@ export default function donate({ fundraiser, slug, user, strapi_publisable_key, 
                     comment,
                     amount: donation_amount,
                     fund_raise: fundraiser['id'],
-                    type: 'btc',
+                    type: 'btc_bep_20',
                     user: user ? user : new_user
                 }
             });

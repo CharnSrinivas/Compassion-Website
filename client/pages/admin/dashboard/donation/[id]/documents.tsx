@@ -70,9 +70,9 @@ interface Props {
 
 export default function edit({ donation, admin_token, slug }: Props) {
     const router = useRouter();
-    const [approving, setApprving] = useState(false);
+    const [approving, setApproving] = useState(false);
     const toggleApproval = async () => {
-        setApprving(true);
+        setApproving(true);
         let res = await axios.put(server_url + '/content-manager/collection-types/api::charity-donation.charity-donation/' + donation.id, {
             approved: !donation.approved
         }, {
@@ -80,7 +80,7 @@ export default function edit({ donation, admin_token, slug }: Props) {
                 Authorization: `Bearer ${admin_token}`,
             }
         });
-        setApprving(false);
+        setApproving(false);
         router.reload();
 
     }
@@ -116,7 +116,7 @@ export default function edit({ donation, admin_token, slug }: Props) {
                                 <p>Back</p>
                             </a>
                             <h1 className="text-gray-900 text-3xl title-font font-medium mb-4">
-                                {donation.title}
+                                {''}
                             </h1>
                             <div className="flex mb-4">
                                 <a href={`/admin/dashboard/donation/${slug}/details`} className="flex-grow border-b-2  py-2 text-lg px-1  border-gray-300">
@@ -250,13 +250,13 @@ export default function edit({ donation, admin_token, slug }: Props) {
                             <img
                                 className="lg:w-1/3 w-full lg:h-[40rem] h-52 object-cover object-center rounded"
                                 src={server_url + donation.image[0].url}
-                                alt={donation.title}
+                                alt={''}
                             />
                         }{!donation.image &&
                             <img
                                 className="lg:w-1/3 w-full lg:h-[40rem] h-52 object-cover object-center rounded"
                                 src={"/assets/image-placeholder.jpg"}
-                                alt={donation.title}
+                                alt={''}
                             />
                         }
 

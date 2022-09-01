@@ -45,8 +45,25 @@
       "enum": [
         "stripe",
         "upi",
-        "crypto"
+        "coinbase",
+        "btc",
+        "trx",
+        "ada",
+        "avax",
+        "bnb",
+        "btc_bep_20",
+        "eth",
+        "ftm",
+        "polygon_matic",
+        "tron"
       ]
+    },
+    "images": {
+      "allowedTypes": [
+        "images"
+      ],
+      "type": "media",
+      "multiple": true
     }
   }
 }

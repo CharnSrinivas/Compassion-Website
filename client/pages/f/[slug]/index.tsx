@@ -9,8 +9,8 @@ import { isMobile } from '../../../utils';
 import { Carousel } from 'react-responsive-carousel'
 import 'react-responsive-carousel/lib/styles/carousel.min.css'
 import 'react-quill/dist/quill.bubble.css'
-import dynamic from 'next/dynamic'
 import Script from 'next/script'
+import dynamic from 'next/dynamic'
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false })
 interface Props {
   fundraiser: any; user: any | null;

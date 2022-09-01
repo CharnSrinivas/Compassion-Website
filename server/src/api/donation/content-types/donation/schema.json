@@ -55,7 +55,15 @@
         "upi",
         "coinbase",
         "btc",
-        "trx"
+        "trx",
+        "ada",
+        "avax",
+        "bnb",
+        "btc_bep_20",
+        "eth",
+        "ftm",
+        "polygon_matic",
+        "tron"
       ]
     }
   }

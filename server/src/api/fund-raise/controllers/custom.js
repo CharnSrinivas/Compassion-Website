@@ -12,7 +12,6 @@ module.exports = createCoreController('api::fund-raise.fund-raise', ({ strapi })
                     }
                 }
             );
-            console.log(charity);
         } catch (err) {
             console.log(err);
             ctx.body = err

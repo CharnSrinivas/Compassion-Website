@@ -230,6 +230,10 @@
       "relation": "oneToOne",
       "target": "api::user-document.user-document",
       "mappedBy": "user"
+    },
+    "register_no": {
+      "required": true,
+      "type": "integer"
     }
   }
 }

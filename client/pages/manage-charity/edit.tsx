@@ -7,6 +7,10 @@ import * as Yup from 'yup'
 
 import React, { useState } from 'react'
 import { jwt_aut_token, server_url } from '../../config';
+import 'react-quill/dist/quill.snow.css'
+
+import dynamic from 'next/dynamic'
+const ReactQuill = dynamic(() => import('react-quill'), { ssr: false })
 
 interface Props {
     charity: any | null;
@@ -16,14 +20,30 @@ interface Props {
 export default function edit({ charity, token }: Props) {
     const [submitting, setSubmitting] = useState(false);
     const router = useRouter();
-
+    console.log(charity);
+    
+    const formats = [
+        'header',
+        'bold', 'italic', 'underline', 'strike', 'blockquote',
+        'list', 'bullet', 'indent',
+        'link', 'image'
+    ]
+    const modules = {
+        toolbar: [
+            [{ 'header': [1, 2, false] }],
+            ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+            [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }],
+            ['link'],
+            ['clean']
+        ],
+    }
     const formik = useFormik({
         initialValues: {
             name: charity['attributes']['name'] ? charity['attributes']['name'] : '',
             targetFunds: charity['attributes']['target_funds'] ? charity['attributes']['target_funds'] : 0,
             address: charity['attributes']['address'] ? charity['attributes']['address'] : '',
             category: charity['attributes']['category'] ? charity['attributes']['category'] : null,
-            registerNumber: charity['attributes']['register_number'] ? charity['attributes']['register_number'] : '',
+            registerNumber: charity['attributes']['register_no'] ? charity['attributes']['register_no'] : '',
             description: charity['attributes']['description'] ? charity['attributes']['description'] : '',
         },
         validationSchema: Yup.object({
@@ -39,41 +59,43 @@ export default function edit({ charity, token }: Props) {
                     .min(3, "Invalid zip code")
                     .required('Zip Code is required'),
             registerNumber:
-                Yup.number()
-                    .optional(),
+                Yup.number().required(),
             description:
                 Yup.string().required("Description is required"),
 
         }),
         onSubmit: async (e) => {
+            if(submitting)return;
             setSubmitting(true);
             // const name = (e.name).replaceAll(' ', '-');
-            let res = await fetch(server_url + "/api/charities/" + charity.id,
-
-                {
-                    method: "PUT",
-
-                    body: JSON.stringify({
-                        data: {
-                            name: e.name,
-                            address: e.address,
-                            register_no: (  e.registerNumber && !isNaN(e.registerNumber)) ? e.registerNumber : null,
-                            description: e.description,
-                            id:charity.id
+                let res = await fetch(server_url + "/api/charities/" + charity.id,
+    
+                    {
+                        method: "PUT",
+    
+                        body: JSON.stringify({
+                            data: {
+                                name: e.name,
+                                address: e.address,
+                                register_no: (e.registerNumber && !isNaN(e.registerNumber)) ? e.registerNumber : null,
+                                description: e.description,
+                                id: charity.id
+                            }
+                        }),
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': "application/json"
                         }
-                    }),
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type':"application/json"
-                    }
-                },
-            );
-            if (res.status <= 201) {
-                res.json().then(res_json => {
-                    // console.log(res_json);
+                    },
+                );
+                if (res.status <= 201) {
+                    res.json().then(res_json => {
+                        router.reload()
+                    })
+                }else{
+                    setSubmitting(false);
                     router.reload()
-                })
-            }
+                }
         }
     });
     return (
@@ -172,9 +194,9 @@ export default function edit({ charity, token }: Props) {
                             {formik.errors.address}
                         </p>
                     }
-                   
+
                     <label htmlFor="" className="block font-medium">
-                        Register number (optional)
+                        Register number
                     </label>
                     <input
                         onBlur={formik.handleBlur}
@@ -191,16 +213,8 @@ export default function edit({ charity, token }: Props) {
                             {formik.errors.registerNumber}
                         </p>
                     }
-                    <textarea
-                        onBlur={formik.handleBlur}
-                        onChange={formik.handleChange}
-                        value={formik.values.description}
-                        id="description"
-                        name='description'
-                        cols={30}
-                        rows={10}
-                        placeholder="Tell about your charity...."
-                        className="w-full  p-4 text-gray-600 bg-indigo-50 outline-none rounded-md my-5"></textarea>
+
+                    <ReactQuill className='mb-8 p-0 mt-2 bg-indigo-50' theme="snow" value={formik.values.description} modules={modules} formats={formats} onChange={formik.handleChange} />
                     {
                         formik.errors.description &&
                         <p className="text-xs italic text-red-500">

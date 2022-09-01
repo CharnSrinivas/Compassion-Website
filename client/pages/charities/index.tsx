@@ -2,6 +2,11 @@ import { GetServerSidePropsContext, GetServerSidePropsResult, GetStaticPathsCont
 import React from 'react'
 import { server_url } from '../../config'
 import qs from 'qs'
+import dynamic from 'next/dynamic'
+import 'react-quill/dist/quill.bubble.css'
+
+const ReactQuill = dynamic(() => import('react-quill'), { ssr: false })
+
 interface Props {
     charities: any[]
 }
@@ -63,14 +68,7 @@ export default function fundraisers({ charities }: Props) {
                                                     <h2 className="text-lg text-gray-900 font-medium title-font mb-4">
                                                         {item.attributes.title}
                                                     </h2>
-                                                    {item.attributes.description &&
-                                                        <p className="leading-relaxed text-base break-words">
-                                                            {(item.attributes.description as string).slice(0, 60) + "..."}
-                                                        </p>
-                                                    }
-                                                    {!item.attributes.description &&
-                                                        <p className="leading-relaxed text-base">No description  </p>
-                                                    }
+                                                    <ReactQuill className='' theme="bubble" readOnly={true} value={(item.attributes.description as string).slice(0, 60) + "..."} />
                                                     <div className='text-gray-900 font-medium mt-4 flex items-center gap-2'>
                                                         <strong className='font-medium text-gray-800 text-xl'>{item.attributes.direct_funds?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</strong>
                                                         <p className='text-gray-600 '>direct funds raised</p>
@@ -103,7 +101,7 @@ export default function fundraisers({ charities }: Props) {
 export async function getServerSideProps(context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<Record<string, unknown>>> {
     const server_url = 'http://127.0.0.1:1337';
     const query = qs.stringify({
-         populate: ["image", "user"], pagination: {
+        populate: ["image", "user"], pagination: {
             pageSize: 10,
         },
         sort: ['direct_funds:desc'],

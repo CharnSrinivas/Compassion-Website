@@ -455,7 +455,7 @@ export default function donate({ fundraiser, slug, user, stripe_publishable_key 
                                     </svg>
 
                                 </div>
-                                <div className="bg-white mx-auto min-w-1xl flex w-[80%] lg:w-auto flex-col lg:max-h-[50rem] max-h-[30rem] overflow-y-scroll rounded-xl shadow-lg">
+                                <div className="bg-white mx-auto  flex w-[80%] lg:w-auto flex-col h-auto lg:max-h-[30rem] max-h-[30rem] overflow-y-scroll rounded-xl shadow-lg">
                                     <a href={`/f/${slug}/donate/btc`} className="lg:px-12 cursor-pointer px-5 py-5 flex flex-row items-center gap-3">
                                         <img src="/assets/btc.png" alt="bitcoin" className='w-10 h-10' />
                                         <div className='flex-col items-start'>

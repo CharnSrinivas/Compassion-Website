@@ -131,10 +131,10 @@ export default function edit({ donation, admin_token, id }: Props) {
                                 {donation.charity.name}
                             </h1>
                             <div className="flex mb-4">
-                                <a href={`/admin/dashboard/donation/${id}/details`} className="flex-grow text-indigo-500 border-b-2 border-indigo-500 py-2 text-lg px-1">
+                                <a href={`/admin/dashboard/charity-donation/${id}/details`} className="flex-grow text-indigo-500 border-b-2 border-indigo-500 py-2 text-lg px-1">
                                     Details
                                 </a>
-                                <a href={`/admin/dashboard/donation/${id}/documents`} className="flex-grow border-b-2 border-gray-300 py-2 text-lg px-1">
+                                <a href={`/admin/dashboard/charity-donation/${id}/documents`} className="flex-grow border-b-2 border-gray-300 py-2 text-lg px-1">
                                     Documents
                                 </a>
                             </div>

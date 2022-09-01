@@ -160,7 +160,6 @@ module.exports = createCoreController('api::donation.donation', ({ strapi }) => 
         } catch (error) {
             console.log('---------------- error ----------------------');
             console.log(error);
-            console.log(error.message);
             console.log('---------------- error ----------------------');
             ctx.send({ error: error.message }, 400)
         }

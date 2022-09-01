@@ -28,7 +28,7 @@ async function sendMail(subject, html, text) {
             html: html, // html body
         });
 
-        console.log("Message sent: %s", info.messageId);
+        console.log("Mail sent: %s", info.messageId);
         // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
 
         // Preview only available when sending through an Ethereal account
@@ -310,7 +310,6 @@ module.exports = createCoreController('api::donation.donation', ({ strapi }) => 
                         populate: { charity: true, fund_raise: true, user: true }
                     })
                 }
-                console.log(donation);
                 if (donation.fund_raise) {
 
                     let fund_raiser = await strapi.query("api::fund-raise.fund-raise").findOne({

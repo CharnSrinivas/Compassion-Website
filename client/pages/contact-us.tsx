@@ -52,7 +52,7 @@ export default function contact_us() {
                                             />
                                         </svg>
                                         <div className="ml-4 text-md tracking-wide">
-                                            Footscray, Vic Australia
+                                             1/10 Eldridge st Footscray Vic 3011
                                         </div>
                                     </div>
                                     <div className="flex items-center mt-4 text-white ">
@@ -191,7 +191,7 @@ export default function contact_us() {
                                         />
                                     </svg>
                                     <div className="ml-4 text-md tracking-wide">
-                                        Footscray, Vic Australia
+                                         1/10 Eldridge st Footscray Vic 3011
                                     </div>
                                 </div>
                                 <div className="flex items-center mt-4 text-gray-600 ">
